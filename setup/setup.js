@@ -15,6 +15,7 @@ var files = {
     jsShared: [
     ],
     jsClient: [
+		'data.js'
     ],
     jsBase: [
         // http://jquery.com/
