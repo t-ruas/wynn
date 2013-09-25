@@ -1,0 +1,33 @@
+<html>
+	<head>
+		<script src="doT.js" type="text/javascript"></script>
+		<script src="jquery-1.10.1.js" type="text/javascript"></script>
+	</head>
+
+	<body><div>Hello World!</div>
+	</body>
+
+	<script type="text/javascript">	
+		function getdata() {
+			console.log('chargement data');
+		}
+		$(document).ready(function() {
+			console.log('Envoi de la requete Ajax!');
+			$.ajax({
+				url : 'service/ca',
+				type : 'POST',
+				dataType : 'json',
+				contentType: 'application/json',
+				data : {},
+				timeout: 12000,
+				success : function(data){
+					console.log('Success' + data);
+					window.setInterval(getdata(data), 6000);
+				},
+				error : function(){
+					console.log('Fail!');
+				}
+			});
+		});
+	</script>
+</html>

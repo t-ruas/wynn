@@ -1,0 +1,187 @@
+<html>
+<!-- Tableau 
+	Vision 
+	Par 
+	Vendeur 
+	-->
+	<head>
+		<script src="../static/doT.js" type="text/javascript"></script>
+		<script src="../static/jquery-1.10.1.js" type="text/javascript"></script>
+	</head>
+	<body>
+	<script id="tableMaker" type="text/x-dot-template">
+		On peut dégager les labels et name dans la structure des vendeurs
+		<TR><TH>Iteration du modèle</TH> {{~it.model.indicateurs :struct}}<TH>{{=struct.label}}</TH>{{~}}</TR>
+		{{~it.table :dot}}
+			<TR><TH>{{=dot.firstname}} {{=dot.lastname}} ({{=dot.rank}})</TH>
+			{{~dot.indicateurs :perfs}}<TH>{{=perfs.value}}</TH>{{~}}</TR>
+		{{~}}
+	</script>
+	<script id="load_body" type="text/x-dot-template">
+	   <div><TABLE border="1">
+	    {{#def.tableHeader}}
+	   </TABLE></div>
+	</script>
+	<div id="content"></div>
+	</body>
+	<script type="text/javascript">
+		var def = {
+			tableHeader : $('#tableMaker').text()
+			<!-- tableContent : $('#tableContent').text() -->
+		};
+		var data = {
+		model:
+		{"firstname":"Prénom",
+		  "lastname":"Nom",
+		  "rank":"0",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]},		
+		table:
+		 [{"firstname":"Jacques",
+		  "lastname":"Lego",
+		  "rank":"1",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]},
+		 {"firstname":"Pierre",
+		  "lastname":"Duplo",
+		  "rank":"2",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]},
+		 {"firstname":"Robert",
+		  "lastname":"Mecano",
+		  "rank":"3",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]},
+		 {"firstname":"Germain",
+		  "lastname":"Donkey Products",
+		  "rank":"4",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]},
+		 {"firstname":"Fabrice",
+		  "lastname":"Anker",
+		  "rank":"5",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]},
+		 {"firstname":"Hervé",
+		  "lastname":"Playmobil",
+		  "rank":"6",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]},
+		 {"firstname":"Francine",
+		  "lastname":"Melissa & Doug",
+		  "rank":"7",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]},
+		 {"firstname":"Dimitri",
+		  "lastname":"JeuJura",
+		  "rank":"8",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]},
+		 {"firstname":"Cyril",
+		  "lastname":"Sevi",
+		  "rank":"9",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]},
+		 {"firstname":"Charles",
+		  "lastname":"Vilac",
+		  "rank":"10",
+		  indicateurs:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		  {name:"VOL", label:"Volume", value:"15"},
+		  {name:"REM", label:"% Remise", value:"14"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		  {name:"ACC", label:"Poids ACC", value:"9"},
+		  {name:"SVC", label:"Poids <br />Service", value:"7"},
+		  {name:"OA", label:"% OA", value:"19"},
+		  {name:"PRM", label:"Primes", value:"13"}]}
+		  ],
+		  "flagIsInTop":"false",
+		  "vendeur":
+		  {"firstname":"Florent",
+		   "lastname":"Darty",
+		   "rank":"10",
+		   indicateurs:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"12"},
+		   {name:"VOL", label:"Volume", value:"15"},
+		   {name:"REM", label:"% Remise", value:"14"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"3"},
+		   {name:"ACC", label:"Poids ACC", value:"9"},
+		   {name:"SVC", label:"Poids <br />Service", value:"7"},
+		   {name:"OA", label:"% OA", value:"19"},
+		   {name:"PRM", label:"Primes", value:"13"}]}}
+		
+		var pagefn = doT.template($('#load_body').text(), undefined, def);
+		$('#content').html(pagefn(data));
+		
+	</script>
+</html>

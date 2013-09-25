@@ -1,0 +1,134 @@
+<html>
+	<head>
+		<script src="../static/doT.js" type="text/javascript"></script>
+		<script src="../static/jquery-1.10.1.js" type="text/javascript"></script>
+	</head>
+	
+	<body>
+	<script id="tableHeader" type="text/x-dot-template">
+		<TR><TH><p>Encart qu on garde</p></TH>{{~it.model.performances  :int}}<TH>{{=int.label}}</TH>{{~}}</TR>
+		{{~it.top :numbers}}
+		<TR>
+			<TH>{{=numbers.name}} ({{=numbers.rank}})</TH>{{~numbers.performances :titikaka}}<TH>{{=titikaka.value}}</TH>{{~}}</TR>{{~}}
+	</script>
+	<script id="tableBottom" type="text/x-dot-template">
+		{{? it.flagIsInTop == "false"}}
+			<TR><TH>{{=it.vendeur.name}} ({{=it.vendeur.rank}})</TH>
+			{{~it.vendeur.performances :hat}}<TH>{{=hat.value}}</TH>{{~}}
+			</TR></TABLE>
+		{{??}}
+			</TABLE>
+		{{?}}
+		
+	</script>
+	<script id="load_body" type="text/x-dot-template">
+		<TABLE border="1">
+		{{#def.tableHeader}}
+		{{#def.tableContent}}
+		{{#def.tableBottom}} <!-- Si le vendeur est pas dans le top -->
+		</TABLE>
+	</script>
+	<div id="content"></div>
+	</body>
+	
+	<script type="text/javascript">
+		var def = {
+			tableHeader : $('#tableHeader').text(),
+			tableBottom : $('#tableBottom').text()
+		};
+		var data = {
+		"model":
+		{"name":"Pierre-Henri",
+		 performances:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"1250"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"22"},
+		  {name:"ACC", label:"Poids ACC", value:"30"},
+		  {name:"SVC", label:"Poids <br />Service", value:"22"}],
+		 "rank":"1"},
+		"top":
+		 [{"name":"Pierre-Henri",
+		 performances:
+		  [{name:"CA", label:"Chiffre d'Affaire", value:"1250"},
+		  {name:"PSE", label:"Taux de concrét<br />PSE", value:"22"},
+		  {name:"ACC", label:"Poids ACC", value:"30"},
+		  {name:"SVC", label:"Poids <br />Service", value:"22"}],
+		 "rank":"1"},
+		  {"name":"Jacques",
+		  performances:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"1159"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"20"},
+		   {name:"ACC", label:"Poids ACC", value:"31"},
+		   {name:"SVC", label:"Poids <br />Service", value:"18"}], 
+		   "rank":"2"},
+		  {"name":"Albert",
+		   performances:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"1144"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"30"},
+		   {name:"ACC", label:"Poids ACC", value:"7"},
+		   {name:"SVC", label:"Poids <br />Service", value:"4"}], 
+		   "rank":"3"},
+		  {"name":"Rodolphe",
+		   performances:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"1119"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"27"},
+		   {name:"ACC", label:"Poids ACC", value:"24"},
+		   {name:"SVC", label:"Poids <br />Service", value:"6"}], 
+		   "rank":"4"},
+		   {"name":"Aymeric",
+		   performances:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"1087"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"30"},
+		   {name:"ACC", label:"Poids ACC", value:"21"},
+		   {name:"SVC", label:"Poids <br />Service", value:"12"}], 
+		   "rank":"5"},
+		   {"name":"Paul",
+		   performances:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"1078"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"23"},
+		   {name:"ACC", label:"Poids ACC", value:"18"},
+		   {name:"SVC", label:"Poids <br />Service", value:"6"}], 
+		   "rank":"6"},
+		   {"name":"Roger",
+		   performances:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"1073"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"17"},
+		   {name:"ACC", label:"Poids ACC", value:"13"},
+		   {name:"SVC", label:"Poids <br />Service", value:"4"}], 
+		   "rank":"7"},
+		   {"name":"Ulrich",
+		   performances:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"1065"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"26"},
+		   {name:"ACC", label:"Poids ACC", value:"24"},
+		   {name:"SVC", label:"Poids <br />Service", value:"6"}], 
+		   "rank":"8"},
+		   {"name":"Pierre",
+		   performances:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"1065"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"18"},
+		   {name:"ACC", label:"Poids ACC", value:"22"},
+		   {name:"SVC", label:"Poids <br />Service", value:"8"}], 
+		   "rank":"9"},
+		   {"name":"Franck",
+		   performances:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"1051"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"17"},
+		   {name:"ACC", label:"Poids ACC", value:"30"},
+		   {name:"SVC", label:"Poids <br />Service", value:"5"}], 
+		   "rank":"10"},
+		 ], 
+		 flagIsInTop:"true",
+		 vendeur: 
+		  {"name":"Charles",
+		  performances:
+		   [{name:"CA", label:"Chiffre d'Affaire", value:"722"},
+		   {name:"PSE", label:"Taux de concrét<br />PSE", value:"8"},
+		   {name:"ACC", label:"Poids ACC", value:"0"},
+		   {name:"SVC", label:"Poids <br />Service", value:"5"}], 
+		   "rank":"127"}
+		   };
+		var pagefn = doT.template($('#load_body').text(), undefined, def);
+		$('#content').html(pagefn(data));
+		
+	</script>
+</html>

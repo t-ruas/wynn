@@ -1,0 +1,8 @@
+{
+    "name": "darty-win-setup",
+    "version": "0.0.1",
+    "dependencies": {
+        "fs-extra": "*",
+        "uglify-js": "*"
+    }
+}

@@ -1,0 +1,52 @@
+<html>
+	<head>
+		<script src="../static/doT.js" type="text/javascript"></script>
+		<script src="../static/jquery-1.10.1.js" type="text/javascript"></script>
+	</head>
+	<body>	
+		<script id="load_body" type="text/x-dot-template">
+			{{#def.table}}
+			{{#def.flag}}
+		</script>
+		<script id="body_palmares" type="text/x-dot-template">
+			<div>
+				<ul>{{~it.top_sellers.top :vert}}
+					<li>{{=vert.value}} - {{=vert.name}}</li>
+				{{~}}</script>
+		<script id="test_flag" type="text/x-dot-template">
+			{{? it.top_sellers.flag_InTopTen == "false"}}
+				<li>{{=it.top_sellers.item.value}} - {{=it.top_sellers.item.name}}</li>
+			{{??}}
+				</li></ul></div>
+			{{?}}</script>
+		<div id="content"></div>
+		<div id="contentcustom"></div>
+	</body>	
+	<script type="text/javascript">
+		var def = {
+			table: $('#body_palmares').text(),
+			flag: $('#test_flag').text()
+		};
+		var data = {
+			top_sellers:
+			{
+				top:
+					[{name:"Neuilly-sur-Seine", value:"1"},
+					{name:"Monaco", value:"2"},
+					{name:"Passy", value:"3"},
+					{name:"Paris",value:"4"},
+					{name:"Grenoble",value:"5"},
+					{name:"Mont-de-Marsan", value:"6"},
+					{name:"Saint-Malo", value:"7"},
+					{name:"Darty.fr",value:"8"},
+					{name:"SAV Darty",value:"9"},
+					{name:"Herblay", value:"10"}],
+				flag_InTopTen:"false",
+				item:
+					{name:"Marseille",value:"113"}
+			}
+		}
+		var pagefn = doT.template($('#load_body').text(), undefined, def);
+		$('#content').html(pagefn(data));
+	</script>
+</html>

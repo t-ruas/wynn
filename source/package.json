@@ -1,0 +1,13 @@
+{
+    "name": "darty-win",
+    "version": "0.0.1",
+    "dependencies": {
+        "winston": "*",
+        "moment": "*",
+        "node-uuid": "*",
+        "node-static": "*",
+        "cookies": "*",
+        "keygrip": "*",
+        "dot": "*"
+    }
+}
