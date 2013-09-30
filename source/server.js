@@ -106,6 +106,7 @@ var routes = {
         {
             pattern: /^\/accueil/i,
             handler: function (context, callback) {
+                _logger.info(_util.inspect(context));
                 if (authorizeOrRedirect(context, callback)) {
                     callback(null, {file: 'accueil.html'});
                 }
@@ -145,37 +146,25 @@ var routes = {
             }
         },
         {
-            pattern: /^\/service\/ca/i,
+            pattern: /^\/service\/indicateurs/i,
             handler: function (context, callback) {
                 if (authorizeOrFail(context, callback)) {
-                    _data.getIndicateurs(context.content, function (error, result) {
+                    _data.getIndicators(context.content, function (error, result) {
                         callback(error, {data: result});
                     });
                 }
             }
         },
         {
-            pattern: /^\/service\/synthese-prd/i,
-            handler: function () {
+            pattern: /^\/service\/details/i,
+            handler: function (context, callback) {
                 if (authorizeOrFail(context, callback)) {
-                    context.content.type = 'PRD';
-                    _data.getSynthese(context.content, function (error, result) {
+                    _data.getDetails(context.content, function (error, result) {
                         callback(error, {data: result});
                     });
                 }
             }
-        },
-        {
-            pattern: /^\/service\/synthese-org/i,
-            handler: function () {
-                if (authorizeOrFail(context, callback)) {
-                    context.content.type = 'ORG';
-                    _data.getSynthese(context.content, function (error, result) {
-                        callback(error, {data: result});
-                    });
-                }
-            }
-        },
+        }
     ]
 };
 

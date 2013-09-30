@@ -23,13 +23,20 @@ function sendRequest(options, data, callback) {
         response.on('data', function (chunk) {
             content += chunk;
         });
-        response.on('end', function (chunk) {
-            callback(null, JSON.parse(content));
+        response.on('end', function () {
+            var result = JSON.parse(content);
+            _logger.info('Réponse EslasticeSearch : ' + _util.inspect(result, {depth: null}));
+            if (result.error) {
+                callback(new _errors.Error('ElasticSearchError', result.error));
+            } else {
+                callback(null, result);
+            }
         });
     }).on('error', function (error) {
         callback(error);
     });
     if (data) {
+        _logger.info('Requête EslasticeSearch : ' + _util.inspect(data, {depth: null}));
         req.write(JSON.stringify(data));
     }
     req.end();
@@ -54,44 +61,8 @@ function pad(str, n, c) {
     return str;
 };
 
-//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
-
-/*
-function makeFilter(date) {
-
-    var filter = [];
-
-    // TODO: remettre la date du jour.
-    var now = new Date(2013, 09, 20, 14, 38, 49);
-
-    filter.push({
-        range: {
-            'DCREATION': {
-                from: dateToString(new Date(now.getFullYear(), now.getMonth(), now.getDate())),
-                to: dateToString(now),
-                include_lower: true,
-                include_upper: false
-            }
-        }
-    });
-
-    for (var i = 0, imax = arguments.length; i < imax; i++) {
-        for (var option in arguments[i]) {
-            var p = {};
-            p[option] = arguments[i][option];
-            filter.push({term: p);
-        }
-    }
-    if (filter.length > 1) {
-        filter = {and: filter};
-    }
-    return filter;
-}
-*/
-
-function getIndicateursValues(date, callback) {
-
-    var dateFilter = {
+function makeDateFilter(date) {
+    return {
         range: {
             'DCREATION': {
                 from: dateToString(new Date(date.getFullYear(), date.getMonth(), date.getDate())),
@@ -101,114 +72,396 @@ function getIndicateursValues(date, callback) {
             }
         }
     };
+}
+
+/*
+function getRefOrg(callback) {
+}
+
+var refPrd = null;
+
+function getRefPrd(callback) {
+    if (refPrd) {
+        callback(null, refPrd);
+    } else {
+        postSearch('prd', {}, function (error, result) {
+            if (error) {
+                callback(error);
+            } else {
+                var list = result.hits[0];
+                refPrd = {};
+                for (var i = 0, imax = list.length; i < imax; i++) {
+                    var b;
+                    var e = list[i];
+                    refPrd[e.CUNIVERS] || refPrd[e.CUNIVERS] = {lib: e.LUNIVERS, sub: {}};
+                    b = refPrd[e.CUNIVERS];
+                    b.sub[e.CRAYON] || b.sub[e.CRAYON] = {lib: e.LRAYON, sub: {}};
+                    b = b.sub[e.CRAYON];
+                    b.sub[e.CGAMME] || b.sub[e.CGAMME] = {lib: e.LGAMME, sub: {}};
+                    b = b.sub[e.CGAMME];
+                    b.sub[e.CCODIT] || b.sub[e.CCODIT] = {lib: e.LCODIT};
+                }
+                callback(null, refPrd);
+            }
+        });
+    }
+}
+*/
+
+function getBudget() {
+    return {ca: 10, vtPartAcc: 15, vtPartServ: 15, vtPartOa: 15, vtPartRem: 15};
+}
+
+function getScoreEvol(val, histo, moyenne, budget) {
+    var score = 0;
+    (val > histo) && score++;
+    (val > histo + (histo * moyenne) / 100) && score++;
+    (val > histo + (histo * budget) / 100) && score++;
+    return score;
+}
+
+if (getScoreEvol(1200, 1000, 25, 10) !== 2) {
+    console.error('getScoreEvol()');
+}
+
+function getScore(val, histo, moyenne, budget) {
+    var score = 0;
+    (val > histo) && score++;
+    (val > moyenne) && score++;
+    (val > histo + (histo * budget) / 100) && score++;
+    return score;
+}
+
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+
+function prepareDateFilters() {
+
+    var dates = new Array(3);
+
+    // TODO: remettre la date du jour.
+    dates[0] = new Date(2013, 09, 20, 14, 38, 49);
+    dates[1] = new Date(dates[0]);
+    dates[1].setMinutes(dates[1].getMinutes() - 2);
+    dates[2] = new Date(dates[1]);
+    dates[2].setFullYear(dates[2].getFullYear() - 1);
+
+    for (var i = 0; i < 3; i++) {
+        dates[i] = makeDateFilter(dates[i]);
+    }
+
+    return dates;
+}
+
+function getIndicators(options, callback) {
+
+    var fDates = prepareDateFilters();
+    var fAcc = {term: {'CTYPENT': 'co'}};
+    var fServ = {term: {'CTYPENT': 'se'}};
+    var fOa = {term: {'CTYPENT': 'co'}};
+    var fRem = {term: {'CTYPENT': 're'}};
+    var fVt = {field: 'NVENTE'};
+    var fCa = {field: 'PVTOTAL'};
 
     var data = {
         size: 0,
-        filter: {},
         facets: {
-            'global': {
-                facet_filter: {and: [dateFilter]},
-                statistical: {field: 'PVTOTAL'}
-            },
-            'acc': {
-                facet_filter: {and: [dateFilter, {term: {'CTYPENT': 'co'}}]},
-                statistical: {field: 'PVTOTAL'}
-            },
-            'serv': {
-                facet_filter: {and: [dateFilter, {term: {'CTYPENT': 'se'}}]},
-                statistical: {field: 'PVTOTAL'}
-            },
-            'oa': {
-                facet_filter: {and: [dateFilter, {term: {'CTYPENT': 'co'}}]},
-                statistical: {field: 'PVTOTAL'}
-            },
-            'rem': {
-                facet_filter: {and: [dateFilter, {term: {'CTYPENT': 're'}}]},
-                statistical: {field: 'PVTOTAL'}
-            },
+            'ca': {facet_filter: {and: [fDates[0]]}, statistical: fCa},
+            'ca_1y': {facet_filter: {and: [fDates[2]]}, statistical: fCa},
+            'ca_2m': {facet_filter: {and: [fDates[1]]}, statistical: fCa},
+            'ca_global_1y': {facet_filter: {and: [fDates[2]]}, statistical: fCa},
+            'ca_global_2m': {facet_filter: {and: [fDates[1]]}, statistical: fCa},
+            'vt_acc_1y': {facet_filter: {and: [fDates[2], fAcc]}, terms: fVt},
+            'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc]}, terms: fVt},
+            'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc]}, terms: fVt},
+            'vt_serv_1y': {facet_filter: {and: [fDates[2], fServ]}, terms: fVt},
+            'vt_serv_2m': {facet_filter: {and: [fDates[1], fServ]}, terms: fVt},
+            'vt_serv_global_2m': {facet_filter: {and: [fDates[1], fServ]}, terms: fVt},
+            'vt_oa_1y': {facet_filter: {and: [fDates[2], fOa]}, terms: fVt},
+            'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa]}, terms: fVt},
+            'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa]}, terms: fVt},
+            'vt_rem_1y': {facet_filter: {and: [fDates[2], fRem]}, terms: fVt},
+            'vt_rem_2m': {facet_filter: {and: [fDates[1], fRem]}, terms: fVt},
+            'vt_rem_global_2m': {facet_filter: {and: [fDates[1], fRem]}, terms: fVt},
+            'vt_1y': {facet_filter: {and: [fDates[2]]}, terms: fVt},
+            'vt_2m': {facet_filter: {and: [fDates[1]]}, terms: fVt},
+            'vt_global_1y': {facet_filter: {and: [fDates[2]]}, terms: fVt},
+            'vt_global_2m': {facet_filter: {and: [fDates[1]]}, terms: fVt}
         }
     };
 
-    _logger.info('Requête EslasticeSearch : ' + _util.inspect(data, {depth: null}));
-    postSearch('lv', data, function (error, result) {
-        if (error || result.error) {
-            callback(error || new _errors.Error('ElasticSearchError', result.error));
-        } else {
-            _logger.info('Réponse EslasticeSearch : ' + _util.inspect(result, {depth: null}));
-            callback(null, result);
+    if (options) {
+        for (var facet in data.facets) {
+            // Pas de filtre org sur les facets globales.
+            if (facet.indexOf('global') !== -1) {
+                options.org1 && data.facets[facet].facet_filter.and.push({term: {'CLIEU1': options.org1}});
+                options.org2 && data.facets[facet].facet_filter.and.push({term: {'CLIEU2': options.org2}});
+                options.org3 && data.facets[facet].facet_filter.and.push({term: {'CLIEU3': options.org3}});
+            }
+            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD1': options.prd1}});
+            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD2': options.prd2}});
+            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD3': options.prd3}});
         }
-    });
-}
+    }
 
-function getIndicateurs(options, callback) {
-
-    // TODO: remettre la date du jour.
-    var today = new Date(2013, 09, 20, 14, 38, 49);
-    var lastYear = new Date(today);
-    lastYear.setFullYear(lastYear.getFullYear() - 1);
-
-    getIndicateursValues(today, function (error, result2) {
+    postSearch('lv', data, function (error, result) {
         if (error) {
             callback(error);
         } else {
-            getIndicateursValues(lastYear, function (error, result1) {
-                if (error) {
-                    callback(error);
-                } else {
-                    var o = {};
-                    for (var facet in result1.facets) {
-                        o[facet] = {
-                            val1: round2(result1.facets[facet].total),
-                            val2: round2(result2.facets[facet].total)
-                        };
-                        o[facet].evol = ((o[facet].val2 - o[facet].val1) / o[facet].val1) * 100;
-                    }
-                    callback(null, o);
-                }
-            });
-        }
-    });
-}
 
-function getSynthese(options, callback) {
+            var o = {};
 
-    // http://www.elasticsearch.org/guide/reference/api/search/facets/terms-stats-facet/
+            o.ca = result.facets['ca'].total;
+            o.ca2m = result.facets['ca_2m'].total;
+            var ca1y = result.facets['ca_1y'].total;
+            o.caEvo = 100 * (o.ca2m - ca1y) / ca1y;
+            var caGlobal1y = result.facets['ca_global_1y'].total;
+            var caGlobal2m = result.facets['ca_global_2m'].total;
+            o.caPt = getScoreEvol(
+                o.ca,
+                ca1y,
+                caGlobal2m / (caGlobal2m - caGlobal1y),
+                getBudget().ca);
 
-    var data = {
-        size: 0,
-        facets: {
-            'produits': {
-                facet_filter: makeFilter(options),
-                terms_stats: {
-                    //size: 10,
-                    key_field: {'PRD': 'produit', 'ORG': 'lieu'}[options.type],
-                    value_field: 'pvtotal',
-                    order: 'total'
-                }
-            }
-        }
-    };
+            o.vt2m = result.facets['vt_2m'].terms.length;
+            o.vt1y = result.facets['vt_1y'].terms.length;
+            o.vtEvo = 100 * (o.vt2m - o.vt1y) / o.vt1y;
+            o.vtPt = getScoreEvol(
+                o.vt2m,
+                o.vt1y,
+                result.facets['vt_global_1y'].terms.length / (result.facets['vt_global_1y'].terms.length - result.facets['vt_global_2m'].terms.length),
+                getBudget().vt);
 
-    postSearch('ldv', data, function (error, result) {
-        if (error || result.error) {
-            callback(error || new _errors.Error('ElasticSearchError', result.error));
-        } else {
-            _logger.info(_util.inspect(result));
+            o.vtPartAcc1y = 100 * result.facets['vt_acc_1y'].terms.length / o.vt1y;
+            o.vtPartAcc2m = 100 * result.facets['vt_acc_2m'].terms.length / o.vt2m;
+            o.vtAccPt = getScore(
+                o.vtPartAcc2m,
+                o.vtPartAcc1y,
+                result.facets['vt_acc_global_2m'].terms.length,
+                getBudget().vtPartAcc);
 
-            var a = result.facets['ca'].terms;
-            var imax = a.length;
-            var o = new Array(imax);
-            for (var i = 0; i < imax; i++) {
-                o.push({name: a[i].term, value: round2(a[i].total)});
-            }
+            o.vtPartServ1y = 100 * result.facets['vt_serv_1y'].terms.length / o.vt1y;
+            o.vtPartServ2m = 100 * result.facets['vt_serv_2m'].terms.length / o.vt2m;
+            o.vtPartServPt = getScore(
+                o.vtPartServ2m,
+                o.vtPartServ1y,
+                result.facets['vt_serv_global_2m'].terms.length,
+                getBudget().vtPartServ);
+
+            o.vtPartOa1y = 100 * result.facets['vt_oa_1y'].terms.length / o.vt1y;
+            o.vtPartOa2m = 100 * result.facets['vt_oa_2m'].terms.length / o.vt2m;
+            o.vtPartOaPt = getScore(
+                o.vtPartOa2m,
+                o.vtPartOa1y,
+                result.facets['vt_oa_global_2m'].terms.length,
+                getBudget().vtPartOa);
+
+            o.vtPartRem1y = 100 * result.facets['vt_rem_1y'].terms.length / o.vt1y;
+            o.vtPartRem2m = 100 * result.facets['vt_rem_2m'].terms.length / o.vt2m;
+            o.vtPartRemPt = 3 - getScore(
+                o.vtPartRem2m,
+                o.vtPartRem1y,
+                result.facets['vt_rem_global_2m'].terms.length,
+                getBudget().vtPartRem);
+
+            // TODO
+            o.ent = 15;
 
             callback(null, o);
         }
     });
 }
 
+function getAggregationField(name) {
+    switch (name) {
+        case 'prd1': return 'CPRD1';
+        case 'prd2': return 'CPRD2';
+        case 'prd3': return 'CPRD3';
+        case 'org1': return 'NLIEU';
+        case 'org2': return 'CLIEU2';
+        case 'org3': return 'CLIEU3';
+    }
+}
+
+function getDetails(options, callback) {
+
+    var fDates = prepareDateFilters();
+    var fAcc = {term: {'CTYPENT': 'co'}};
+    var fServ = {term: {'CTYPENT': 'se'}};
+    var fOa = {term: {'CTYPENT': 'co'}};
+    var fRem = {term: {'CTYPENT': 're'}};
+
+    var fVt = {
+        field: getAggregationField(options.agg),
+        script: 'term + ";" + _source.NVENTE'
+    };
+
+    var fCa = {
+        key_field: getAggregationField(options.agg),
+        value_field: 'PVTOTAL'
+    };
+
+    var data = {
+        size: 0,
+        facets: {
+            'ca': {facet_filter: {and: [fDates[0]]}, terms_stats: fCa},
+            'ca_1y': {facet_filter: {and: [fDates[2]]}, terms_stats: fCa},
+            'ca_2m': {facet_filter: {and: [fDates[1]]}, terms_stats: fCa},
+            'ca_global_1y': {facet_filter: {and: [fDates[2]]}, terms_stats: fCa},
+            'ca_global_2m': {facet_filter: {and: [fDates[1]]}, terms_stats: fCa},
+            'vt_acc_1y': {facet_filter: {and: [fDates[2], fAcc]}, terms: fVt},
+            'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc]}, terms: fVt},
+            'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc]}, terms: fVt},
+            'vt_serv_1y': {facet_filter: {and: [fDates[2], fServ]}, terms: fVt},
+            'vt_serv_2m': {facet_filter: {and: [fDates[1], fServ]}, terms: fVt},
+            'vt_serv_global_2m': {facet_filter: {and: [fDates[1], fServ]}, terms: fVt},
+            'vt_oa_1y': {facet_filter: {and: [fDates[2], fOa]}, terms: fVt},
+            'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa]}, terms: fVt},
+            'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa]}, terms: fVt},
+            'vt_rem_1y': {facet_filter: {and: [fDates[2], fRem]}, terms: fVt},
+            'vt_rem_2m': {facet_filter: {and: [fDates[1], fRem]}, terms: fVt},
+            'vt_rem_global_2m': {facet_filter: {and: [fDates[1], fRem]}, terms: fVt},
+            'vt_1y': {facet_filter: {and: [fDates[2]]}, terms: fVt},
+            'vt_2m': {facet_filter: {and: [fDates[1]]}, terms: fVt}
+        }
+    };
+
+    if (options) {
+        for (var facet in data.facets) {
+            // Pas de filtre org sur les facets globales.
+            if (facet.indexOf('global') !== -1) {
+                options.org1 && data.facets[facet].facet_filter.and.push({term: {'CLIEU1': options.org1}});
+                options.org2 && data.facets[facet].facet_filter.and.push({term: {'CLIEU2': options.org2}});
+                options.org3 && data.facets[facet].facet_filter.and.push({term: {'CLIEU3': options.org3}});
+            }
+            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD1': options.prd1}});
+            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD2': options.prd2}});
+            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD3': options.prd3}});
+        }
+    }
+
+    postSearch('lv', data, function (error, result) {
+        if (error) {
+            callback(error);
+        } else {
+
+            var o = {};
+
+            var mergeCaList = function (p, terms) {
+                for (var i = 0, imax = terms.length; i < imax; i++) {
+                    var term = terms[i];
+                    if (!o[term.term]) {
+                        o[term.term] = {};
+                    }
+                    o[term.term][p] = term.total;
+                }
+            }
+
+            var mergeVtList = function (p, terms) {
+                for (var i = 0, imax = terms.length; i < imax; i++) {
+                    var term = terms[i].term.split(';')[0];
+                    if (!o[term]) {
+                        o[term] = {};
+                    }
+                    if (typeof o[term][p] !== 'number') {
+                        o[term][p] = 0;
+                    }
+                    o[term][p]++;
+                }
+            }
+
+            mergeCaList('ca', result.facets['ca'].terms);
+            mergeCaList('ca2m', result.facets['ca_2m'].terms);
+            mergeCaList('ca1y', result.facets['ca_1y'].terms);
+            mergeCaList('caGlobal1y', result.facets['ca_global_1y'].terms);
+            mergeCaList('caGlobal2m', result.facets['ca_global_2m'].terms);
+
+            mergeVtList('vt2m', result.facets['vt_2m'].terms);
+            mergeVtList('vt1y', result.facets['vt_1y'].terms);
+
+            mergeVtList('vtPartAcc1y', result.facets['vt_acc_1y'].terms);
+            mergeVtList('vtPartAcc2m', result.facets['vt_acc_2m'].terms);
+            mergeVtList('vtPartAccGlobal2m', result.facets['vt_acc_global_2m'].terms);
+
+            mergeVtList('vtPartServ1y', result.facets['vt_serv_1y'].terms);
+            mergeVtList('vtPartServ2m', result.facets['vt_serv_2m'].terms);
+            mergeVtList('vtPartServGlobal2m', result.facets['vt_serv_global_2m'].terms);
+
+            mergeVtList('vtPartOa1y', result.facets['vt_oa_1y'].terms);
+            mergeVtList('vtPartOa2m', result.facets['vt_oa_2m'].terms);
+            mergeVtList('vtPartOaGlobal2m', result.facets['vt_oa_global_2m'].terms);
+
+            mergeVtList('vtPartRem1y', result.facets['vt_rem_1y'].terms);
+            mergeVtList('vtPartRem2m', result.facets['vt_rem_2m'].terms);
+            mergeVtList('vtPartRemGlobal2m', result.facets['vt_rem_global_2m'].terms);
+
+            var u = [];
+
+            for (var n in o) {
+                o[n].caEvo = 100 * (o[n].ca2m - o[n].ca1y) / o[n].ca1y;
+                o[n].caPt = getScoreEvol(
+                    o[n].ca,
+                    o[n].ca1y,
+                    o[n].caGlobal2m / (o[n].caGlobal2m - o[n].caGlobal1y),
+                    getBudget().ca);
+                delete o[n].ca;
+                delete o[n].ca1y;
+                delete o[n].caGlobal1y;
+                delete o[n].caGlobal2m;
+
+                o[n].vtPartAcc1y = 100 * o[n].vtPartAcc1y / o[n].vt1y;
+                o[n].vtPartAcc2m = 100 * o[n].vtPartAcc2m / o[n].vt2m;
+                o[n].vtAccPt = getScore(
+                    o[n].vtPartAcc2m,
+                    o[n].vtPartAcc1y,
+                    o[n].vtPartAccGlobal2m,
+                    getBudget().vtPartAcc);
+                delete o[n].vtPartAcc1y;
+                delete o[n].vtPartAccGlobal2m;
+
+                o[n].vtPartServ1y = 100 * o[n].vtPartServ1y / o[n].vt1y;
+                o[n].vtPartServ2m = 100 * o[n].vtPartServ2m / o[n].vt2m;
+                o[n].vtServPt = getScore(
+                    o[n].vtPartServ2m,
+                    o[n].vtPartServ1y,
+                    o[n].vtPartServGlobal2m,
+                    getBudget().vtPartServ);
+                delete o[n].vtPartServ1y;
+                delete o[n].vtPartServGlobal2m;
+
+                o[n].vtPartOa1y = 100 * o[n].vtPartOa1y / o[n].vt1y;
+                o[n].vtPartOa2m = 100 * o[n].vtPartOa2m / o[n].vt2m;
+                o[n].vtOaPt = getScore(
+                    o[n].vtPartOa2m,
+                    o[n].vtPartOa1y,
+                    o[n].vtPartOaGlobal2m,
+                    getBudget().vtPartOa);
+                delete o[n].vtPartOa1y;
+                delete o[n].vtPartOaGlobal2m;
+
+                o[n].vtPartRem1y = 100 * o[n].vtPartRem1y / o[n].vt1y;
+                o[n].vtPartRem2m = 100 * o[n].vtPartRem2m / o[n].vt2m;
+                o[n].vtRemPt = getScore(
+                    o[n].vtPartRem2m,
+                    o[n].vtPartRem1y,
+                    o[n].vtPartRemGlobal2m,
+                    getBudget().vtPartRem);
+                delete o[n].vtPartRem1y;
+                delete o[n].vtPartRemGlobal2m;
+
+                o[n].cd = n;
+                o[n].lib = 'lib test';
+
+                u.push(o[n]);
+            }
+
+            callback(null, u);
+        }
+    });
+}
+
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
-exports.getIndicateurs = getIndicateurs;
+exports.getIndicators = getIndicators;
+exports.getDetails = getDetails;
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
