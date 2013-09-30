@@ -108,7 +108,16 @@ var routes = {
             handler: function (context, callback) {
                 _logger.info(_util.inspect(context));
                 if (authorizeOrRedirect(context, callback)) {
-                    callback(null, {file: 'accueil.html'});
+                    callback(null, {file: 'accueil.html', fileData: {options: context.path.query}});
+                }
+            }
+        },
+        {
+            pattern: /^\/details/i,
+            handler: function (context, callback) {
+                _logger.info(_util.inspect(context));
+                if (authorizeOrRedirect(context, callback)) {
+                    callback(null, {file: 'details.html', fileData: {options: context.path.query}});
                 }
             }
         },
