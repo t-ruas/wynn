@@ -84,6 +84,7 @@ function handleRequest(request, response) {
                                     context.response.writeHead(301, {'Location': result.redirect});
                                     context.response.end();
                                 } else {
+                                    context.response.statusCode = result.status || 200;
                                     context.response.end();
                                 }
                             }
