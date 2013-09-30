@@ -132,8 +132,6 @@ function getScore(val, histo, moyenne, budget) {
     return score;
 }
 
-//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
-
 function prepareDateFilters() {
 
     var dates = new Array(3);
@@ -151,6 +149,32 @@ function prepareDateFilters() {
 
     return dates;
 }
+
+var fieldNames = {
+    'prd1': 'CPRD1',
+    'prd2': 'CPRD2',
+    'prd3': 'CPRD3',
+    'org1': 'NLIEU',
+    'org2': 'CLIEU2',
+    'org3': 'CLIEU3',
+};
+
+function getFieldName(name) {
+    return name in fieldNames ? fieldNames[name] : null;
+}
+
+function addFilter(options, prefix, andArray) {
+    for (var i = 1; i < 4; i++) {
+        var p = prefix + i;
+        if (p in options) {
+            var o = {};
+            o[getFieldName(p)] = options[p];
+            andArray.push({term: o});
+        }
+    }
+}
+
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 function getIndicators(options, callback) {
 
@@ -189,17 +213,14 @@ function getIndicators(options, callback) {
         }
     };
 
+    // Ajout des filtres à toutes les facets définies.
     if (options) {
         for (var facet in data.facets) {
             // Pas de filtre org sur les facets globales.
             if (facet.indexOf('global') !== -1) {
-                options.org1 && data.facets[facet].facet_filter.and.push({term: {'CLIEU1': options.org1}});
-                options.org2 && data.facets[facet].facet_filter.and.push({term: {'CLIEU2': options.org2}});
-                options.org3 && data.facets[facet].facet_filter.and.push({term: {'CLIEU3': options.org3}});
+                addFilter(options, 'org', data.facets[facet].facet_filter.and);
             }
-            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD1': options.prd1}});
-            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD2': options.prd2}});
-            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD3': options.prd3}});
+            addFilter(options, 'prd', data.facets[facet].facet_filter.and);
         }
     }
 
@@ -271,16 +292,7 @@ function getIndicators(options, callback) {
     });
 }
 
-function getAggregationField(name) {
-    switch (name) {
-        case 'prd1': return 'CPRD1';
-        case 'prd2': return 'CPRD2';
-        case 'prd3': return 'CPRD3';
-        case 'org1': return 'NLIEU';
-        case 'org2': return 'CLIEU2';
-        case 'org3': return 'CLIEU3';
-    }
-}
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 function getDetails(options, callback) {
 
@@ -291,12 +303,12 @@ function getDetails(options, callback) {
     var fRem = {term: {'CTYPENT': 're'}};
 
     var fVt = {
-        field: getAggregationField(options.agg),
+        field: getFieldName(options.agg),
         script: 'term + ";" + _source.NVENTE'
     };
 
     var fCa = {
-        key_field: getAggregationField(options.agg),
+        key_field: getFieldName(options.agg),
         value_field: 'PVTOTAL'
     };
 
@@ -325,17 +337,14 @@ function getDetails(options, callback) {
         }
     };
 
+    // Ajout des filtres à toutes les facets définies.
     if (options) {
         for (var facet in data.facets) {
             // Pas de filtre org sur les facets globales.
             if (facet.indexOf('global') !== -1) {
-                options.org1 && data.facets[facet].facet_filter.and.push({term: {'CLIEU1': options.org1}});
-                options.org2 && data.facets[facet].facet_filter.and.push({term: {'CLIEU2': options.org2}});
-                options.org3 && data.facets[facet].facet_filter.and.push({term: {'CLIEU3': options.org3}});
+                addFilter(options, 'org', data.facets[facet].facet_filter.and);
             }
-            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD1': options.prd1}});
-            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD2': options.prd2}});
-            options.prd && data.facets[facet].facet_filter.and.push({term: {'CPROD3': options.prd3}});
+            addFilter(options, 'prd', data.facets[facet].facet_filter.and);
         }
     }
 
