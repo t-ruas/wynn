@@ -106,18 +106,28 @@ var routes = {
         {
             pattern: /^\/accueil/i,
             handler: function (context, callback) {
-                _logger.info(_util.inspect(context));
                 if (authorizeOrRedirect(context, callback)) {
-                    callback(null, {file: 'accueil.html', fileData: {options: context.path.query}});
+                    _data.getFilterText(context.path.query, function (error, result) {
+                        if (error) {
+                            callback(error);
+                        } else {
+                            callback(error, {file: 'accueil.html', fileData: {options: result}});
+                        }
+                    });
                 }
             }
         },
         {
             pattern: /^\/details/i,
             handler: function (context, callback) {
-                _logger.info(_util.inspect(context));
                 if (authorizeOrRedirect(context, callback)) {
-                    callback(null, {file: 'details.html', fileData: {options: context.path.query}});
+                    _data.getFilterText(context.path.query, function (error, result) {
+                        if (error) {
+                            callback(error);
+                        } else {
+                            callback(error, {file: 'details.html', fileData: {options: result}});
+                        }
+                    });
                 }
             }
         },
