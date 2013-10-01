@@ -64,7 +64,7 @@ function pad(str, n, c) {
 function makeDateFilter(date) {
     return {
         range: {
-            'DCREATION': {
+            'DATE': {
                 from: dateToString(new Date(date.getFullYear(), date.getMonth(), date.getDate())),
                 to: dateToString(date),
                 include_lower: true,
@@ -99,7 +99,7 @@ function prepareDateFilters() {
     var dates = new Array(3);
 
     // TODO: remettre la date du jour.
-    dates[0] = new Date(2013, 09, 20, 14, 38, 49);
+    dates[0] = new Date(2013, 09, 23, 14, 38, 49);
     dates[1] = new Date(dates[0]);
     dates[1].setMinutes(dates[1].getMinutes() - 2);
     dates[2] = new Date(dates[1]);
@@ -149,9 +149,10 @@ function getFilterText(options, callback) {
     var o = {};
     var cancel = false;
     var i = 0;
-    for (var n in filterFields) {
-        if (n in options) {
+    for (var m in filterFields) {
+        if (m in options) {
             i++;
+            var n = m;
             getLib(filterFields[n], options[n], function (error, result) {
                 // En cas d'erreur sur un des codes, on sort en erreur et ignore tous les autres retours.
                 if (error) {
@@ -166,6 +167,9 @@ function getFilterText(options, callback) {
                 }
             });
         }
+    }
+    if (!i) {
+        callback(null, o);
     }
 }
 
@@ -287,7 +291,7 @@ function getIndicators(options, callback) {
 
                     o.vtPartAcc1y = 100 * result.facets['vt_acc_1y'].terms.length / o.vt1y;
                     o.vtPartAcc2m = 100 * result.facets['vt_acc_2m'].terms.length / o.vt2m;
-                    o.vtAccPt = getScore(
+                    o.vtPartAccPt = getScore(
                         o.vtPartAcc2m,
                         o.vtPartAcc1y,
                         result.facets['vt_acc_global_2m'].terms.length,
@@ -364,7 +368,17 @@ function getDetails(options, callback) {
 
             // Cas particulier au niveau filiale.
             if (options.agg === 'org1') {
-                
+                var dartycom = {
+                    or: [
+                        {prefix: {'NVENTE': '907001'}},
+                        {
+                            and: [
+                                {term: {'CORDG2': '040'}},
+                                {term: {'CORG0': '907'}}
+                            ]
+                        }
+                    ]
+                };
             }
 
             var fPrd = makeNavFilters(options, 'prd');
@@ -420,6 +434,10 @@ function getDetails(options, callback) {
                         }
                     }
 
+                    if (!libCache[aggField.cd]) {
+                        libCache[aggField.cd] = {};
+                    }
+
                     // On commence par les libellés pour créer les objets.
                     for (var i = 0, imax = result.facets['lib'].terms.length; i < imax; i++) {
                         var parts = result.facets['lib'].terms[i].term.split(';');
@@ -428,9 +446,6 @@ function getDetails(options, callback) {
                             lib: parts[1]
                         };
                         // On en profite pour remplir le cache des libellés.
-                        if (!libCache[aggField.cd]) {
-                            libCache[aggField.cd] = {};
-                        }
                         if (!libCache[aggField.cd][parts[0]]) {
                             libCache[aggField.cd][parts[0]] = parts[1];
                         }
@@ -535,7 +550,7 @@ exports.getFilterText = getFilterText;
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
-getFilterText({prd1: 'GEM'}, function (error, result) { _logger.info('test getFilterText() : ' + _util.inspect(result)); });
+getFilterText({prd1: 'div'}, function (error, result) { _logger.info('test getFilterText() : ' + _util.inspect(result)); });
 
 if (getScoreEvol(1200, 1000, 25, 10) !== 2) {
     console.error('getScoreEvol()');
