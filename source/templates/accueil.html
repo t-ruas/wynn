@@ -1,245 +1,98 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<script src="doT.js" type="text/javascript"></script>
-		<script src="jquery-1.10.1.js" type="text/javascript"></script>
-		<!--<script src="../static/navigation.js" type="text/javascript"></script>-->
-		
-		<STYLE type="text/css">
-			th.value {color:rgb(90,153,211);}
-			.evolution {color:rgb(0,177,72);}
-			.fixe {color:rgb(253,192,6);}
-			tr#remises>th.value {color:rgb(248,18,24);}
-			div.CA tr>th.fixe,tr>th.evolution {color:rgb(90,153,211);}
-			div.CA>table tr>th.fixe {font-size:72;}
-			
+    <head>
+        <meta charset="utf-8" />
+        <title>Darty Wynn</title>
+        <link rel="stylesheet" type="text/css" href="default.css" />
+        <script src="doT.js" type="text/javascript"></script>
+        <script src="jquery-1.10.1.js" type="text/javascript"></script>
+        @@scripts@@
+        <script type="text/javascript">
+            // les informations de filtres sont envoyées en json dans un objet.
+            // On met l'objet dans une variable, pour l'utiliser facilement
+            darty.wynn.pageData = {
+                filtres: {{=JSON.stringify(it.filtres)}},
+                budget: {{=JSON.stringify(it.budget)}},
+            };
+            darty.wynn.gui.accueil.start();
+        </script>
+        <script id="indicateurs" type="text/x-dot-template">
+            <div class="CA">
+                <table>
+                    <tr>
+                        <th class="fixe"><% %> E</th>
+                    </tr>
+                    <tr>
+                        <th class="evolution"> %</th>
+                    </tr>
+                </table>
+            </div>
+            <div class="indicateurs">
+                <table>
+                    <tr id="accessoires"><th class="label">Accessoires</th>
+                        <th class="value"><% %> %</th><tr/>
+                    <tr id="services"><th class="label">Services</th>
+                        <th class="value"><% %> %</th><tr/>
+                    <tr id="offresactives"><th class="label">O A</th>
+                        <th class="value"><% %> %</th><tr/>
+                    <tr id="remises"><th class="label">Remise</th>
+                        <th class="value"><% %> %</th><tr/>
+                </table>
+            </div>
+            <div class="bottom-line">
+                <div class="entrees">
+                    <span class="label"> entrees </span>
+                    <span class="fixe"><% %>11 000</span>
+                    (<span class="evolution">%</span>)
+                </div>
+                <div class="ventes">
+                    <span class="entrees" class="label"> ventes </span>
+                    <span class="fixe"><% %>4 000</span>(
 
-			
-			div.CA>table tr>th.evolution {font-size:36; float:right;}
-			div.indicateurs {width: 300; margin-left: 128; margin-top: 70;}
-			
-			div.indicateurs .label {font-size: 24;text-align:right;padding-right:30;}
-			div.indicateurs .value {font-size: 24;text-align:left;padding-left:30;}
-			
-			div.bottom-line {line-height:1;font-size: 14;margin-top: 80;margin-left:60;}
-			.concretisation,.ventes,.entrees {display:inline;}
-			#content-left {border-width:1px;border-style:dotted;border-color:black;float:left;width:500;height:500;font-family: Arial;}
-			#content-right {width:400; background:rgb(90,153,211);float:right;margin-right:400px;padding-left:10px;height:500;}
-			#content {border-width:1px;border-style:dotted;border-color:black;}
-			div.CA>table {width: 350;text-align: right;margin-right: auto;margin-left: auto;margin-top: 10;}
-			div.filtre {background-color: red;}
-			div.granularite{background-color: #E2E2E2;}
-			.information {background-color: #EADDFF; color: #77777F; float: right; font-size: 8; margin-top: 30;cursor: pointer;}
-		</STYLE>
-		
-	</head>
-	<body>
-	<p></p>
-		<script id="indicateurs" type="text/x-dot-template">
-			<div class="CA">
-				<table>
-					<tr>
-						<th class="fixe"><%=it.ca2m %> €</th>
-					</tr>
-					<tr>
-						<th class="evolution color_<%%>"> <%=calcEvol(it.ca2m, it.ca1y)%> %</th>
-					</tr>
-				</table>
-			</div>
-			<div class="indicateurs">
-				<table>
-					<tr id="accessoires"><th class="label">Accessoires</th>
-						<th class="value" id = "acc"><%=it.vtAcc2m %> %</th><tr/>
-					<tr id="services"><th class="label">Services</th>
-						<th class="value" id="ser"><%=it.vtServ2m %> %</th><tr/>
-					<tr id="offresactives"><th class="label">O A</th>
-						<th class="value" id="off"><%=it.vtOa2m %> %</th><tr/>
-					<tr id="remises"><th class="label">Remise</th>
-						<th class="value" id="rem"><%=it.vtRem2m %> %</th><tr/>
-				</table>
-			</div>
-			<div class="bottom-line">
-				<div class="entrees">
-					<span class="label"> entrees </span>
-					<span class="fixe"><%=it.ent2m %></span>(
-					
-					<span class="evolution" id="ent">
-						<%=calcEvol(it.ent2m, it.ent1y) %> %</span>)
-				</div>
-				<div class="ventes">
-					<span class="entrees" class="label"> ventes </span>
-					<span class="fixe"><%=it.vt2m%></span>(
-					
-					<span class="evolution" id="ven">
-						<%=calcEvol(it.vt2m,it.vt1y) %> %</span>) 
-				</div>
-				<span class="concretisation"> concretisation </span>
-				<span class="fixe" id="con"> <%=getConcret(it.vt2m,it.ent2m) %> </span>
-				<span id="kikou">test</span>
-			</div>
-			<div id="information" class="information" > <span id="sync"></span> <span id="compteur"></span> </div>
-		</script>
-		
-		<script id="load-ranking2" type="text/x-dot-template">
-			<div id="informations">
-				<div id="position"><p>Le magasin est actuellement classe a la position : <%=it.services*6%></p>
-				<% %>
-					<p>Le magasin a progresse de X<% %>place<% %>(s)<% %><% %></p>
-				<% %>
-					<p>Le magasin a perdu <% %>X place<% %>(s)<% %><% %></p>
-				<!-- <% %> -->
-				</div>
-				<div id="top5">
-					<table>
-						<tr><th>X</th><th id="kiki" onclick="alert("kiki")">critere 2</th><th>critere 4</th><th>critere 4</th><th>critere 5</th></tr>
-						<tr><th>mag 1 (rank)</th><th>val 1</th><th>val 2</th><th>val 4</th><th>val 4</th></tr>
-						<tr><th>mag 2 (rank)</th><th>val 2.1</th><th>val 2.2</th><th>val 2.3</th><th>val 2.4</th></tr>
-						<tr><th>mag 3 (rank)</th><th>val 3.1</th><th>val 3.2</th><th>val 3.3</th><th>val 3.4</th></tr>
-						<tr><th>mag 4 (rank)</th><th>val 4.1</th><th>val 4.2</th><th>val 4.3</th><th>val 4.4</th></tr>
-						<tr><th>mag 5 (rank)</th><th>val 5.1</th><th>val 5.2</th><th>val 5.3</th><th>val 5.4</th></tr>
-						<tr><th>mag 16 (rank)</th><th>val 13.1</th><th>val 13.2</th><th>val 13.3</th><th>val 13.4</th></tr>
-					</table
-						
-						
-						
-						
-				</div>
-			</div>
-		</script>
-		<script id="navigation-bar" type="text/x-dot-template">
-		<div><span>Darty France</span></div>
-		</script>
-		<div id="content">
-		
-		<div id="content-left"><div id="content-header"></div></div>		
-		<div id="content-right"></div>
-		</div>
-	</body>
+                    <span class="evolution">
+                         %</span>)
+                </div>
+                <span class="concretisation"> concretisation</span>
+                <span class="fixe"><% %>4780</span>
+            </div>
+        </script>
 
-	<script type="text/javascript">	 
-	
-	$(document).ready(function() {
-		callAjax ();
-		modifyHTML();
-		setInterval(function(){
-			callAjax();
-		}, 120000);
-		setInterval(function(){
-				modifyHTML();
-				},1000);
-		
-		function callAjax(){
-			setLastLoad();
-			
-			$.ajax({
-			url : 'service/indicateurs',
-			type : 'POST',
-			dataType : 'json',
-			contentType: 'application/json',
-			data : JSON.stringify({}),
-			timeout: 40000,
-			success : function(data){
-				getdata(data);
-			},
-			error : function(){}
-			});
-		}
-		
-		
-	$("#kikou").click(function(){
-	console.log("click !!");
-	});	
-	});
-	
-	var timer = 120;
-	var derniereSync;
-	var dernierTimer;
-	function setLastLoad () {
-		var dateActuelle = new Date ;
-		derniereSync = "Dernier chargement : " + dateActuelle.getHours() + " : " + dateActuelle.getMinutes() + " : "+dateActuelle.getSeconds();
-	}
-	
-	function setIncTimer () {
-		if (timer > 0 ){
-		timer =timer - 1;	
-		}
-		else 
-		{
-			timer=120;
-		}
-		dernierTimer = " prochain dans :" + timer;
-	};
-	
-	function modifyHTML () {
-		setIncTimer();
-		$("#sync").remove();
-		$("#compteur").remove();
-		$("#information").append("<span id=\"sync\" >" + derniereSync + "</span>");
-		$("#information").append("<span id=\"compteur\">" + dernierTimer + "</span>")
-	}
-			
-	function getdata(data) {
-		var pagefn = doT.template($('#navigation-bar').text(), undefined, def);
-		$('#content-header').html('dddddddddd');
-		console.log('Menu de navigation chargee');
-		
-		pagefn  = doT.template($('#indicateurs').text(), undefined, def);
-		$('#content-left').html(pagefn(data));
-		console.log('partie gauche chargee');
-				
-		
-		pagefn = doT.template($('#load-ranking').text(), undefined, def);
-		$('#content-right').html(pagefn(data));	
-		console.log('partie droite chargee');
-	}
-	
-	function getConcret (ventes, entree) {
-		num = ventes/entree *100;
-		num= num.toFixed(2);
-		return num; 
-	}
+        <script id="load-ranking" type="text/x-dot-template">
+            <div id="informations">
+                <div id="position"><p>Le magasin est actuellement classe a la position : <% %></p>
+                <% %>
+                    <p>Le magasin a progresse de X<% %>place<% %>(s)<% %><% %></p>
+                <% %>
+                    <p>Le magasin a perdu <% %>X place<% %>(s)<% %><% %></p>
+                <!-- <% %> -->
+                </div>
+                <div id="top5">
+                    <table>
+                        <tr><th>X</th><th>critere 2</th><th>critere 4</th><th>critere 4</th><th>critere 5</th></tr>
+                        <tr><th>mag 1 (rank)</th><th>val 1</th><th>val 2</th><th>val 4</th><th>val 4</th></tr>
+                        <tr><th>mag 2 (rank)</th><th>val 2.1</th><th>val 2.2</th><th>val 2.3</th><th>val 2.4</th></tr>
+                        <tr><th>mag 3 (rank)</th><th>val 3.1</th><th>val 3.2</th><th>val 3.3</th><th>val 3.4</th></tr>
+                        <tr><th>mag 4 (rank)</th><th>val 4.1</th><th>val 4.2</th><th>val 4.3</th><th>val 4.4</th></tr>
+                        <tr><th>mag 5 (rank)</th><th>val 5.1</th><th>val 5.2</th><th>val 5.3</th><th>val 5.4</th></tr>
+                        <tr><th>mag 16 (rank)</th><th>val 13.1</th><th>val 13.2</th><th>val 13.3</th><th>val 13.4</th></tr>
+                    </table>
 
-	
-	function setTableauCorres () {
-		var tableCorresp = [
-			 {id : ca, couleur : data.caPT}
-			,{id : acc, couleur : data.caPT}
-			,{id : ca, couleur : data.caPT}
-			,{id : ca, couleur : data.caPT}  
-			]
-	}
-	
-	function getTimer () {
-		return timer;
-	}
-	
-	function getScoreEvol(val, histo, moyenne, budget) {
-    var score = 0;
-    (val > histo) && score++;
-    (val > histo + (histo * moyenne) / 100) && score++;
-    (val > histo + (histo * budget) / 100) && score++;
-    return score;
-	}
-	
-	function calcEvol (_1y, _2m) {
-		switch (_2m)
-		{
-		case 0:
-		return 	0;
-		break; 
-		
-		default :
-		return  Math.floor((_2m / _1y -1) *100);
-		}
-		
-	}
-	
-	
+                </div>
+            </div>
+        </script>
 
-	var def = {
-	};
-	
-	</script>
+        <script id="navigation-bar" type="text/x-dot-template">
+            <div><span>Darty France</span></div>
+        </script>
+
+    </head>
+    <body>
+        <p></p>
+        <div id="content">
+            <div id="content-left">
+                <div id="content-header"></div>
+            </div>
+            <div id="content-right"></div>
+        </div>
+    </body>
 </html>
-
-					
