@@ -31,8 +31,10 @@ var actionTypes = {
     },
     'replacePattern': function (origin, destination, action) {
         console.log('replace pattern [' + action.pattern + ']');
-        var path = _path.resolve(destination, action.file);
-        _fs.writeFileSync(path, _fs.readFileSync(path, {encoding: 'utf8'}).replace(action.pattern, action.value), {encoding: 'utf8'});
+        for (var j = 0, jmax = action.files.length; j < jmax; j++) {
+            var path = _path.resolve(destination, action.files[j]);
+            _fs.writeFileSync(path, _fs.readFileSync(path, {encoding: 'utf8'}).replace(action.pattern, action.value), {encoding: 'utf8'});
+        }
     },
     'minifyFiles': function (origin, destination, action) {
         console.log('minify files');
@@ -70,13 +72,13 @@ function process(origin, destination, actions) {
 }
 
 function generateScriptTags(lists) {
-    var tags = '';
+    var tags = [];
     for (var j = 0, jmax = lists.length; j < jmax; j++) {
         for (var k = 0, kmax = lists[j].length; k < kmax; k++) {
-            tags += '<script type="text/javascript" src="' + _path.basename(lists[j][k]) + '"></script>\n';
+            tags.push('<script type="text/javascript" src="' + _path.basename(lists[j][k]) + '"></script>');
         }
     }
-    return tags;
+    return tags.join('\n        ');
 }
 
 exports.generateScriptTags = generateScriptTags;

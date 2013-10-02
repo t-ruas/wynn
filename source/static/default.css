@@ -1,0 +1,55 @@
+
+th.value {color:rgb(90,153,211);}
+.evolution {color:rgb(0,177,72);text-align:right;width:70;}
+.fixe {color:rgb(253,192,6);text-align:right;padding-left:30px;width:60;}
+tr#remises>th.value {color:rgb(248,18,24);}
+div.CA tr>th.fixe,tr>th.evolution {color:rgb(90,153,211);}
+div.CA>table tr>th.fixe {font-size:72;}
+div.CA>table tr>th.evolution {font-size:36; float:right;}
+div.indicateurs .label {font-size: 18;text-align:right;
+<!-- margin-right:30; -->
+}
+div.indicateurs .value {font-size: 18;text-align:left;
+<!-- margin-left:30; -->
+}
+.liste {width:170;text-align:right;}
+.CA,.CAevol {width:50; text-align:right;}
+.OA,.REM,.PSE,.ACC,#OA,#REM,#PSE,#ACC {position:relative;display:none; width:50; text-align:middle;}
+
+#content {
+position:absolute;
+left:250px;
+top:32px;
+<!-- margin-left: 200; -->
+margin-top:28;
+border-width:1px;
+border-style:dotted;
+border-color:black;}
+
+
+
+
+
+
+th.value {color:rgb(90,153,211);}
+.evolution {color:rgb(0,177,72);}
+.fixe {color:rgb(253,192,6);}
+tr#remises>th.value {color:rgb(248,18,24);}
+div.CA tr>th.fixe,tr>th.evolution {color:rgb(90,153,211);}
+div.CA>table tr>th.fixe {font-size:72;}
+
+
+
+div.CA>table tr>th.evolution {font-size:36; float:right;}
+div.indicateurs {width: 300; margin-left: 128; margin-top: 70;}
+
+div.indicateurs .label {font-size: 24;text-align:right;padding-right:30;}
+div.indicateurs .value {font-size: 24;text-align:left;padding-left:30;}
+
+div.bottom-line {line-height:1;font-size: 14;margin-top: 80;margin-left:60;}
+.concretisation,.ventes,.entrees {display:inline;}
+#content-left {border-width:1px;border-style:dotted;border-color:black;float:left;width:500;height:500;}
+#content-right {width:400; background:rgb(90,153,211);float:right;margin-right:400px;padding-left:10px;height:500;}
+#content {border-width:1px;border-style:dotted;border-color:black;}
+div.CA>table {width: 350;text-align: right;margin-right: auto;margin-left: auto;margin-top: 10;}
+

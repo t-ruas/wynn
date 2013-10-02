@@ -14,6 +14,10 @@ var _config = require('./config');
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
+_dot.templateSettings.strip = false;
+
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+
 var fileServer;
 var routes;
 

@@ -107,11 +107,20 @@ var routes = {
             pattern: /^\/accueil/i,
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
+                    var data = {};
                     _data.getFilterText(context.path.query, function (error, result) {
                         if (error) {
                             callback(error);
                         } else {
-                            callback(error, {file: 'accueil.html', fileData: {options: result}});
+                            data.filtres = result;
+                            _data.getBudget(function (error, result) {
+                                if (error) {
+                                    callback(error);
+                                } else {
+                                    data.budget = result;
+                                    callback(error, {file: 'accueil.html', fileData: data});
+                                }
+                            });
                         }
                     });
                 }
@@ -121,11 +130,20 @@ var routes = {
             pattern: /^\/details/i,
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
+                    var data = {};
                     _data.getFilterText(context.path.query, function (error, result) {
                         if (error) {
                             callback(error);
                         } else {
-                            callback(error, {file: 'details.html', fileData: {options: result}});
+                            data.filtres = result;
+                            _data.getBudget(function (error, result) {
+                                if (error) {
+                                    callback(error);
+                                } else {
+                                    data.budget = result;
+                                    callback(error, {file: 'details.html', fileData: data});
+                                }
+                            });
                         }
                     });
                 }

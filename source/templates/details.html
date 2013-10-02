@@ -1,332 +1,55 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<STYLE type="text/css">
-			th.value {color:rgb(90,153,211);}
-			.evolution {color:rgb(0,177,72);text-align:right;width:70;}
-			.fixe {color:rgb(253,192,6);text-align:right;padding-left:30px;width:60;}
-			tr#remises>th.value {color:rgb(248,18,24);}
-			div.CA tr>th.fixe,tr>th.evolution {color:rgb(90,153,211);}
-			div.CA>table tr>th.fixe {font-size:72;}
-			div.CA>table tr>th.evolution {font-size:36; float:right;}
-			div.indicateurs .label {font-size: 18;text-align:right;
-			<!-- margin-right:30; -->
-			}
-			div.indicateurs .value {font-size: 18;text-align:left;
-			<!-- margin-left:30; -->
-			}
-			.liste {width:170;text-align:right;}
-			.CA,.CAevol {width:50; text-align:right;}
-			.OA,.REM,.PSE,.ACC,#OA,#REM,#PSE,#ACC {position:relative;display:none; width:50; text-align:middle;}
-			
-			#content {
-			position:absolute;
-			left:250px;
-			top:32px;
-			<!-- margin-left: 200; -->
-			margin-top:28;
-			border-width:1px;
-			border-style:dotted;
-			border-color:black;}
-		</STYLE>
-		
-		<script src="../doT.js" type="text/javascript"></script>
-		<script src="../static/jquery-1.10.1.js" type="text/javascript"></script>
-		<script src="../static/__jquery.tablesorter/jquery.tablesorter.js" type="text/javascript"></script>
-	</head>
-	<body>
-	<script id="load" type="text/x-dot-template">
-		<table class="tablesorter">
-			<thead>
-				<tr>
-					<th></th>
-					<th></th>
-					<th></th>
-					<%~it.model.indicateurs :struct%>
-					<th class="table-header" class="<%=struct.name%>" id="<%=struct.name%>"><%=struct.name%>
-					</th><%~%>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><%~it.liste :dot%>
-					<th class="liste" id="<%=dot.name%>"><%=dot.name%></th><th class="fixe" class="CA" id="<%=dot.name%>"><%=dot.CA%></th><th class="evolution" class="CAevol" id="<%=dot.name%>"><%?dot.CAevol > 0%>+ <%=dot.CAevol%><%??%>- <%=dot.CAevol*-1%><%?%>%</th>
-					<%~dot.indicateurs :perfs%>
-					<th class="<%=perfs.name%>"><%=perfs.value%>%</th>
-					<%~%>
-				</tr>
-				<%~%>
-			</tbody>
-				<tr>
-					<th></th>
-					<th id="sommeCA" class="fixe"></th>
-					<th id="sommeCAEvol" class="evolution"></th>
-					<th id="sommeACC" class="ACC"></th>
-					<th id="sommePSE" class="PSE"></th>
-					<th id="sommeOA" class="OA"></th>
-					<th id="sommeREM" class="REM"></th>
-			
-		</table>
-	</script>
-	<div id="content" style="border"></div>
-	<button type="button" onclick="showOrHideKPI()">Click !</button>
-	</body>
-	<script type="text/javascript">
-	$(document).ready(function() { 
-		$("th.evolution").click(function(){
-			var left = $('#content').css('left');
-			var top = $('#content').css('top');
-			$('div#content').css('margin-left','none');
-			console.log('left vaut : ' + left + '- top vaut : '+ top);
-			if (parseInt(left) >= 200) 
-			{ 
-				$("#content").animate({left:'8px'}, 1000);
-				showOrHideKPI();
-			}
-			else 
-			{
-				$("#content").animate({left:'250px'}, 1000);
-				showOrHideKPI();
-			}		
-		});
-		function tablesorterControler(choix) {
-			switch (choix)
-			{
-			case 'col1':
-				console.log('case 1 : order by first column');
-				$("table.tablesorter").tablesorter( {sortList: [[0,0]]} ); 
-				break;
-			case 'col2':
-				console.log('case 2 : order by second column');
-				$("table.tablesorter").tablesorter( {sortList: [[1,0]]} );
-				break;
-			case 'col3':
-				console.log('case 3 : order by third column');
-				$("table.tablesorter").tablesorter( {sortList: [[2,0]]} );
-				break;
-			case 'ACC':
-				console.log('case 4 : order by fourth column');
-				$("table.tablesorter").tablesorter( {sortList: [[3,0]]} );
-				break;
-			case 'PSE':
-				console.log('case 5 : order by fifth column');
-				$("table.tablesorter").tablesorter( {sortList: [[4,0]]} );
-				break;
-			case 'OA':
-				console.log('case 6 : order by sixth column');
-				$("table.tablesorter").tablesorter( {sortList: [[5,0]]} );
-				break;
-			case 'REM':
-				console.log('case 7 : order by last column');
-				$("table.tablesorter").tablesorter( {sortList: [[6,0]]} );
-				break;
-			} 
-		}
-		$("th.fixe").click(function(){
-			alert('Direction Drill Down vers Dashboard : ' + $(this).attr('id'));
-		});
-		$("th.table-header").click(function() {
-			//alert('TableSorting(' + $(this).attr('id')+')');
-			tablesorterControler($(this).attr('id'));
-		});
-		$("th.liste").click(function(){
-			alert('Drill Down dans la dimension ' + $(this).attr('id'));
-		});
-	});
-	
-	function showOrHideKPI() { // rajouter le décalage en setTimedOut ... ou animate opacity en léger décalage =) 
-		if ($('.OA').is(':hidden') && $('.REM').is(':hidden') && $('.ACC').is(':hidden') && $('.PSE').is(':hidden')
-		&& $('#OA').is(':hidden') && $('#REM').is(':hidden') && $('#ACC').is(':hidden') && $('#PSE').is(':hidden')
-		) {
-			$('#OA').show();
-			$('#REM').show();
-			$('#ACC').show();
-			$('#PSE').show();
-			$('.OA').fadeIn();
-			$('.REM').fadeIn();
-			$('.ACC').fadeIn();
-			$('.PSE').fadeIn();
-			$('#content').css("top","12");
-		}
-		else {
-			$('#OA').hide();
-			$('#REM').hide();
-			$('#ACC').hide();
-			$('#PSE').hide();
-			$('.OA').fadeOut();
-			$('.REM').fadeOut();
-			$('.ACC').fadeOut();
-			$('.PSE').fadeOut();
-			$('#content').css("top","32");
-		}
-	};
-	var def = {
-		tableHeader : $('#tableMaker').text()
-		<!-- tableContent : $('#tableContent').text() -->
-	};
-	var data = {
-	model:
-	{name:"Guillaume",
-	 CA:"",
-	 CAevol:"",
-	 indicateurs:
-	 [{name:"ACC", label:"", color:"", value:""},
-	 {name:"PSE", value:""},
-	 {name:"OA", value:""},
-	 {name:"REM", value:""}
-	 ]},
-	liste:
-	[{name:"GEM",
-	 CA:"2349123",
-	 CAevol:"2.5",
-	 indicateurs:
-	 [{name:"ACC", value:"21.7"},
-	 {name:"PSE", value:"25.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.12"}
-	 ]},
-	 {name:"PEM",
-	 CA:"1193212",
-	 CAevol:"10.6",
-	 indicateurs:
-	 [{name:"ACC", value:"22.7"},
-	 {name:"PSE", value:"24.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.091"}
-	 ]},
-	 {name:"IMAGE",
-	 CA:"880879",
-	 CAevol:"-2.1",
-	 indicateurs:
-	 [{name:"ACC", value:"23.7"},
-	 {name:"PSE", value:"26.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.090"}
-	 ]},
-	 {name:"SON",
-	 CA:"316472",
-	 CAevol:"3.4",
-	 indicateurs:
-	 [{name:"ACC", value:"24.7"},
-	 {name:"PSE", value:"23.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.106"}
-	 ]},
-	 {name:"MULTIMEDIA",
-	 CA:"1902247",
-	 CAevol:"1.3",
-	 indicateurs:
-	 [{name:"ACC", value:"25.7"},
-	 {name:"PSE", value:"27.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.10549"}
-	 ]},
-	 {name:"COMMUNICATION",
-	 CA:"496980",
-	 CAevol:"46.7",
-	 indicateurs:
-	 [{name:"ACC", value:"26.7"},
-	 {name:"PSE", value:"22.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.1054"}
-	 ]},
-	 {name:"ENERGIE",
-	 CA:"20129",
-	 CAevol:"2.1",
-	 indicateurs:
-	 [{name:"ACC", value:"27.7"},
-	 {name:"PSE", value:"28.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.1057"}
-	 ]},
-	 {name:"CUISINE",
-	 CA:"12000",
-	 CAevol:"-2.1",
-	 indicateurs:
-	 [{name:"ACC", value:"28.7"},
-	 {name:"PSE", value:"21.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.1056"}
-	 ]},
-	 {name:"S. ASSURANCES",
-	 CA:"380213",
-	 CAevol:"7.5",
-	 indicateurs:
-	 [{name:"ACC", value:"29.7"},
-	 {name:"PSE", value:"29.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.056"}
-	 ]},
-	 {name:"S. MULTIMEDIA",
-	 CA:"6243",
-	 CAevol:"-86.7",
-	 indicateurs:
-	 [{name:"ACC", value:"30.7"},
-	 {name:"PSE", value:"20.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.05"}
-	 ]},
-	 {name:"S. DEMATERIALISES",
-	 CA:"21135",
-	 CAevol:"283.7",
-	 indicateurs:
-	 [{name:"ACC", value:"31.7"},
-	 {name:"PSE", value:"30.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.0"}
-	 ]},
-	 {name:"S. LIVRAISON",
-	 CA:"15896",
-	 CAevol:"-19.6",
-	 indicateurs:
-	 [{name:"ACC", value:"32.7"},
-	 {name:"PSE", value:"19.3"},
-	 {name:"OA", value:"23.1"},
-	 {name:"REM", value:"1.1"}
-	 ]}
-	]};	 
-	function somme(data){
-			var sommeCA = 0;
-			var sommeCAy = 0;
-			var sommeACC = 0;
-			var sommePSE = 0;
-			var sommeOA = 0;
-			var sommeREM = 0;
-			for (i=0; i<data.liste.length; i++)
-			{
-				sommeCA+=parseInt(data.liste[i].CA);
-				sommeCAy+=parseInt(parseInt(data.liste[i].CA)/(1+(parseFloat(data.liste[i].CAevol)/100)));
-				for (u=0; u<data.liste[i].indicateurs.length; u++)
-				{	// ensemble de lignes ACC / ensemble de lignes
-					if (data.liste[i].indicateurs[u].name == 'ACC')
-						sommeACC+=parseInt(data.liste[i].indicateurs[u].value);
-					else if (data.liste[i].indicateurs[u].name == 'PSE')					
-						sommePSE+=parseInt(data.liste[i].indicateurs[u].value);
-					else if (data.liste[i].indicateurs[u].name == 'OA')	
-						sommeOA+=parseInt(data.liste[i].indicateurs[u].value);
-					else if (data.liste[i].indicateurs[u].name == 'REM')
-						sommeREM+=parseInt(data.liste[i].indicateurs[u].value);
-					else
-						alert('erreur, traitement 0909898');
-				}
-			}
-			var tot = ((sommeCA/sommeCAy)-1)*10000;
-			tot = Math.round(tot)/100;
-			console.log(tot);
-			$("th#sommeCA").html(sommeCA);
-			var signe = '';
-			if(sommeCAy < 0)
-				signe = '- ';
-			else
-				signe = '+ ';
-			$("th#sommeCAEvol").text(signe + tot + '%');
-			$("th#sommeACC").text(sommeACC);
-			$("th#sommePSE").text(sommePSE);
-			$("th#sommeOA").text(sommeOA);
-			$("th#sommeREM").text(sommeREM);
-		}
-	
-	var pagefn = doT.template($('#load').text(), undefined, def);
-	$('#content').html(pagefn(data));
-	somme(data);
-	
-	</script>
+    <head>
+        <meta charset="utf-8" />
+        <title>Darty Wynn</title>
+        <link rel="stylesheet" type="text/css" href="default.css" />
+        <script src="doT.js" type="text/javascript"></script>
+        <script src="jquery-1.10.1.js" type="text/javascript"></script>
+        <script src="__jquery.tablesorter/jquery.tablesorter.js" type="text/javascript"></script>
+        @@scripts@@
+        <script type="text/javascript">
+            darty.wynn.pageData = {
+                filtres: {{=JSON.stringify(it.filtres)}},
+                budget: {{=JSON.stringify(it.budget)}},
+            };
+            darty.wynn.gui.details.start();
+        </script>
+    </head>
+    <body>
+        <script id="load" type="text/x-dot-template">
+            <table class="tablesorter">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <%~it.model.indicateurs :struct%>
+                        <th class="table-header" class="<%=struct.name%>" id="<%=struct.name%>"><%=struct.name%>
+                        </th><%~%>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><%~it.liste :dot%>
+                        <th class="liste" id="<%=dot.name%>"><%=dot.name%></th><th class="fixe" class="CA" id="<%=dot.name%>"><%=dot.CA%></th><th class="evolution" class="CAevol" id="<%=dot.name%>"><%?dot.CAevol > 0%>+ <%=dot.CAevol%><%??%>- <%=dot.CAevol*-1%><%?%>%</th>
+                        <%~dot.indicateurs :perfs%>
+                        <th class="<%=perfs.name%>"><%=perfs.value%>%</th>
+                        <%~%>
+                    </tr>
+                    <%~%>
+                </tbody>
+                    <tr>
+                        <th></th>
+                        <th id="sommeCA" class="fixe"></th>
+                        <th id="sommeCAEvol" class="evolution"></th>
+                        <th id="sommeACC" class="ACC"></th>
+                        <th id="sommePSE" class="PSE"></th>
+                        <th id="sommeOA" class="OA"></th>
+                        <th id="sommeREM" class="REM"></th>
+                    </tr>
+            </table>
+        </script>
+        <div id="content" style="border"></div>
+        <button type="button" onclick="showOrHideKPI()">Click !</button>
+    </body>
 </html>

@@ -78,22 +78,6 @@ function getBudget(callback) {
     callback(null, {ca: 10, vtPartAcc: 15, vtPartServ: 15, vtPartOa: 15, vtPartRem: 15});
 }
 
-function getScoreEvol(val, histo, moyenne, budget) {
-    var score = 0;
-    (val > histo) && score++;
-    (val > histo + (histo * moyenne) / 100) && score++;
-    (val > histo + (histo * budget) / 100) && score++;
-    return score;
-}
-
-function getScore(val, histo, moyenne, budget) {
-    var score = 0;
-    (val > histo) && score++;
-    (val > moyenne) && score++;
-    (val > histo + (histo * budget) / 100) && score++;
-    return score;
-}
-
 function prepareDateFilters() {
 
     var dates = new Array(3);
@@ -215,91 +199,83 @@ function getLib(field, code, callback) {
 
 function getIndicators(options, callback) {
 
-    getBudget(function (error, result) {
+    var fDates = prepareDateFilters();
+    var fAcc = {term: {'FLAGPM': 'acc'}};
+    var fServ = {term: {'FLAGTYPART': 'p'}};
+    var fOa = {term: {'FLAGOA': 'oa'}};
+    var fRem = {term: {'FLAGREM': 'rem'}};
+
+    var fVt = {field: 'NVENTE'};
+    var fCa = {field: 'PVTOTAL'};
+
+    var fPrd = makeNavFilters(options, 'prd');
+    var fOrg = makeNavFilters(options, 'org');
+
+    var data = {
+        size: 0,
+        facets: {
+            'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, statistical: fCa},
+            'ca_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, statistical: fCa},
+            'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fCa},
+            'ca_global_1y': {facet_filter: {and: [fDates[2]].concat(fPrd)}, statistical: fCa},
+            'ca_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fCa},
+            'vt_acc_1y': {facet_filter: {and: [fDates[2], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd)}, terms: fVt},
+            'vt_serv_1y': {facet_filter: {and: [fDates[2], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_serv_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_serv_global_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd)}, terms: fVt},
+            'vt_oa_1y': {facet_filter: {and: [fDates[2], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},
+            'vt_rem_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms: fVt},
+            'vt_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_global_1y': {facet_filter: {and: [fDates[2]].concat(fPrd)}, terms: fVt},
+            'vt_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fVt}
+        }
+    };
+
+    postSearch('lv', data, function (error, result) {
         if (error) {
             callback(error);
         } else {
-            var budget = result;
 
-            var fDates = prepareDateFilters();
-            var fAcc = {term: {'FLAGPM': 'acc'}};
-            var fServ = {term: {'FLAGTYPART': 'p'}};
-            var fOa = {term: {'FLAGOA': 'oa'}};
-            var fRem = {term: {'FLAGREM': 'rem'}};
+            var getCaFacet = function (name) {
+                return result.facets[name].total;
+            }
 
-            var fVt = {field: 'NVENTE'};
-            var fCa = {field: 'PVTOTAL'};
+            var getVtFacet = function (name) {
+                return result.facets[name].terms.length;
+            }
 
-            var fPrd = makeNavFilters(options, 'prd');
-            var fOrg = makeNavFilters(options, 'org');
-
-            var data = {
-                size: 0,
-                facets: {
-                    'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, statistical: fCa},
-                    'ca_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, statistical: fCa},
-                    'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fCa},
-                    'ca_global_1y': {facet_filter: {and: [fDates[2]].concat(fPrd)}, statistical: fCa},
-                    'ca_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fCa},
-                    'vt_acc_1y': {facet_filter: {and: [fDates[2], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd)}, terms: fVt},
-                    'vt_serv_1y': {facet_filter: {and: [fDates[2], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_serv_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_serv_global_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd)}, terms: fVt},
-                    'vt_oa_1y': {facet_filter: {and: [fDates[2], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},
-                    'vt_rem_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms: fVt},
-                    'vt_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_global_1y': {facet_filter: {and: [fDates[2]].concat(fPrd)}, terms: fVt},
-                    'vt_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fVt}
-                }
-            };
-
-            postSearch('lv', data, function (error, result) {
-                if (error) {
-                    callback(error);
-                } else {
-
-                    var getCaFacet = function (name) {
-                        return result.facets[name].total;
-                    }
-
-                    var getVtFacet = function (name) {
-                        return result.facets[name].terms.length;
-                    }
-
-                    callback(null, {
-                        ca: getCaFacet('ca'),
-                        ca2m: getCaFacet('ca_2m'),
-                        ca1y: getCaFacet('ca_1y'),
-                        caGlobal1y: getCaFacet('ca_global_1y'),
-                        caGlobal2m: getCaFacet('ca_global_2m'),
-                        vt2m: getVtFacet('vt_2m'),
-                        vt1y: getVtFacet('vt_1y'),
-                        vtGlobal1y: getVtFacet('vt_global_1y'),
-                        vtGlobal2m: getVtFacet('vt_global_2m'),
-                        vtAcc1y: getVtFacet('vt_acc_1y'),
-                        vtAcc2m: getVtFacet('vt_acc_2m'),
-                        vtAccGlobal2m: getVtFacet('vt_acc_global_2m'),
-                        vtServ1y: getVtFacet('vt_serv_1y'),
-                        vtServ2m: getVtFacet('vt_serv_2m'),
-                        vtServGlobal2m: getVtFacet('vt_acc_global_2m'),
-                        vtOa1y: getVtFacet('vt_oa_1y'),
-                        vtOa2m: getVtFacet('vt_oa_2m'),
-                        vtOaGlobal2m: getVtFacet('vt_oa_global_2m'),
-                        vtRem1y: getVtFacet('vt_rem_1y'),
-                        vtRem2m: getVtFacet('vt_rem_2m'),
-                        vtRemGlobal2m: getVtFacet('vt_rem_global_2m'),
-                        // TODO
-                        ent2m: 15,
-                        ent1y: 10,
-                    });
-                }
+            callback(null, {
+                ca: getCaFacet('ca'),
+                ca2m: getCaFacet('ca_2m'),
+                ca1y: getCaFacet('ca_1y'),
+                caGlobal1y: getCaFacet('ca_global_1y'),
+                caGlobal2m: getCaFacet('ca_global_2m'),
+                vt2m: getVtFacet('vt_2m'),
+                vt1y: getVtFacet('vt_1y'),
+                vtGlobal1y: getVtFacet('vt_global_1y'),
+                vtGlobal2m: getVtFacet('vt_global_2m'),
+                vtAcc1y: getVtFacet('vt_acc_1y'),
+                vtAcc2m: getVtFacet('vt_acc_2m'),
+                vtAccGlobal2m: getVtFacet('vt_acc_global_2m'),
+                vtServ1y: getVtFacet('vt_serv_1y'),
+                vtServ2m: getVtFacet('vt_serv_2m'),
+                vtServGlobal2m: getVtFacet('vt_acc_global_2m'),
+                vtOa1y: getVtFacet('vt_oa_1y'),
+                vtOa2m: getVtFacet('vt_oa_2m'),
+                vtOaGlobal2m: getVtFacet('vt_oa_global_2m'),
+                vtRem1y: getVtFacet('vt_rem_1y'),
+                vtRem2m: getVtFacet('vt_rem_2m'),
+                vtRemGlobal2m: getVtFacet('vt_rem_global_2m'),
+                // TODO
+                ent2m: 15,
+                ent1y: 10,
             });
         }
     });
@@ -309,135 +285,127 @@ function getIndicators(options, callback) {
 
 function getDetails(options, callback) {
 
-    getBudget(function (error, result) {
+    var aggField = filterFields[options.agg];
+
+    var fDates = prepareDateFilters();
+    var fAcc = {term: {'FLAGPM': 'acc'}};
+    var fServ = {term: {'FLAGTYPART': 'p'}};
+    var fOa = {term: {'FLAGOA': 'oa'}};
+    var fRem = {term: {'FLAGREM': 'rem'}};
+
+    var fLib = {
+        field: aggField.cd,
+        script: 'term + ";" + _source.' + aggField.lib
+    };
+
+    // on concatène le numéro de vente avec l'axe d'aggrégation pour avoir un count de ventes et non de lignes.
+    var fVt = {
+        field: aggField.cd,
+        script: 'term + ";" + _source.NVENTE'
+    };
+
+    var fCa = {
+        key_field: aggField.cd,
+        value_field: 'PVTOTAL'
+    };
+
+    var fPrd = makeNavFilters(options, 'prd');
+    var fOrg = makeNavFilters(options, 'org');
+
+    var data = {
+        size: 0,
+        facets: {
+            'lib': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms: fLib},
+            'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
+            'ca_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
+            'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
+            'ca_global_1y': {facet_filter: {and: [fDates[2]].concat(fPrd)}, terms_stats: fCa},
+            'ca_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fCa},
+            'vt_acc_1y': {facet_filter: {and: [fDates[2], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd)}, terms: fVt},
+            'vt_serv_1y': {facet_filter: {and: [fDates[2], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_serv_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_serv_global_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd)}, terms: fVt},
+            'vt_oa_1y': {facet_filter: {and: [fDates[2], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},
+            'vt_rem_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms: fVt},
+            'vt_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
+        }
+    };
+
+    postSearch('lv', data, function (error, result) {
         if (error) {
             callback(error);
         } else {
-            var budget = result;
 
-            var aggField = filterFields[options.agg];
+            var o = {};
 
-            var fDates = prepareDateFilters();
-            var fAcc = {term: {'FLAGPM': 'acc'}};
-            var fServ = {term: {'FLAGTYPART': 'p'}};
-            var fOa = {term: {'FLAGOA': 'oa'}};
-            var fRem = {term: {'FLAGREM': 'rem'}};
-
-            var fLib = {
-                field: aggField.cd,
-                script: 'term + ";" + _source.' + aggField.lib
-            };
-
-            // on concatène le numéro de vente avec l'axe d'aggrégation pour avoir un count de ventes et non de lignes.
-            var fVt = {
-                field: aggField.cd,
-                script: 'term + ";" + _source.NVENTE'
-            };
-
-            var fCa = {
-                key_field: aggField.cd,
-                value_field: 'PVTOTAL'
-            };
-
-            var fPrd = makeNavFilters(options, 'prd');
-            var fOrg = makeNavFilters(options, 'org');
-
-            var data = {
-                size: 0,
-                facets: {
-                    'lib': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms: fLib},
-                    'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
-                    'ca_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
-                    'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
-                    'ca_global_1y': {facet_filter: {and: [fDates[2]].concat(fPrd)}, terms_stats: fCa},
-                    'ca_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fCa},
-                    'vt_acc_1y': {facet_filter: {and: [fDates[2], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd)}, terms: fVt},
-                    'vt_serv_1y': {facet_filter: {and: [fDates[2], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_serv_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_serv_global_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd)}, terms: fVt},
-                    'vt_oa_1y': {facet_filter: {and: [fDates[2], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},
-                    'vt_rem_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms: fVt},
-                    'vt_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms: fVt},
-                    'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
+            var mergeCaList = function (p, terms) {
+                for (var i = 0, imax = terms.length; i < imax; i++) {
+                    var term = terms[i];
+                    o[term.term][p] = term.total;
                 }
-            };
+            }
 
-            postSearch('lv', data, function (error, result) {
-                if (error) {
-                    callback(error);
-                } else {
-
-                    var o = {};
-
-                    var mergeCaList = function (p, terms) {
-                        for (var i = 0, imax = terms.length; i < imax; i++) {
-                            var term = terms[i];
-                            o[term.term][p] = term.total;
-                        }
+            var mergeVtList = function (p, terms) {
+                for (var i = 0, imax = terms.length; i < imax; i++) {
+                    var term = terms[i].term.split(';')[0];
+                    if (typeof o[term][p] !== 'number') {
+                        o[term][p] = 0;
                     }
-
-                    var mergeVtList = function (p, terms) {
-                        for (var i = 0, imax = terms.length; i < imax; i++) {
-                            var term = terms[i].term.split(';')[0];
-                            if (typeof o[term][p] !== 'number') {
-                                o[term][p] = 0;
-                            }
-                            o[term][p]++;
-                        }
-                    }
-
-                    if (!libCache[aggField.cd]) {
-                        libCache[aggField.cd] = {};
-                    }
-
-                    // On commence par les libellés pour créer les objets.
-                    for (var i = 0, imax = result.facets['lib'].terms.length; i < imax; i++) {
-                        var parts = result.facets['lib'].terms[i].term.split(';');
-                        o[parts[0]] = {
-                            cd: parts[0],
-                            lib: parts[1]
-                        };
-                        // On en profite pour remplir le cache des libellés.
-                        if (!libCache[aggField.cd][parts[0]]) {
-                            libCache[aggField.cd][parts[0]] = parts[1];
-                        }
-                    }
-
-                    mergeCaList('ca', result.facets['ca'].terms);
-                    mergeCaList('ca2m', result.facets['ca_2m'].terms);
-                    mergeCaList('ca1y', result.facets['ca_1y'].terms);
-                    mergeCaList('caGlobal1y', result.facets['ca_global_1y'].terms);
-                    mergeCaList('caGlobal2m', result.facets['ca_global_2m'].terms);
-                    mergeVtList('vt2m', result.facets['vt_2m'].terms);
-                    mergeVtList('vt1y', result.facets['vt_1y'].terms);
-                    mergeVtList('vtAcc1y', result.facets['vt_acc_1y'].terms);
-                    mergeVtList('vtAcc2m', result.facets['vt_acc_2m'].terms);
-                    mergeVtList('vtAccGlobal2m', result.facets['vt_acc_global_2m'].terms);
-                    mergeVtList('vtServ1y', result.facets['vt_serv_1y'].terms);
-                    mergeVtList('vtServ2m', result.facets['vt_serv_2m'].terms);
-                    mergeVtList('vtServGlobal2m', result.facets['vt_serv_global_2m'].terms);
-                    mergeVtList('vtOa1y', result.facets['vt_oa_1y'].terms);
-                    mergeVtList('vtOa2m', result.facets['vt_oa_2m'].terms);
-                    mergeVtList('vtOaGlobal2m', result.facets['vt_oa_global_2m'].terms);
-                    mergeVtList('vtRem1y', result.facets['vt_rem_1y'].terms);
-                    mergeVtList('vtRem2m', result.facets['vt_rem_2m'].terms);
-                    mergeVtList('vtRemGlobal2m', result.facets['vt_rem_global_2m'].terms);
-
-                    var u = [];
-
-                    for (var n in o) {
-                        u.push(o[n]);
-                    }
-
-                    callback(null, u);
+                    o[term][p]++;
                 }
-            });
+            }
+
+            if (!libCache[aggField.cd]) {
+                libCache[aggField.cd] = {};
+            }
+
+            // On commence par les libellés pour créer les objets.
+            for (var i = 0, imax = result.facets['lib'].terms.length; i < imax; i++) {
+                var parts = result.facets['lib'].terms[i].term.split(';');
+                o[parts[0]] = {
+                    cd: parts[0],
+                    lib: parts[1]
+                };
+                // On en profite pour remplir le cache des libellés.
+                if (!libCache[aggField.cd][parts[0]]) {
+                    libCache[aggField.cd][parts[0]] = parts[1];
+                }
+            }
+
+            mergeCaList('ca', result.facets['ca'].terms);
+            mergeCaList('ca2m', result.facets['ca_2m'].terms);
+            mergeCaList('ca1y', result.facets['ca_1y'].terms);
+            mergeCaList('caGlobal1y', result.facets['ca_global_1y'].terms);
+            mergeCaList('caGlobal2m', result.facets['ca_global_2m'].terms);
+            mergeVtList('vt2m', result.facets['vt_2m'].terms);
+            mergeVtList('vt1y', result.facets['vt_1y'].terms);
+            mergeVtList('vtAcc1y', result.facets['vt_acc_1y'].terms);
+            mergeVtList('vtAcc2m', result.facets['vt_acc_2m'].terms);
+            mergeVtList('vtAccGlobal2m', result.facets['vt_acc_global_2m'].terms);
+            mergeVtList('vtServ1y', result.facets['vt_serv_1y'].terms);
+            mergeVtList('vtServ2m', result.facets['vt_serv_2m'].terms);
+            mergeVtList('vtServGlobal2m', result.facets['vt_serv_global_2m'].terms);
+            mergeVtList('vtOa1y', result.facets['vt_oa_1y'].terms);
+            mergeVtList('vtOa2m', result.facets['vt_oa_2m'].terms);
+            mergeVtList('vtOaGlobal2m', result.facets['vt_oa_global_2m'].terms);
+            mergeVtList('vtRem1y', result.facets['vt_rem_1y'].terms);
+            mergeVtList('vtRem2m', result.facets['vt_rem_2m'].terms);
+            mergeVtList('vtRemGlobal2m', result.facets['vt_rem_global_2m'].terms);
+
+            var u = [];
+
+            for (var n in o) {
+                u.push(o[n]);
+            }
+
+            callback(null, u);
         }
     });
 }
@@ -447,11 +415,6 @@ function getDetails(options, callback) {
 exports.getIndicators = getIndicators;
 exports.getDetails = getDetails;
 exports.getFilterText = getFilterText;
+exports.getBudget = getBudget;
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
-
-getFilterText({prd1: 'div'}, function (error, result) { _logger.info('test getFilterText() : ' + _util.inspect(result)); });
-
-if (getScoreEvol(1200, 1000, 25, 10) !== 2) {
-    console.error('getScoreEvol()');
-}

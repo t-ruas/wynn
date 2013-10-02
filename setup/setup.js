@@ -15,13 +15,23 @@ var files = {
     jsShared: [
     ],
     jsClient: [
-		'data.js'
+        'static/darty.wynn.js',
+        'static/darty.wynn.data.js',
+        'static/darty.wynn.gui.js',
+    ],
+    templates: [
+        'templates/accueil.html',
+        'templates/details.html',
     ],
     jsBase: [
         // http://jquery.com/
         'static/jquery-1.10.1.js',
         // https://github.com/olado/doT
         'static/doT.js'
+    ],
+    misc: [
+        'static/favicon.ico',
+        'static/default.css'
     ],
     setup: [
         'package.json',
@@ -30,22 +40,22 @@ var files = {
 
 var actions = {
     dev: [
-        {type: 'importFiles', files: [files.jsBase, files.jsShared, files.jsServer, files.jsShared, files.jsClient, files.setup, ['static/favicon.ico']]},
+        {type: 'importFiles', files: [files.jsBase, files.jsShared, files.jsServer, files.jsShared, files.jsClient, files.setup, files.templates, files.misc]},
         {type: 'importDirectories', directories: ['static/images']},
         {type: 'importDirectories', directories: ['static/styles']},
-        {type: 'importDirectories', directories: ['templates']},
-        {type: 'replacePattern', pattern: /\\{\\{/g, value: '<%', file: 'static/doT.js'},
-        {type: 'replacePattern', pattern: /\\}\\}/g, value: '%>', file: 'static/doT.js'},
+        {type: 'replacePattern', pattern: /\\{\\{/g, value: '<%', files: ['static/doT.js']},
+        {type: 'replacePattern', pattern: /\\}\\}/g, value: '%>', files: ['static/doT.js']},
+        {type: 'replacePattern', pattern: /@@scripts@@/g, value: _build.generateScriptTags([files.jsClient]), files: files.templates},
         {type: 'createDirectory', directory: 'logs'},
     ],
     prd: [
-        {type: 'importFiles', files: [files.jsBase, files.jsShared, files.jsServer, files.setup, ['static/favicon.ico']]},
+        {type: 'importFiles', files: [files.jsBase, files.jsShared, files.jsServer, files.setup, files.templates, files.misc]},
         {type: 'importDirectories', directories: ['static/images']},
         {type: 'importDirectories', directories: ['static/styles']},
-        {type: 'importDirectories', directories: ['templates']},
         {type: 'minifyFiles', files: [files.jsShared, files.jsClient], destination: 'static/darty.win.min.js'},
-        {type: 'replacePattern', pattern: /\\{\\{/g, value: '<%', file: 'static/doT.js'},
-        {type: 'replacePattern', pattern: /\\}\\}/g, value: '%>', file: 'static/doT.js'},
+        {type: 'replacePattern', pattern: /\\{\\{/g, value: '<%', files: ['static/doT.js']},
+        {type: 'replacePattern', pattern: /\\}\\}/g, value: '%>', files: ['static/doT.js']},
+        {type: 'replacePattern', pattern: /@@scripts@@/g, value: 'darty.wynn.min.js', files: files.templates},
         {type: 'createDirectory', directory: 'logs'},
     ]
 };
