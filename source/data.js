@@ -131,11 +131,10 @@ var filterFields = {
 // Prépare les filtres ElasticSearch à partir des options de navigation org et prd.
 function makeNavFilters(options, prefix) {
     var filters = [];
-    for (var i = 1; i < 4; i++) {
-        var p = prefix + i;
-        if (p in options) {
+    for (var n in filterFields) {
+        if (n in options && n.slice(0, 3) === prefix) {
             var o = {};
-            o[filterFields[p].cd] = options[p].toLowerCase();
+            o[filterFields[n].cd] = options[n].toLowerCase();
             filters.push({term: o});
         }
     }
@@ -261,71 +260,44 @@ function getIndicators(options, callback) {
                 }
             };
 
+            var getCaFacet = function (name) {
+                return result.facets[name].total;
+            }
+
+            var getVtFacet = function (name) {
+                return result.facets[name].terms.length;
+            }
+
             postSearch('lv', data, function (error, result) {
                 if (error) {
                     callback(error);
                 } else {
-
-                    var o = {};
-
-                    o.ca = result.facets['ca'].total;
-                    o.ca2m = result.facets['ca_2m'].total;
-                    var ca1y = result.facets['ca_1y'].total;
-                    o.caEvo = 100 * (o.ca2m - ca1y) / ca1y;
-                    var caGlobal1y = result.facets['ca_global_1y'].total;
-                    var caGlobal2m = result.facets['ca_global_2m'].total;
-                    o.caPt = getScoreEvol(
-                        o.ca,
-                        ca1y,
-                        caGlobal2m / (caGlobal2m - caGlobal1y),
-                        budget.ca);
-
-                    o.vt2m = result.facets['vt_2m'].terms.length;
-                    o.vt1y = result.facets['vt_1y'].terms.length;
-                    o.vtEvo = 100 * (o.vt2m - o.vt1y) / o.vt1y;
-                    o.vtPt = getScoreEvol(
-                        o.vt2m,
-                        o.vt1y,
-                        result.facets['vt_global_1y'].terms.length / (result.facets['vt_global_1y'].terms.length - result.facets['vt_global_2m'].terms.length),
-                        budget.vt);
-
-                    o.vtPartAcc1y = 100 * result.facets['vt_acc_1y'].terms.length / o.vt1y;
-                    o.vtPartAcc2m = 100 * result.facets['vt_acc_2m'].terms.length / o.vt2m;
-                    o.vtPartAccPt = getScore(
-                        o.vtPartAcc2m,
-                        o.vtPartAcc1y,
-                        result.facets['vt_acc_global_2m'].terms.length,
-                        budget.vtPartAcc);
-
-                    o.vtPartServ1y = 100 * result.facets['vt_serv_1y'].terms.length / o.vt1y;
-                    o.vtPartServ2m = 100 * result.facets['vt_serv_2m'].terms.length / o.vt2m;
-                    o.vtPartServPt = getScore(
-                        o.vtPartServ2m,
-                        o.vtPartServ1y,
-                        result.facets['vt_serv_global_2m'].terms.length,
-                        budget.vtPartServ);
-
-                    o.vtPartOa1y = 100 * result.facets['vt_oa_1y'].terms.length / o.vt1y;
-                    o.vtPartOa2m = 100 * result.facets['vt_oa_2m'].terms.length / o.vt2m;
-                    o.vtPartOaPt = getScore(
-                        o.vtPartOa2m,
-                        o.vtPartOa1y,
-                        result.facets['vt_oa_global_2m'].terms.length,
-                        budget.vtPartOa);
-
-                    o.vtPartRem1y = 100 * result.facets['vt_rem_1y'].terms.length / o.vt1y;
-                    o.vtPartRem2m = 100 * result.facets['vt_rem_2m'].terms.length / o.vt2m;
-                    o.vtPartRemPt = 3 - getScore(
-                        o.vtPartRem2m,
-                        o.vtPartRem1y,
-                        result.facets['vt_rem_global_2m'].terms.length,
-                        budget.vtPartRem);
-
-                    // TODO
-                    o.ent = 15;
-                    o.entEvo = 100;
-
-                    callback(null, o);
+                    callback(null, {
+                        ca: getCaFacet('ca'),
+                        ca2m: getCaFacet('ca_2m'),
+                        ca1y: getCaFacet('ca_1y'),
+                        caGlobal1y: getCaFacet('ca_global_1y'),
+                        caGlobal2m: getCaFacet('ca_global_2m'),
+                        vt2m: getVtFacet('vt_2m'),
+                        vt1y: getVtFacet('vt_1y'),
+                        vtGlobal1y: getVtFacet('vt_global_1y'),
+                        vtGlobal2m: getVtFacet('vt_global_2m'),
+                        vtAcc1y: getVtFacet('vt_acc_1y'),
+                        vtAcc2m: getVtFacet('vt_acc_2m'),
+                        vtAccGlobal2m: getVtFacet('vt_acc_global_2m'),
+                        vtServ1y: getVtFacet('vt_serv_1y'),
+                        vtServ2m: getVtFacet('vt_serv_2m'),
+                        vtServGlobal2m: getVtFacet('vt_acc_global_2m'),
+                        vtOa1y: getVtFacet('vt_oa_1y'),
+                        vtOa2m: getVtFacet('vt_oa_2m'),
+                        vtOaGlobal2m: getVtFacet('vt_oa_global_2m'),
+                        vtRem1y: getVtFacet('vt_rem_1y'),
+                        vtRem2m: getVtFacet('vt_rem_2m'),
+                        vtRemGlobal2m: getVtFacet('vt_rem_global_2m'),
+                        // TODO
+                        ent2m: 15,
+                        ent1y: 10,
+                    });
                 }
             });
         }
@@ -365,21 +337,6 @@ function getDetails(options, callback) {
                 key_field: aggField.cd,
                 value_field: 'PVTOTAL'
             };
-
-            // Cas particulier au niveau filiale.
-            if (options.agg === 'org1') {
-                var dartycom = {
-                    or: [
-                        {prefix: {'NVENTE': '907001'}},
-                        {
-                            and: [
-                                {term: {'CORDG2': '040'}},
-                                {term: {'CORG0': '907'}}
-                            ]
-                        }
-                    ]
-                };
-            }
 
             var fPrd = makeNavFilters(options, 'prd');
             var fOrg = makeNavFilters(options, 'org');
@@ -451,87 +408,29 @@ function getDetails(options, callback) {
                         }
                     }
 
-                    _logger.info('libCache : ' + _util.inspect(libCache));
-
                     mergeCaList('ca', result.facets['ca'].terms);
                     mergeCaList('ca2m', result.facets['ca_2m'].terms);
                     mergeCaList('ca1y', result.facets['ca_1y'].terms);
                     mergeCaList('caGlobal1y', result.facets['ca_global_1y'].terms);
                     mergeCaList('caGlobal2m', result.facets['ca_global_2m'].terms);
-
                     mergeVtList('vt2m', result.facets['vt_2m'].terms);
                     mergeVtList('vt1y', result.facets['vt_1y'].terms);
-
-                    mergeVtList('vtPartAcc1y', result.facets['vt_acc_1y'].terms);
-                    mergeVtList('vtPartAcc2m', result.facets['vt_acc_2m'].terms);
-                    mergeVtList('vtPartAccGlobal2m', result.facets['vt_acc_global_2m'].terms);
-
-                    mergeVtList('vtPartServ1y', result.facets['vt_serv_1y'].terms);
-                    mergeVtList('vtPartServ2m', result.facets['vt_serv_2m'].terms);
-                    mergeVtList('vtPartServGlobal2m', result.facets['vt_serv_global_2m'].terms);
-
-                    mergeVtList('vtPartOa1y', result.facets['vt_oa_1y'].terms);
-                    mergeVtList('vtPartOa2m', result.facets['vt_oa_2m'].terms);
-                    mergeVtList('vtPartOaGlobal2m', result.facets['vt_oa_global_2m'].terms);
-
-                    mergeVtList('vtPartRem1y', result.facets['vt_rem_1y'].terms);
-                    mergeVtList('vtPartRem2m', result.facets['vt_rem_2m'].terms);
-                    mergeVtList('vtPartRemGlobal2m', result.facets['vt_rem_global_2m'].terms);
+                    mergeVtList('vtAcc1y', result.facets['vt_acc_1y'].terms);
+                    mergeVtList('vtAcc2m', result.facets['vt_acc_2m'].terms);
+                    mergeVtList('vtAccGlobal2m', result.facets['vt_acc_global_2m'].terms);
+                    mergeVtList('vtServ1y', result.facets['vt_serv_1y'].terms);
+                    mergeVtList('vtServ2m', result.facets['vt_serv_2m'].terms);
+                    mergeVtList('vtServGlobal2m', result.facets['vt_serv_global_2m'].terms);
+                    mergeVtList('vtOa1y', result.facets['vt_oa_1y'].terms);
+                    mergeVtList('vtOa2m', result.facets['vt_oa_2m'].terms);
+                    mergeVtList('vtOaGlobal2m', result.facets['vt_oa_global_2m'].terms);
+                    mergeVtList('vtRem1y', result.facets['vt_rem_1y'].terms);
+                    mergeVtList('vtRem2m', result.facets['vt_rem_2m'].terms);
+                    mergeVtList('vtRemGlobal2m', result.facets['vt_rem_global_2m'].terms);
 
                     var u = [];
 
                     for (var n in o) {
-                        o[n].caEvo = 100 * (o[n].ca2m - o[n].ca1y) / o[n].ca1y;
-                        o[n].caPt = getScoreEvol(
-                            o[n].ca,
-                            o[n].ca1y,
-                            o[n].caGlobal2m / (o[n].caGlobal2m - o[n].caGlobal1y),
-                            budget.ca);
-                        delete o[n].ca;
-                        delete o[n].ca1y;
-                        delete o[n].caGlobal1y;
-                        delete o[n].caGlobal2m;
-
-                        o[n].vtPartAcc1y = 100 * o[n].vtPartAcc1y / o[n].vt1y;
-                        o[n].vtPartAcc2m = 100 * o[n].vtPartAcc2m / o[n].vt2m;
-                        o[n].vtAccPt = getScore(
-                            o[n].vtPartAcc2m,
-                            o[n].vtPartAcc1y,
-                            o[n].vtPartAccGlobal2m,
-                            budget.vtPartAcc);
-                        delete o[n].vtPartAcc1y;
-                        delete o[n].vtPartAccGlobal2m;
-
-                        o[n].vtPartServ1y = 100 * o[n].vtPartServ1y / o[n].vt1y;
-                        o[n].vtPartServ2m = 100 * o[n].vtPartServ2m / o[n].vt2m;
-                        o[n].vtServPt = getScore(
-                            o[n].vtPartServ2m,
-                            o[n].vtPartServ1y,
-                            o[n].vtPartServGlobal2m,
-                            budget.vtPartServ);
-                        delete o[n].vtPartServ1y;
-                        delete o[n].vtPartServGlobal2m;
-
-                        o[n].vtPartOa1y = 100 * o[n].vtPartOa1y / o[n].vt1y;
-                        o[n].vtPartOa2m = 100 * o[n].vtPartOa2m / o[n].vt2m;
-                        o[n].vtOaPt = getScore(
-                            o[n].vtPartOa2m,
-                            o[n].vtPartOa1y,
-                            o[n].vtPartOaGlobal2m,
-                            budget.vtPartOa);
-                        delete o[n].vtPartOa1y;
-                        delete o[n].vtPartOaGlobal2m;
-
-                        o[n].vtPartRem1y = 100 * o[n].vtPartRem1y / o[n].vt1y;
-                        o[n].vtPartRem2m = 100 * o[n].vtPartRem2m / o[n].vt2m;
-                        o[n].vtRemPt = getScore(
-                            o[n].vtPartRem2m,
-                            o[n].vtPartRem1y,
-                            o[n].vtPartRemGlobal2m,
-                            budget.vtPartRem);
-                        delete o[n].vtPartRem1y;
-                        delete o[n].vtPartRemGlobal2m;
-
                         u.push(o[n]);
                     }
 
