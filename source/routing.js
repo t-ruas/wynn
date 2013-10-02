@@ -41,12 +41,13 @@ function handleRequest(request, response) {
     );
     request.addListener('end', function () {
             if (context.body.length) {
-                context.content = (function () {
-                    switch (context.request.headers['content-type']) {
-                        case 'application/json': return JSON.parse(context.body);
-                        case 'application/x-www-form-urlencoded': return _querystring.parse(context.body);
+                context.content = (function (ct) {
+                    if (!ct.indexOf('application/json')) {
+                        return JSON.parse(context.body);
+                    } else if (!ct.indexOf('application/x-www-form-urlencoded')) {
+                        return _querystring.parse(context.body);
                     }
-                })();
+                })(context.request.headers['content-type']);
             }
             var methodRoutes = routes[context.request.method];
             for (var i = 0, imax = methodRoutes.length; i < imax; i++) {
