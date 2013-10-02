@@ -260,18 +260,19 @@ function getIndicators(options, callback) {
                 }
             };
 
-            var getCaFacet = function (name) {
-                return result.facets[name].total;
-            }
-
-            var getVtFacet = function (name) {
-                return result.facets[name].terms.length;
-            }
-
             postSearch('lv', data, function (error, result) {
                 if (error) {
                     callback(error);
                 } else {
+
+                    var getCaFacet = function (name) {
+                        return result.facets[name].total;
+                    }
+
+                    var getVtFacet = function (name) {
+                        return result.facets[name].terms.length;
+                    }
+
                     callback(null, {
                         ca: getCaFacet('ca'),
                         ca2m: getCaFacet('ca_2m'),
