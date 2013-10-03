@@ -24,16 +24,14 @@ var files = {
     ],
     jsBase: [
         // http://jquery.com/
-        'static/jquery-1.10.1.js',
+        'static/jquery-1.10.2.js',
         // https://github.com/olado/doT
         'static/doT.js',
         'static/jquery.tablesorter.js',
     ],
     jsBaseMin: [
-        // http://jquery.com/
-        'static/jquery-1.10.1.js',
-        // https://github.com/olado/doT
-        'static/doT.js',
+        'static/jquery-1.10.2.min.js',
+        'static/doT.min.js',
         'static/jquery.tablesorter.min.js',
     ],
     misc: [
@@ -53,6 +51,7 @@ var actions = {
         {type: 'replacePattern', pattern: /\\{\\{/g, value: '<%', files: ['static/doT.js']},
         {type: 'replacePattern', pattern: /\\}\\}/g, value: '%>', files: ['static/doT.js']},
         {type: 'replacePattern', pattern: /@@scripts@@/g, value: _build.generateScriptTags([files.jsClient]), files: files.templates},
+        {type: 'replacePattern', pattern: /@@base_scripts@@/g, value: _build.generateScriptTags([files.jsBase]), files: files.templates},
         {type: 'createDirectory', directory: 'logs'},
     ],
     prd: [
@@ -63,6 +62,7 @@ var actions = {
         {type: 'replacePattern', pattern: /\\{\\{/g, value: '<%', files: ['static/doT.js']},
         {type: 'replacePattern', pattern: /\\}\\}/g, value: '%>', files: ['static/doT.js']},
         {type: 'replacePattern', pattern: /@@scripts@@/g, value: 'darty.wynn.min.js', files: files.templates},
+        {type: 'replacePattern', pattern: /@@base_scripts@@/g, value: _build.generateScriptTags([files.jsBaseMin]), files: files.templates},
         {type: 'createDirectory', directory: 'logs'},
     ]
 };
