@@ -12,12 +12,11 @@ var files = {
         'data.js',
         'ldap.js'
     ],
-    jsShared: [
-    ],
     jsClient: [
         'static/darty.wynn.js',
         'static/darty.wynn.data.js',
-        'static/darty.wynn.gui.js',
+        'static/darty.wynn.gui.accueil.js',
+        'static/darty.wynn.gui.details.js',
     ],
     templates: [
         'templates/accueil.html',
@@ -40,7 +39,7 @@ var files = {
 
 var actions = {
     dev: [
-        {type: 'importFiles', files: [files.jsBase, files.jsShared, files.jsServer, files.jsShared, files.jsClient, files.setup, files.templates, files.misc]},
+        {type: 'importFiles', files: [files.jsBase, files.jsServer, files.jsClient, files.setup, files.templates, files.misc]},
         {type: 'importDirectories', directories: ['static/images']},
         {type: 'importDirectories', directories: ['static/styles']},
         {type: 'replacePattern', pattern: /\\{\\{/g, value: '<%', files: ['static/doT.js']},
@@ -49,7 +48,7 @@ var actions = {
         {type: 'createDirectory', directory: 'logs'},
     ],
     prd: [
-        {type: 'importFiles', files: [files.jsBase, files.jsShared, files.jsServer, files.setup, files.templates, files.misc]},
+        {type: 'importFiles', files: [files.jsBase, files.jsServer, files.setup, files.templates, files.misc]},
         {type: 'importDirectories', directories: ['static/images']},
         {type: 'importDirectories', directories: ['static/styles']},
         {type: 'minifyFiles', files: [files.jsShared, files.jsClient], destination: 'static/darty.win.min.js'},

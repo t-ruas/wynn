@@ -10,10 +10,7 @@
         <script type="text/javascript">
             // les informations de filtres sont envoyées en json dans un objet.
             // On met l'objet dans une variable, pour l'utiliser facilement
-            darty.wynn.pageData = {
-                filtres: {{=JSON.stringify(it.filtres)}},
-                budget: {{=JSON.stringify(it.budget)}},
-            };
+            darty.wynn.pageData = {{=JSON.stringify(it)}};
             darty.wynn.gui.accueil.start();
         </script>
         <script id="indicateurs" type="text/x-dot-template">

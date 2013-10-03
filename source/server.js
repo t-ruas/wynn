@@ -107,20 +107,11 @@ var routes = {
             pattern: /^\/accueil/i,
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
-                    var data = {};
-                    _data.getFilterText(context.path.query, function (error, result) {
+                    getRefData(context, function (error, result) {
                         if (error) {
                             callback(error);
                         } else {
-                            data.filtres = result;
-                            _data.getBudget(function (error, result) {
-                                if (error) {
-                                    callback(error);
-                                } else {
-                                    data.budget = result;
-                                    callback(error, {file: 'accueil.html', fileData: data});
-                                }
-                            });
+                            callback(error, {file: 'accueil.html', fileData: result});
                         }
                     });
                 }
@@ -130,20 +121,11 @@ var routes = {
             pattern: /^\/details/i,
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
-                    var data = {};
-                    _data.getFilterText(context.path.query, function (error, result) {
+                    getRefData(context, function (error, result) {
                         if (error) {
                             callback(error);
                         } else {
-                            data.filtres = result;
-                            _data.getBudget(function (error, result) {
-                                if (error) {
-                                    callback(error);
-                                } else {
-                                    data.budget = result;
-                                    callback(error, {file: 'details.html', fileData: data});
-                                }
-                            });
+                            callback(error, {file: 'details.html', fileData: result});
                         }
                     });
                 }
@@ -204,6 +186,33 @@ var routes = {
         }
     ]
 };
+
+// Récupération des données de référentiels déposées sur les pages: filtres, budget, ordre.
+function getRefData(context, callback) {
+    var data = {};
+    _data.getFilterText(context.path.query, function (error, result) {
+        if (error) {
+            callback(error);
+        } else {
+            data.filtres = result;
+            _data.getBudget(function (error, result) {
+                if (error) {
+                    callback(error);
+                } else {
+                    data.budget = result;
+                    _data.getOrder(function (error, result) {
+                        if (error) {
+                            callback(error);
+                        } else {
+                            data.ordre = result;
+                            callback(error, data);
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 

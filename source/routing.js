@@ -14,6 +14,7 @@ var _config = require('./config');
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
+// Configure DoT pour ne pas supprimer les retours à la ligne du html.
 _dot.templateSettings.strip = false;
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
