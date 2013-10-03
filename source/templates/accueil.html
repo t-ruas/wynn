@@ -16,41 +16,41 @@
             <div class="CA">
                 <table>
                     <tr>
-                        <th class="fixe"><% %> E</th>
+                        <th class="fixe"><%=it.ca2m %> €</th>
                     </tr>
                     <tr>
-                        <th class="evolution"> %</th>
+                        <th class="evolution"><%=darty.wynn.gui.accueil.calcEvol(it.ca2m, it.ca1y)%> %</th>
                     </tr>
                 </table>
             </div>
             <div class="indicateurs">
                 <table>
                     <tr id="accessoires"><th class="label">Accessoires</th>
-                        <th class="value"><% %> %</th><tr/>
+                        <th class="value"><%=it.vtAcc2m %> %</th><tr/>
                     <tr id="services"><th class="label">Services</th>
-                        <th class="value"><% %> %</th><tr/>
+                        <th class="value"><%=it.vtServ2m %> %</th><tr/>
                     <tr id="offresactives"><th class="label">O A</th>
-                        <th class="value"><% %> %</th><tr/>
+                        <th class="value"><%=it.vtOa2m %> %</th><tr/>
                     <tr id="remises"><th class="label">Remise</th>
-                        <th class="value"><% %> %</th><tr/>
+                        <th class="value"><%=it.caRem2m %> %</th><tr/>
                 </table>
             </div>
             <div class="bottom-line">
                 <div class="entrees">
                     <span class="label"> entrees </span>
-                    <span class="fixe"><% %>11 000</span>
-                    (<span class="evolution">%</span>)
+                    <span class="fixe"><%=it.ent2m %></span>
+                    (<span class="evolution"><%=darty.wynn.gui.accueil.calcEvol(it.ent2m, it.ent1y)%> %</span>)
                 </div>
                 <div class="ventes">
                     <span class="entrees" class="label"> ventes </span>
-                    <span class="fixe"><% %>4 000</span>(
+                    <span class="fixe"><%=it.ent2m %></span>(
 
-                    <span class="evolution">
-                         %</span>)
+                    <span class="evolution"><%=darty.wynn.gui.accueil.calcEvol(it.vt2m, it.vt1y)%> %</span>)
                 </div>
                 <span class="concretisation"> concretisation</span>
-                <span class="fixe"><% %>4780</span>
+                <span class="fixe"><% %></span>
             </div>
+             <div id="info" class="info" > <span id="sync"></span> <span id="compteur"></span> </div>
         </script>
 
         <script id="load-ranking" type="text/x-dot-template">
