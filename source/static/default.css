@@ -53,5 +53,7 @@ div.bottom-line {line-height:1px;font-size: 14px;margin-top: 80px;margin-left:85
 #content {border-width:1px;border-style:dotted;border-color:black;}
 div.CA>table {width: 350px;text-align: right;margin-right: auto;margin-left: auto;margin-top: 10px;}
 
-.info {background-color:#EAEAEA;color:#7F7F7C;float:right;margin-top:40px;margin-right:5;width:170px;font-size:10px;cursor: pointer;padding-left:5px;}
+#refreshTimer  {background-color:#EAEAEA;color:#7F7F7C;float:right;margin-top:40px;margin-right:5;width:270px;font-size:10px;cursor: pointer;padding-left:5px;}
 #informations {display:none;}
+
+

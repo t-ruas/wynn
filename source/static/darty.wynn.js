@@ -25,6 +25,10 @@ darty.wynn.formatPrct = function (n) {
     return isNaN(n) ? 'x' : (n + ' %');
 };
 
+darty.wynn.formatConcret = function (n) {
+    return isNaN(n) ? 'x' : (n.toFixed(2) + ' %');
+};
+
 darty.wynn.formatTime = function (d) {
     return darty.wynn.pad(d.getHours(), 2) + ':' + darty.wynn.pad(d.getMinutes(), 2) + ':' + darty.wynn.pad(d.getSeconds(), 2);
 };
