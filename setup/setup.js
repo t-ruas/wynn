@@ -26,7 +26,15 @@ var files = {
         // http://jquery.com/
         'static/jquery-1.10.1.js',
         // https://github.com/olado/doT
-        'static/doT.js'
+        'static/doT.js',
+        'static/jquery.tablesorter.js',
+    ],
+    jsBaseMin: [
+        // http://jquery.com/
+        'static/jquery-1.10.1.js',
+        // https://github.com/olado/doT
+        'static/doT.js',
+        'static/jquery.tablesorter.min.js',
     ],
     misc: [
         'static/favicon.ico',
@@ -48,7 +56,7 @@ var actions = {
         {type: 'createDirectory', directory: 'logs'},
     ],
     prd: [
-        {type: 'importFiles', files: [files.jsBase, files.jsServer, files.setup, files.templates, files.misc]},
+        {type: 'importFiles', files: [files.jsBaseMin, files.jsServer, files.setup, files.templates, files.misc]},
         {type: 'importDirectories', directories: ['static/images']},
         {type: 'importDirectories', directories: ['static/styles']},
         {type: 'minifyFiles', files: [files.jsShared, files.jsClient], destination: 'static/darty.win.min.js'},

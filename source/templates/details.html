@@ -6,14 +6,12 @@
         <link rel="stylesheet" type="text/css" href="default.css" />
         <script src="doT.js" type="text/javascript"></script>
         <script src="jquery-1.10.1.js" type="text/javascript"></script>
-        <script src="__jquery.tablesorter/jquery.tablesorter.js" type="text/javascript"></script>
+        <script src="jquery.tablesorter.js" type="text/javascript"></script>
         @@scripts@@
         <script type="text/javascript">
             darty.wynn.pageData = {{=JSON.stringify(it)}};
             darty.wynn.gui.details.start();
         </script>
-    </head>
-    <body>
         <script id="load" type="text/x-dot-template">
             <table class="tablesorter">
                 <thead>
@@ -46,7 +44,9 @@
                     </tr>
             </table>
         </script>
+    </head>
+    <body>
         <div id="content" style="border"></div>
-        <button type="button" onclick="showOrHideKPI()">Click !</button>
+        <button type="button" onclick="darty.wynn.gui.details.showOrHideKPI()">Click !</button>
     </body>
 </html>
