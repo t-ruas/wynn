@@ -7,6 +7,8 @@ darty.wynn.gui.details = (function () {
 
     function refreshPage() {
 
+        refreshTimer = null;
+
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
@@ -91,7 +93,6 @@ darty.wynn.gui.details = (function () {
             $('#refreshTimer').on('click', function () {
                 if (refreshTimer) {
                     window.clearTimeout(refreshTimer);
-                    refreshTimer = null;
                     refreshPage();
                 }
             });
