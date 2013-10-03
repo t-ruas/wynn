@@ -45,7 +45,7 @@ var actionTypes = {
             }
         }
         _fs.writeFileSync(
-            destination,
+            _path.resolve(destination, action.destination),
             _uglify.minify(files).code,
             {encoding: 'utf8'}
         );
