@@ -26,13 +26,13 @@
                 <tbody>
                     <%~it.list:line%>
                         <tr>
-                            <td><a href="/details?<%=line.ddQuery%>"><%=line.lib%></a></td>
-                            <td><a href="/accueil?<%=line.dbQuery%>"><%=line.ca%></a></td>
-                            <td><a href="#" class="linkExpand"><%=line.caEvo%></a></td>
-                            <td><%=line.acc%></td>
-                            <td><%=line.serv%></td>
-                            <td><%=line.oa%></td>
-                            <td><%=line.rem%></td>
+                            <td><a href="/details?<%=line.model.ddQuery%>"><%=line.lib%></a></td>
+                            <td><a href="/accueil?<%=line.model.dbQuery%>"><%=line.model.ca%></a></td>
+                            <td><a href="#" class="linkExpand"><%=line.model.caEvo%></a></td>
+                            <td><%=line.model.acc%></td>
+                            <td><%=line.model.serv%></td>
+                            <td><%=line.model.oa%></td>
+                            <td><%=line.model.rem%></td>
                         </tr>
                     <%~%>
                 </tbody>
@@ -52,5 +52,6 @@
     </head>
     <body>
         <div id="detailsContent"></div>
+        <div id="refreshTimer"></div>
     </body>
 </html>

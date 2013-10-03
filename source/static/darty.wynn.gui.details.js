@@ -2,45 +2,63 @@
 darty.wynn.gui.details = (function () {
 
     var refreshTimer = null;
+    var lastRefresh = null;
+    var nextRefresh = null;
 
     function refreshPage() {
-
-        refreshTimer = null;
 
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
 
-                var data = {
-                    list: result,
-                    totals: {
-                        ca: 0,
-                        caEvo: 0,
-                        acc: 0,
-                        serv: 0,
-                        oa: 0,
-                        rem: 0,
-                    }
+                var t = {
+                    ca1y: 0,
+                    ca2m: 0,
+                    vt1y: 0,
+                    vt2m: 0,
+                    vtAcc2m: 0,
+                    vtServ2m: 0,
+                    vtOa2m: 0,
                 };
 
                 for (var i = 0, imax = result.length; i < imax; i++) {
-                    var item = result[i];
 
-                    item.ca = darty.wynn.priceToStr(item.ca2m);
-                    item.caEvo = darty.wynn.formatEvo(100 * (item.ca2m - item.ca1y) / item.ca1y);
-                    item.acc = darty.wynn.formatEvo(100 * item.vtAcc2m / item.vt2m);
-                    item.serv = darty.wynn.formatEvo(100 * item.vtServ2m / item.vt2m);
-                    item.oa = darty.wynn.formatEvo(100 * item.vtOa2m / item.vt2m);
-                    item.rem = 0;
-                    item.ddQuery = makeDrillDownQuery(item.cd);
-                    item.dbQuery = makeDashboardQuery(item.cd);
+                    var u = result[i];
 
-                    data.totals.ca += item.ca2m;
+                    u.model = {
+                        ca: darty.wynn.priceToStr(u.ca2m),
+                        caEvo: darty.wynn.formatEvo(100 * (u.ca2m - u.ca1y) / u.ca1y),
+                        acc: darty.wynn.formatEvo(100 * u.vtAcc2m / u.vt2m),
+                        serv: darty.wynn.formatEvo(100 * u.vtServ2m / u.vt2m),
+                        oa: darty.wynn.formatEvo(100 * u.vtOa2m / u.vt2m),
+                        rem: 0,
+                        ddQuery: makeDrillDownQuery(u.cd),
+                        dbQuery: makeDashboardQuery(u.cd),
+                    };
+
+                    t.ca1y += u.ca1y;
+                    t.ca2m += u.ca2m;
+                    t.vt1y += u.vt1y;
+                    t.vt2m += u.vt2m;
+                    t.vtAcc2m += u.vtAcc2m;
+                    t.vtServ2m += u.vtServ2m;
+                    t.vtOa2m += u.vtOa2m;
                 }
 
-                $('#detailsContent').html(doT.template($('#tmplDetailsTable').text())(data));
+                var tot = {
+                    ca: t.ca2m,
+                    caEvo: darty.wynn.formatEvo(100 * (t.ca2m - t.ca1y) / t.ca1y),
+                    acc: darty.wynn.formatPrct(100 * t.vtAcc2m / t.vt2m),
+                    serv: darty.wynn.formatPrct(100 * t.vtServ2m / t.vt2m),
+                    oa: darty.wynn.formatPrct(100 * t.vtOa2m / t.vt2m),
+                    rem: 0,
+                };
 
-                //refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
+                $('#detailsContent').html(doT.template($('#tmplDetailsTable').text())({list: result, totals: tot}));
+
+                refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
+                lastRefresh = new Date();
+                nextRefresh = new Date(lastRefresh.getTime() + darty.wynn.config.reqInterval);
             }
         });
     }
@@ -69,6 +87,22 @@ darty.wynn.gui.details = (function () {
             $(document).on('click', '#detailsTable th', function() {
                 $('#detailsTable').tablesorter({sortList: [[$(this).index(), 0]]});
             });
+
+            $('#refreshTimer').on('click', function () {
+                if (refreshTimer) {
+                    window.clearTimeout(refreshTimer);
+                    refreshTimer = null;
+                    refreshPage();
+                }
+            });
+            
+            window.setInterval(function () {
+                if (refreshTimer) {
+                    $('#refreshTimer').text('date des données ' + darty.wynn.formatTime(lastRefresh) + ' prochaine récupération dans ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's.');
+                } else {
+                    $('#refreshTimer').text('');
+                }
+            }, 1000);
 
             refreshPage();
         });
