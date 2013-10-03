@@ -10,41 +10,47 @@
             darty.wynn.pageData = {{=JSON.stringify(it)}};
             darty.wynn.gui.details.start();
         </script>
-        <script id="load" type="text/x-dot-template">
-            <table class="tablesorter">
+        <script id="tmplDetailsTable" type="text/x-dot-template">
+            <table id="detailsTable" class="tablesorter">
                 <thead>
                     <tr>
                         <th></th>
                         <th></th>
                         <th></th>
-                        <%~it.model.indicateurs :struct%>
-                        <th class="table-header" class="<%=struct.name%>" id="<%=struct.name%>"><%=struct.name%>
-                        </th><%~%>
+                        <th>Acc.</th>
+                        <th>Gar.</th>
+                        <th>OA.</th>
+                        <th>Rem.</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><%~it.liste :dot%>
-                        <th class="liste" id="<%=dot.name%>"><%=dot.name%></th><th class="fixe" class="CA" id="<%=dot.name%>"><%=dot.CA%></th><th class="evolution" class="CAevol" id="<%=dot.name%>"><%?dot.CAevol > 0%>+ <%=dot.CAevol%><%??%>- <%=dot.CAevol*-1%><%?%>%</th>
-                        <%~dot.indicateurs :perfs%>
-                        <th class="<%=perfs.name%>"><%=perfs.value%>%</th>
-                        <%~%>
-                    </tr>
+                    <%~it.list:line%>
+                        <tr>
+                            <td><a href="/details?<%=line.ddQuery%>"><%=line.lib%></a></td>
+                            <td><a href="/accueil?<%=line.dbQuery%>"><%=line.ca%></a></td>
+                            <td><a href="#" class="linkExpand"><%=line.caEvo%></a></td>
+                            <td><%=line.acc%></td>
+                            <td><%=line.serv%></td>
+                            <td><%=line.oa%></td>
+                            <td><%=line.rem%></td>
+                        </tr>
                     <%~%>
                 </tbody>
+                <tfoot>
                     <tr>
-                        <th></th>
-                        <th id="sommeCA" class="fixe"></th>
-                        <th id="sommeCAEvol" class="evolution"></th>
-                        <th id="sommeACC" class="ACC"></th>
-                        <th id="sommePSE" class="PSE"></th>
-                        <th id="sommeOA" class="OA"></th>
-                        <th id="sommeREM" class="REM"></th>
+                        <td></td>
+                        <td><%=it.totals.ca%></td>
+                        <td><%=it.totals.caEvo%></td>
+                        <td><%=it.totals.acc%></td>
+                        <td><%=it.totals.serv%></td>
+                        <td><%=it.totals.oa%></td>
+                        <td><%=it.totals.rem%></td>
                     </tr>
+                </tfoot>
             </table>
         </script>
     </head>
     <body>
-        <div id="content" style="border"></div>
-        <button type="button" onclick="darty.wynn.gui.details.showOrHideKPI()">Click !</button>
+        <div id="detailsContent"></div>
     </body>
 </html>

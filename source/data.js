@@ -25,10 +25,10 @@ function sendRequest(options, data, callback) {
         });
         response.on('end', function () {
             var result = JSON.parse(content);
-            _logger.info('Réponse EslasticeSearch : ' + _util.inspect(result, {depth: null}));
             if (result.error) {
                 callback(new _errors.Error('ElasticSearchError', result.error));
             } else {
+                _logger.info('Réponse EslasticeSearch : ' + _util.inspect(result, {depth: null}));
                 callback(null, result);
             }
         });
@@ -62,6 +62,8 @@ function pad(str, n, c) {
 }
 
 function makeDateFilter(date) {
+    // TODO: retirer.
+    return {};
     return {
         range: {
             'DATE': {
@@ -136,24 +138,27 @@ function getFilterText(options, callback) {
     var o = {};
     var cancel = false;
     var i = 0;
-    for (var m in filterFields) {
-        if (m in options) {
-            i++;
-            var n = m;
-            getLib(filterFields[n], options[n], function (error, result) {
-                // En cas d'erreur sur un des codes, on sort en erreur et ignore tous les autres retours.
-                if (error) {
-                    callback(error);
-                    cancel = true;
-                }
-                if (!cancel) {
-                    o[n] = {cd: options[n], lib: result};
-                    if (!--i) {
-                        callback(null, o);
+    for (var m in options) {
+        (function (n) {
+            if (n in filterFields) {
+                i++;
+                getLib(filterFields[n], options[n], function (error, result) {
+                    // En cas d'erreur sur un des codes, on sort en erreur et ignore tous les autres retours.
+                    if (error) {
+                        callback(error);
+                        cancel = true;
                     }
-                }
-            });
-        }
+                    if (!cancel) {
+                        o[n] = {cd: options[n], lib: result};
+                        if (!--i) {
+                            callback(null, o);
+                        }
+                    }
+                });
+            } else {
+                o[n] = options[n];
+            }
+        })(m);
     }
     if (!i) {
         callback(null, o);
@@ -336,10 +341,10 @@ function getDetails(options, callback) {
             'vt_oa_1y': {facet_filter: {and: [fDates[2], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},
-            'ca_rem_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},
-            'ca_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},
-            'ca_rem_global_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd)}, terms: fVCa},
-            'ca_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms: fCa},
+            'ca_rem_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
+            'ca_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
+            'ca_rem_global_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd)}, terms_stats: fCa},
+            'ca_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms_stats: fCa},
             'vt_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
         }

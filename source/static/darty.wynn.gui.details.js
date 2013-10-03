@@ -7,19 +7,79 @@ darty.wynn.gui.details = (function () {
 
         refreshTimer = null;
 
-        darty.wynn.data.getIndicateurs(darty.wynn.pageData.filtres, function (error, result) {
+        darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
 
-                var pagefn = doT.template($('#load').text(), undefined, def);
-                $('#content').html(pagefn(result));
-                somme(result);
+                var data = {
+                    list: result,
+                    totals: {
+                        ca: 0,
+                        caEvo: 0,
+                        acc: 0,
+                        serv: 0,
+                        oa: 0,
+                        rem: 0,
+                    }
+                };
 
-                refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
+                for (var i = 0, imax = result.length; i < imax; i++) {
+                    var item = result[i];
+
+                    item.ca = darty.wynn.priceToStr(item.ca2m);
+                    item.caEvo = darty.wynn.formatEvo(100 * (item.ca2m - item.ca1y) / item.ca1y);
+                    item.acc = darty.wynn.formatEvo(100 * item.vtAcc2m / item.vt2m);
+                    item.serv = darty.wynn.formatEvo(100 * item.vtServ2m / item.vt2m);
+                    item.oa = darty.wynn.formatEvo(100 * item.vtOa2m / item.vt2m);
+                    item.rem = 0;
+                    item.ddQuery = makeDrillDownQuery(item.cd);
+                    item.dbQuery = makeDashboardQuery(item.cd);
+
+                    data.totals.ca += item.ca2m;
+                }
+
+                $('#detailsContent').html(doT.template($('#tmplDetailsTable').text())(data));
+
+                //refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
             }
         });
     }
 
+    function makeDashboardQuery(cd) {
+        var f = darty.wynn.makeSimpleFiltersClone();
+        delete f.agg;
+        return darty.wynn.makeQuery(f);
+    }
+
+    function makeDrillDownQuery(cd) {
+        var f = darty.wynn.makeSimpleFiltersClone();
+        f[f.agg] = cd;
+        f.agg = f.agg.slice(0,3) + (parseInt(f.agg.slice(3)) + 1);
+        return darty.wynn.makeQuery(f);
+    }
+
+    function start() {
+        $(document).ready(function () {
+
+            $(document).on('click', '#detailsTable .linkExpand', function () {
+                $('#detailsTable td:nth-child(3), #detailsTable th:nth-child(3)').nextAll().toggle();
+                return false;
+            });
+
+            $(document).on('click', '#detailsTable th', function() {
+                $('#detailsTable').tablesorter({sortList: [[$(this).index(), 0]]});
+            });
+
+            refreshPage();
+        });
+    }
+
+    return {
+        start: start,
+    };
+})();
+
+/*
     function tablesorterControler(choix) {
         switch (choix) {
             case 'col1':
@@ -123,41 +183,18 @@ darty.wynn.gui.details = (function () {
         $('th#sommeREM').text(sommeREM);
     }
 
-    function start() {
-        $(document).ready(function () {
-            refreshPage();
-
-            $(document).on('click', 'th.evolution', function(){
-                var left = $('#content').css('left');
-                var top = $('#content').css('top');
-                $('div#content').css('margin-left','none');
-                console.log('left vaut : ' + left + '- top vaut : '+ top);
-                if (parseInt(left) >= 200) {
-                    $('#content').animate({left:'8px'}, 1000);
-                    showOrHideKPI();
-                } else {
-                    $('#content').animate({left:'250px'}, 1000);
-                    showOrHideKPI();
-                }
-            });
-
-            $(document).on('click', 'th.fixe', function(){
-                alert('Direction Drill Down vers Dashboard : ' + $(this).attr('id'));
-            });
-
-            $(document).on('click', 'th.table-header', function() {
-                //alert('TableSorting(' + $(this).attr('id')+')');
-                tablesorterControler($(this).attr('id'));
-            });
-
-            $(document).on('click', 'th.liste', function(){
-                alert('Drill Down dans la dimension ' + $(this).attr('id'));
-            });
-
-        });
+    function toggleIndic() {
+        var left = $('#content').css('left');
+        var top = $('#content').css('top');
+        $('div#content').css('margin-left','none');
+        console.log('left vaut : ' + left + '- top vaut : '+ top);
+        if (parseInt(left) >= 200) {
+            $('#content').animate({left:'8px'}, 1000);
+            showOrHideKPI();
+        } else {
+            $('#content').animate({left:'250px'}, 1000);
+            showOrHideKPI();
+        }
     }
 
-    return {
-        start: start,
-    };
-})();
+*/

@@ -10,7 +10,7 @@ darty.wynn.gui.accueil = (function () {
 
         refreshTimer = null;
 
-        darty.wynn.data.getIndicateurs(darty.wynn.pageData.filtres, function (error, result) {
+        darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
             	setLastLoad();
