@@ -5,6 +5,8 @@ var darty = {
         config: {
             reqInterval: 2 * 60 * 1000,
             reqTimeout: 30 * 1000,
+            refreshInfo: 1 * 1000,
+            refreshCa: 0.5 * 1000,            
         },
     }
 };

@@ -44,13 +44,14 @@ div.CA>table tr>th.evolution {font-size:36px; float:right;}
 div.indicateurs {width: 300px; margin-left: 128px; margin-top: 70px;}
 
 div.indicateurs .label {font-size: 24px;text-align:right;padding-right:30px;}
-div.indicateurs .value {font-size: 24px;text-align:left;padding-left:30px;}
+div.indicateurs .value {font-size: 24px;text-align:right;padding-left:30px;}
 
-div.bottom-line {line-height:1px;font-size: 14px;margin-top: 80px;margin-left:115px;}
+div.bottom-line {line-height:1px;font-size: 14px;margin-top: 80px;margin-left:85px;}
 .concretisation,.ventes,.entrees {display:inline;}
-#content-left {border-width:1px;border-style:dotted;border-color:black;float:left;width:500px;height:500px;}
+#content-left {border-width:1px;border-style:dotted;border-color:black;float:left;width:500px;height:500px;font-family:Arial;}
 #content-right {width:400px; background:rgb(90,153,211);float:right;margin-right:400px;padding-left:10px;height:500px;}
 #content {border-width:1px;border-style:dotted;border-color:black;}
 div.CA>table {width: 350px;text-align: right;margin-right: auto;margin-left: auto;margin-top: 10px;}
 
-.info {background-color:#EAEAEA;color:#7F7F7C;float:right;margin-top:40px;margin-right:5;width:170px;font-size:10px;cursor: pointer;}
+.info {background-color:#EAEAEA;color:#7F7F7C;float:right;margin-top:40px;margin-right:5;width:170px;font-size:10px;cursor: pointer;padding-left:5px;}
+#informations {display:none;}

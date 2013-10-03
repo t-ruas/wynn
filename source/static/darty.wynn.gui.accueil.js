@@ -5,7 +5,12 @@ darty.wynn.gui.accueil = (function () {
     var timer = 120;
 	var derniereSync;
 	var dernierTimer;
-
+	var diffCaDebut;
+	var decoupage = 240;
+	var cumul = 0;
+	var diffCaParDecoupage; 
+	var minMax;
+	
     function refreshPage() {
 
         refreshTimer = null;
@@ -13,7 +18,10 @@ darty.wynn.gui.accueil = (function () {
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
+            	
             	setLastLoad();
+            	
+            	
             	timer=120;
             	
                 var pagefn = doT.template($('#navigation-bar').text());
@@ -35,13 +43,15 @@ darty.wynn.gui.accueil = (function () {
 
     function start() {
         $(document).ready(function () {
-            refreshPage();
-
+        refreshPage();
+            
+		caAFficher();
         
         setInterval(function(){
 				modifyHTML();
-				},1000);    
+				},darty.wynn.config.refreshInfo);    
         
+        		
         
         $(document).click("#info", function () {
             refreshPage();
@@ -51,22 +61,55 @@ darty.wynn.gui.accueil = (function () {
         });
     }
     
+    function caAFficher () {
+        $(document).ready(function () {
+        setInterval(function(){
+				modificationCA(1000,2000);
+				},darty.wynn.config.refreshCa); 
+		return false;
+		});		
+		}
+    
+    function modificationCA (ca2min, caActu){
+    	diffCaDebut= calcDiffCa(ca2min,caActu);
+    	
+    	diffCaParDecoupage = Math.floor (diffCaDebut / decoupage);
+    	minMax = returnMinMax (diffCaParDecoupage);
+    	recalculCaDecoupage (ca2min, minMax);
+    }
+    
     function setLastLoad () {
-		var dateActuelle = new Date ;
-		derniereSync = " Dernier chargement : " + dateActuelle.getHours() + " : " + dateActuelle.getMinutes() + " : "+dateActuelle.getSeconds();
+		var dateActuelle = new Date ; 
+		var seconde;
+		var minutes;
+		
+		derniereSync = " Dernier chargement : " + testTemps(dateActuelle.getHours()) + " : " + testTemps(dateActuelle.getMinutes()) + " : "+testTemps(dateActuelle.getSeconds());
+	}
+	
+	function testTemps (num) {
+		var chiffre;
+		if (num<10){
+			chiffre= "0"+num;
+		}
+		else {
+			chiffre = num;
+		}
+		return chiffre;
 	}
     
     // fabien
     function setIncTimer () {
 		if (timer > 0 ){
 		timer =timer - 1;	
+		console.log(refreshTimer);
 		}
 		else 
 		{
 			timer=120;
+			
 		}
 		dernierTimer =" (" + timer +")";
-	};
+	}
 	
 	function modifyHTML () {
 		setIncTimer();
@@ -85,11 +128,43 @@ darty.wynn.gui.accueil = (function () {
 		$('#content-left').html(pagefn(data));
 		console.log('partie gauche chargee');
 				
-		
-		pagefn = doT.template($('#load-ranking').text(), undefined, def);
-		$('#content-right').html(pagefn(data));	
-		console.log('partie droite chargee');
+
 	}
+	
+		function getAleaNomb (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+	
+	function calcDiffCa (avant, apres){
+		return apres - avant;
+	}
+	
+	function recalculCaDecoupage (ca2m, aTester) {
+		
+		switch (timer)
+	{
+		
+		case 120:
+		$('#affichageCa').remove();
+		$("#ligneARajouter").append("<th class=\"fixe\" id=\"affichageCa\">"+ca2m  +" €</th>");
+		cumul=0;
+		break;
+		
+		default :
+		var aleaNumb = getAleaNomb (minMax.min, minMax.max);
+		cumul += aleaNumb;
+		var aAfficher= separateur(ca2m + cumul);
+		 
+		$('#affichageCa').remove();
+		$("#ligneARajouter").append("<th class=\"fixe\" id=\"affichageCa\">"+aAfficher +" €</th>");		
+	}}
+	
+	function returnMinMax (num) {
+		var minVal = Math.floor(num *0.9);
+		var maxVal = Math.floor(num *1.1);
+		return {min:  minVal, max: maxVal};
+	}
+    
 	
 	function getConcret (ventes, entree) {
 		num = ventes/entree *100;
@@ -131,9 +206,27 @@ darty.wynn.gui.accueil = (function () {
 		}
 		
 	}
+	
+	function separateur(number){
+		console.log(number.length);
+		var nbFormat = '';
+		var count=0;
+		for(var i=number.length-1 ; i>=0 ; i--)
+		{
+			if(count!=0 && count % 3 == 0)
+				nbFormat = number[i]+' '+nbFormat ;
+			else
+				nbFormat = number[i]+nbFormat ;
+			count++;
+		}
+		return nbFormat;
+	}
+	
+	
 
     return {
         start: start,
         calcEvol: calcEvol,
+        getConcret: getConcret,
     };
 })();

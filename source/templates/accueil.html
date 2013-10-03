@@ -15,8 +15,8 @@
         <script id="indicateurs" type="text/x-dot-template">
             <div class="CA">
                 <table>
-                    <tr>
-                        <th class="fixe"><%=it.ca2m %> €</th>
+                    <tr id="ligneARajouter">
+                        <th class="fixe" id="affichageCa">  €</th>
                     </tr>
                     <tr>
                         <th class="evolution"><%=darty.wynn.gui.accueil.calcEvol(it.ca2m, it.ca1y)%> %</th>
@@ -37,7 +37,7 @@
             </div>
             <div class="bottom-line">
                 <div class="entrees">
-                    <span class="label"> entrees </span>
+                    <span class="label"> entrées </span>
                     <span class="fixe"><%=it.ent2m %></span>
                     (<span class="evolution"><%=darty.wynn.gui.accueil.calcEvol(it.ent2m, it.ent1y)%> %</span>)
                 </div>
@@ -47,8 +47,8 @@
 
                     <span class="evolution"><%=darty.wynn.gui.accueil.calcEvol(it.vt2m, it.vt1y)%> %</span>)
                 </div>
-                <span class="concretisation"> concretisation</span>
-                <span class="fixe"><% %></span>
+                <span class="concretisation"> concrétisation</span>
+                <span class="fixe"><%=darty.wynn.gui.accueil.getConcret(it.vt2m,it.ent2m) %></span>
             </div>
              <div id="info" class="info" > <span id="sync"></span> <span id="compteur"></span> </div>
         </script>
