@@ -11,7 +11,7 @@
             darty.wynn.gui.details.start();
         </script>
         <script id="tmplDetailsTable" type="text/x-dot-template">
-            <table id="detailsTable" class="tablesorter">
+            <table id="detailsTable">
                 <thead>
                     <tr>
                         <th></th>
@@ -51,7 +51,17 @@
         </script>
     </head>
     <body>
-        <div id="detailsContent"></div>
-        <div id="refreshTimer"></div>
+        <div id="mainContent">
+            <div id="mainContentTop">
+                <div id="breadcrumb">filtres....</div>
+            </div>
+            <div id="mainContentMiddle">
+            </div>
+            <div id="mainContentBottom">
+                <div id="refreshTimer"></div>
+            </div>
+        </div>
+        <div id="blueContent"></div>
+        <div style="clear: both;"></div>
     </body>
 </html>

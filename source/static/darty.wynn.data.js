@@ -1,6 +1,8 @@
 
 darty.wynn.data = (function () {
 
+    var _w = darty.wynn;
+
     function getIndicateurs(options, callback) {
         postRequest('indicateurs', options, callback);
     }
@@ -31,6 +33,29 @@ darty.wynn.data = (function () {
 
     }
 
+    // Calcul de valeurs supplémentaires sur une ligne aggrégée.
+    function computeLineValues(data) {
+
+        data.caEvo2m = _w.getEvol(data.ca2m, data.ca1y);
+        data.caEvoGlobal2m = _w.getEvol(data.caGlobal2m, data.caGlobal1y);
+
+        data.vtPartAcc1y = _w.getPrct(data.vtAcc1y, data.vt1y);
+        data.vtPartAcc2m = _w.getPrct(data.vtAcc2m, data.vt2m);
+        data.vtPartAccGlobal2m = _w.getPrct(data.vtAccGlobal2m, data.vtGlobal2m);
+
+        data.vtPartServ1y = _w.getPrct(data.vtServ1y, data.vt1y);
+        data.vtPartServ2m = _w.getPrct(data.vtServ2m, data.vt2m);
+        data.vtPartServGlobal2m = _w.getPrct(data.vtOaGlobal2m, data.vtGlobal2m);
+
+        data.vtPartOa1y = _w.getPrct(data.vtOa1y, data.vt1y);
+        data.vtPartOa2m = _w.getPrct(data.vtOa2m, data.vt2m);
+        data.vtPartOaGlobal2m = _w.getPrct(data.vtOaGlobal2m, data.vtGlobal2m);
+
+        data.caPartRem1y = _w.getPrct(data.caRem1y, data.ca1y);
+        data.caPartRem2m = _w.getPrct(data.caRem2m, data.ca2m);
+        data.caPartRemGlobal2m = _w.getPrct(data.caRemGlobal2m, data.caGlobal2m);
+    }
+
     function computeScore(val, histo, moyenne, budget) {
         var score = 0;
         (val > histo) && score++;
@@ -51,6 +76,7 @@ darty.wynn.data = (function () {
         getIndicateurs: getIndicateurs,
         getDetails: getDetails,
         computeScore: computeScore,
-        computeScoreEvol: computeScoreEvol
+        computeScoreEvol: computeScoreEvol,
+        computeLineValues: computeLineValues,
     };
 })();
