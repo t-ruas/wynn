@@ -200,14 +200,7 @@ function getRefData(context, callback) {
                     callback(error);
                 } else {
                     data.budget = result;
-                    _data.getOrder(function (error, result) {
-                        if (error) {
-                            callback(error);
-                        } else {
-                            data.ordre = result;
-                            callback(error, data);
-                        }
-                    });
+                    callback(error, data);
                 }
             });
         }

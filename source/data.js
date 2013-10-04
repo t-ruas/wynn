@@ -3,6 +3,7 @@
 var _util = require('util');
 var _http = require('http');
 var _logger = require('winston');
+var _moment = require('moment');
 var _config = require('./config');
 var _errors = require('./errors');
 
@@ -48,17 +49,8 @@ function round2(n) {
     return Math.round(n * 100) / 100;
 }
 
-// Retourne une date en chaîne au format yyyyMMddHHmm.
 function dateToString(date) {
-    return '' + date.getFullYear() + pad(date.getMonth(), 2) + pad(date.getDate(), 2) + pad(date.getHours(), 2) + pad(date.getMinutes(), 2);
-}
-
-function pad(str, n, c) {
-    str += '';
-    while (str.length < n) {
-        str = (c || '0') + str;
-    }
-    return str;
+    return _moment().format('YYYYMMDDHHmm');
 }
 
 function makeDateFilter(date) {
@@ -78,10 +70,6 @@ function makeDateFilter(date) {
 
 function getBudget(callback) {
     callback(null, {ca: 10, vtPartAcc: 15, vtPartServ: 15, vtPartOa: 15, vtPartRem: 15});
-}
-
-function getOrder(callback) {
-    callback(null, {prd1: {'GEM': 1, 'PEM': 2, 'DIV': 3}});
 }
 
 function prepareDateFilters() {
@@ -239,7 +227,6 @@ function getIndicators(options, callback) {
             'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},
             'ca_rem_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},
             'ca_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},
-            'ca_rem_global_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd)}, terms: fCa},
             'ca_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms: fCa},
             'vt_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt},
@@ -282,7 +269,6 @@ function getIndicators(options, callback) {
                 vtOaGlobal2m: getVtFacet('vt_oa_global_2m'),
                 caRem1y: getCaFacet('ca_rem_1y'),
                 caRem2m: getCaFacet('ca_rem_2m'),
-                caRemGlobal1y: getCaFacet('ca_rem_global_1y'),
                 caRemGlobal2m: getCaFacet('ca_rem_global_2m'),
                 // TODO
                 ent2m: 15,
@@ -343,7 +329,6 @@ function getDetails(options, callback) {
             'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},
             'ca_rem_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
-            'ca_rem_global_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd)}, terms_stats: fCa},
             'ca_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms_stats: fCa},
             'vt_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
@@ -409,7 +394,6 @@ function getDetails(options, callback) {
             mergeVtList('vtOaGlobal2m', result.facets['vt_oa_global_2m'].terms);
             mergeCaList('caRem1y', result.facets['ca_rem_1y'].terms);
             mergeCaList('caRem2m', result.facets['ca_rem_2m'].terms);
-            mergeCaList('caRemGlobal1y', result.facets['ca_rem_global_1y'].terms);
             mergeCaList('caRemGlobal2m', result.facets['ca_rem_global_2m'].terms);
 
             var u = [];
@@ -429,6 +413,5 @@ exports.getIndicators = getIndicators;
 exports.getDetails = getDetails;
 exports.getFilterText = getFilterText;
 exports.getBudget = getBudget;
-exports.getOrder = getOrder;
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\

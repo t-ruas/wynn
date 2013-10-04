@@ -26,13 +26,13 @@
                 <tbody>
                     <%~it.list:line%>
                         <tr>
-                            <td><a href="/details?<%=line.model.ddQuery%>"><%=line.lib%></a></td>
-                            <td><a href="/accueil?<%=line.model.dbQuery%>"><%=line.model.ca%></a></td>
-                            <td><a href="#" class="linkExpand"><%=line.model.caEvo%></a></td>
-                            <td><%=line.model.acc%></td>
-                            <td><%=line.model.serv%></td>
-                            <td><%=line.model.oa%></td>
-                            <td><%=line.model.rem%></td>
+                            <td><a href="/details?<%=line.ddQuery%>"><%=line.lib%></a></td>
+                            <td><a href="/accueil?<%=line.dbQuery%>"><%=line.ca%></a></td>
+                            <td class="<%=line.caEvo.cls%>"><a href="#" class="linkExpand"><%=line.caEvo.val%></a></td>
+                            <td class="<%=line.acc.cls%>"><%=line.acc.val%></td>
+                            <td class="<%=line.serv.cls%>"><%=line.serv.val%></td>
+                            <td class="<%=line.oa.cls%>"><%=line.oa.val%></td>
+                            <td class="<%=line.rem.cls%>"><%=line.rem.val%></td>
                         </tr>
                     <%~%>
                 </tbody>
@@ -40,11 +40,11 @@
                     <tr>
                         <td></td>
                         <td><%=it.totals.ca%></td>
-                        <td><%=it.totals.caEvo%></td>
-                        <td><%=it.totals.acc%></td>
-                        <td><%=it.totals.serv%></td>
-                        <td><%=it.totals.oa%></td>
-                        <td><%=it.totals.rem%></td>
+                        <td class="<%=it.totals.caEvo.cls%>"><%=it.totals.caEvo.val%></td>
+                        <td class="<%=it.totals.acc.cls%>"><%=it.totals.acc.val%></td>
+                        <td class="<%=it.totals.serv.cls%>"><%=it.totals.serv.val%></td>
+                        <td class="<%=it.totals.oa.cls%>"><%=it.totals.oa.val%></td>
+                        <td class="<%=it.totals.rem.cls%>"><%=it.totals.rem.val%></td>
                     </tr>
                 </tfoot>
             </table>

@@ -35,7 +35,7 @@ darty.wynn.data = (function () {
         var score = 0;
         (val > histo) && score++;
         (val > moyenne) && score++;
-        (val > histo + (histo * budget) / 100) && score++;
+        budget && (val > histo + (histo * budget) / 100) && score++;
         return score;
     }
 
@@ -43,7 +43,7 @@ darty.wynn.data = (function () {
         var score = 0;
         (val > histo) && score++;
         (val > histo + (histo * moyenne) / 100) && score++;
-        (val > histo + (histo * budget) / 100) && score++;
+        budget && (val > histo + (histo * budget) / 100) && score++;
         return score;
     }
 

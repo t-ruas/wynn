@@ -1,81 +1,140 @@
 
 darty.wynn.gui.details = (function () {
 
+    var _w = darty.wynn;
+
     var refreshTimer = null;
     var lastRefresh = null;
     var nextRefresh = null;
 
     function refreshPage() {
-
         refreshTimer = null;
-
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
-
-                var t = {
-                    ca1y: 0,
-                    ca2m: 0,
-                    vt1y: 0,
-                    vt2m: 0,
-                    vtAcc2m: 0,
-                    vtServ2m: 0,
-                    vtOa2m: 0,
-                };
-
-                for (var i = 0, imax = result.length; i < imax; i++) {
-
-                    var u = result[i];
-
-                    u.model = {
-                        ca: darty.wynn.priceToStr(u.ca2m),
-                        caEvo: darty.wynn.formatEvo(100 * (u.ca2m - u.ca1y) / u.ca1y),
-                        acc: darty.wynn.formatEvo(100 * u.vtAcc2m / u.vt2m),
-                        serv: darty.wynn.formatEvo(100 * u.vtServ2m / u.vt2m),
-                        oa: darty.wynn.formatEvo(100 * u.vtOa2m / u.vt2m),
-                        rem: 0,
-                        ddQuery: makeDrillDownQuery(u.cd),
-                        dbQuery: makeDashboardQuery(u.cd),
-                    };
-
-                    t.ca1y += u.ca1y;
-                    t.ca2m += u.ca2m;
-                    t.vt1y += u.vt1y;
-                    t.vt2m += u.vt2m;
-                    t.vtAcc2m += u.vtAcc2m;
-                    t.vtServ2m += u.vtServ2m;
-                    t.vtOa2m += u.vtOa2m;
-                }
-
-                var tot = {
-                    ca: t.ca2m,
-                    caEvo: darty.wynn.formatEvo(100 * (t.ca2m - t.ca1y) / t.ca1y),
-                    acc: darty.wynn.formatPrct(100 * t.vtAcc2m / t.vt2m),
-                    serv: darty.wynn.formatPrct(100 * t.vtServ2m / t.vt2m),
-                    oa: darty.wynn.formatPrct(100 * t.vtOa2m / t.vt2m),
-                    rem: 0,
-                };
-
-                $('#detailsContent').html(doT.template($('#tmplDetailsTable').text())({list: result, totals: tot}));
-
-                refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
+                $('#detailsContent').html(doT.template($('#tmplDetailsTable').text())(prepareModel(result)));
+                refreshTimer = window.setTimeout(refreshPage, _w.config.reqInterval);
                 lastRefresh = new Date();
-                nextRefresh = new Date(lastRefresh.getTime() + darty.wynn.config.reqInterval);
+                nextRefresh = new Date(lastRefresh.getTime() + _w.config.reqInterval);
             }
         });
     }
 
+    function prepareModel(data) {
+
+        var model = {
+            list: []
+        };
+
+        var t = {
+            ca1y: 0,
+            ca2m: 0,
+            vt1y: 0,
+            vt2m: 0,
+            vtAcc1y: 0,
+            vtAcc2m: 0,
+            vtServ1y: 0,
+            vtServ2m: 0,
+            vtOa1y: 0,
+            vtOa2m: 0,
+            caRem1y: 0,
+            caRem2m: 0,
+        };
+
+        for (var i = 0, imax = data.length; i < imax; i++) {
+
+            var lineData = data[i];
+
+            var lineModel = createLineModel(lineData);
+            lineModel.lib = lineData.lib;
+            lineModel.ddQuery = makeDrillDownQuery(lineData.cd);
+            lineModel.dbQuery = makeDashboardQuery(lineData.cd);
+            model.list.push(lineModel);
+
+            // Accumulation des valeurs.
+            t.ca1y += lineData.ca1y;
+            t.ca2m += lineData.ca2m;
+            t.vt1y += lineData.vt1y;
+            t.vt2m += lineData.vt2m;
+            t.vtAcc1y += lineData.vtAcc1y;
+            t.vtAcc2m += lineData.vtAcc2m;
+            t.vtServ1y += lineData.vtServ1y;
+            t.vtServ2m += lineData.vtServ2m;
+            t.vtOa1y += lineData.vtOa1y;
+            t.vtOa2m += lineData.vtOa2m;
+            t.caRem1y += lineData.caRem1y;
+            t.caRem2m += lineData.caRem2m;
+        }
+
+        model.totals = createLineModel(t);
+
+        return model;
+    }
+
+    // Calcul de valeurs intermédiaires.
+    function computeLineValues(data) {
+
+        data.caEvo2m = _w.getEvol(data.ca2m, data.ca1y);
+        data.caEvoGlobal2m = _w.getEvol(data.caGlobal2m, data.caGlobal1y);
+
+        data.vtPartAcc1y = _w.getPrct(data.vtAcc1y, data.vt1y);
+        data.vtPartAcc2m = _w.getPrct(data.vtAcc2m, data.vt2m);
+        data.vtPartAccGlobal2m = _w.getPrct(data.vtAccGlobal2m, data.vtGlobal2m);
+
+        data.vtPartServ1y = _w.getPrct(data.vtServ1y, data.vt1y);
+        data.vtPartServ2m = _w.getPrct(data.vtServ2m, data.vt2m);
+        data.vtPartServGlobal2m = _w.getPrct(data.vtOaGlobal2m, data.vtGlobal2m);
+
+        data.vtPartOa1y = _w.getPrct(data.vtOa1y, data.vt1y);
+        data.vtPartOa2m = _w.getPrct(data.vtOa2m, data.vt2m);
+        data.vtPartOaGlobal2m = _w.getPrct(data.vtOaGlobal2m, data.vtGlobal2m);
+
+        data.caPartRem1y = _w.getPrct(data.caRem1y, data.ca1y);
+        data.caPartRem2m = _w.getPrct(data.caRem2m, data.ca2m);
+        data.caPartRemGlobal2m = _w.getPrct(data.caRemGlobal2m, data.caGlobal2m);
+    }
+
+    // Ajout d'un objet sur les données de la ligne pour ne pas mélanger les valeurs d'affichage avec les données numériques en entrée.
+    function createLineModel(data) {
+
+        computeLineValues(data);
+
+        return {
+            ca: _w.formatPrice(data.ca2m),
+            caEvo: {
+                val: _w.formatEvo(data.caEvo2m),
+                cls: isNaN(data.caEvo2m) ? '' : _w.score2Cls(_w.data.computeScoreEvol(data.ca2m, data.ca1y, data.caEvoGlobal2m, _w.pageData.budget.ca), 4)
+            },
+            acc: {
+                val: _w.formatPrct(data.vtPartAcc2m),
+                cls: isNaN(data.vtPartAcc2m) ? '' : _w.score2Cls(_w.data.computeScore(data.vtPartAcc2m, data.vtPartAcc1y, data.vtPartAccGlobal2m), 3)
+            },
+            serv: {
+                val: _w.formatPrct(data.vtPartServ2m),
+                cls: isNaN(data.vtPartServ2m) ? '' : _w.score2Cls(_w.data.computeScore(data.vtPartServ2m, data.vtPartServ1y, data.vtParServGlobal2m), 3)
+            },
+            oa: {
+                val: _w.formatPrct(data.vtPartOa2m),
+                cls: isNaN(data.vtPartOa2m) ? '' : _w.score2Cls(_w.data.computeScore(data.vtPartOa2m, data.vtPartOa1y, data.vtPartOaGlobal2m), 3)
+            },
+            rem: {
+                val: _w.formatPrct(data.caPartRem2m),
+                cls: isNaN(data.caPartRem2m) ? '' : _w.score2Cls(_w.data.computeScore(data.caPartRem2m, data.caPartRem1y, data.caPartRemGlobal2m), 3)
+            },
+        }
+    }
+
     function makeDashboardQuery(cd) {
-        var f = darty.wynn.makeSimpleFiltersClone();
+        var f = _w.makeSimpleFiltersClone();
         delete f.agg;
-        return darty.wynn.makeQuery(f);
+        return _w.makeQuery(f);
     }
 
     function makeDrillDownQuery(cd) {
-        var f = darty.wynn.makeSimpleFiltersClone();
+        var f = _w.makeSimpleFiltersClone();
         f[f.agg] = cd;
         f.agg = f.agg.slice(0,3) + (parseInt(f.agg.slice(3)) + 1);
-        return darty.wynn.makeQuery(f);
+        return _w.makeQuery(f);
     }
 
     function start() {
@@ -99,7 +158,7 @@ darty.wynn.gui.details = (function () {
             
             window.setInterval(function () {
                 if (refreshTimer) {
-                    $('#refreshTimer').text('date des données ' + darty.wynn.formatTime(lastRefresh) + ' prochaine récupération dans ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's.');
+                    $('#refreshTimer').text('date des données ' + _w.formatTime(lastRefresh) + ' prochaine récupération dans ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's.');
                 } else {
                     $('#refreshTimer').text('');
                 }
