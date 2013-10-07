@@ -55,6 +55,12 @@ body {
 #refreshTimer  {
     color: #7F7F7C;
     cursor: pointer;
+    text-align: right;
+    width: 230px;
+    float:right;
+    font-size: 8px;
+    background-color: #D7D7F4; 
+    
 }
 
 
@@ -119,4 +125,15 @@ div.CA>table {width: 350px;text-align: right;margin-right: auto;margin-left: aut
 
 
 #informations {display:none;}
+
+#affichageCa (cursor:pointer;)
+
+
+color_X {color:rgb(91,155,213)} <!-- blue -->
+                       .color_0 {color:rgb(255,0,0);} <!-- red -->
+                       .color_1 {color:rgb(255,192,0);} <!-- yellow -->
+                       .color_2 {color:rgb(146,208,80);} <!-- green -->
+                       .color_3 {color:rgb(0,176,80);} <!-- greenDark -->
+                       .color_gray {color:rgb(187,187,187);} <!-- gray-->
+
 

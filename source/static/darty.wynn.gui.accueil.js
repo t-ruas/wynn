@@ -12,13 +12,18 @@ darty.wynn.gui.accueil = (function () {
 	var cumul = 0;
 	var diffCaParDecoupage; 
 	var minMax;
+	var ca2minutes;
+	var dernierCa;
 	
     function refreshPage() {
 
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
+            	ca2minutes=result.ca2m;
+            	dernierCa= result.ca;
             	result.caEvol=darty.wynn.formatEvo(100 * (result.ca2m - result.ca1y) / result.ca1y);
+            	console.log(result.ca2m, result.ca1y);
             	result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
             	
                 var pagefn = doT.template($('#navigation-bar').text());
@@ -32,7 +37,7 @@ darty.wynn.gui.accueil = (function () {
                 pagefn = doT.template($('#load-ranking').text());
                 $('#content-right').html(pagefn(result));
                 console.log('partie droite chargee');
-                console.log(result);
+
                 
                 console.log(result);
                 for (var i = 0, imax = result.length; i < imax; i++) {
@@ -52,10 +57,8 @@ darty.wynn.gui.accueil = (function () {
         refreshPage();
             
 		caAFficher();
-        
-        window.setInterval(function(){
-				modificationCA(1000,2000);
-		},darty.wynn.config.refreshCa); 
+		makeDrillUrl();
+  
 
         window.setInterval(function () {
             if (refreshTimer) {
@@ -75,13 +78,19 @@ darty.wynn.gui.accueil = (function () {
             }
         });
         
+        $(document).on('click','#affichageCa', function () {
+            window.location.assign(makeDrillUrl() );
+        });
+        
+        
+        
         });
     }
     
     function caAFficher () {
         $(document).ready(function () {
         setInterval(function(){
-				modificationCA(1000,2000);
+				modificationCA(ca2minutes ,dernierCa);
 				},darty.wynn.config.refreshCa); 
 		return false;
 		});		
@@ -111,7 +120,7 @@ darty.wynn.gui.accueil = (function () {
 	{
 		
 		case 120:
-		$('#affichageCa').remove();
+		$('#affichageCa').remove();	
 		$("#ligneARajouter").append("<th class=\"fixe\" id=\"affichageCa\">"+ca2m  +" €</th>");
 		cumul=0;
 		break;
@@ -122,8 +131,15 @@ darty.wynn.gui.accueil = (function () {
 		var aAfficher= darty.wynn.priceToStr(ca2m + cumul);
 		 
 		$('#affichageCa').remove();
-		$("#ligneARajouter").append("<th class=\"fixe\" id=\"affichageCa\">"+aAfficher +" €</th>");		
+		$("#ligneARajouter").append("<th class=\"fixe\" id=\"affichageCa\">"  +aAfficher +" €</th>");		
 	}}
+	
+	
+	function getUrl () {
+		var search = window.location.search;
+		search.lastIndexOf ("prd")
+		
+	}
 	
 	function returnMinMax (num) {
 		var minVal = Math.floor(num *0.9);
@@ -166,6 +182,31 @@ darty.wynn.gui.accueil = (function () {
 		
 	}
 	
+   function makeDrillUrl() {
+   		
+   	/*var ancienLien = window.document.referrer;
+   	console.log(ancienLien);
+   	var url;
+   	if (ancienLien==""){
+   		url ="http://localhost:8090/details?agg=prd1"
+   	}else {
+   		url = ancienLien;
+   	} 	
+	return url;*/
+	
+	var param = window.location.search;
+   		if (param == ""){
+   		return "http://" + window.location.host + "/details?agg=prd1";	
+   		}
+   		else {
+   			var agg= param.lastIndexOf("prd")
+   			var url = param.split("?");
+   			prd=parseInt( param.charAt(agg+3)) +1;
+   			return "http://" + window.location.host + "/details?agg=prd" +prd+"&"+ url[1];
+   			}
+	
+	
+    }
 	
 	
 
