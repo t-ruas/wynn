@@ -58,7 +58,10 @@ darty.wynn.gui.accueil = (function () {
             
 		caAFficher();
 		makeDrillUrl();
-  
+		var ndate= new Date();
+  		var m = (((ndate.getMinutes() )/15 | 0) * 15) % 60;
+		var h = (((ndate.getMinutes()/105 + .5) | 0) + ndate.getHours()) % 24;
+  		console.log(m, h)	
 
         window.setInterval(function () {
             if (refreshTimer) {
