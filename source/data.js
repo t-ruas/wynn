@@ -45,6 +45,7 @@ function sendRequest(options, data, callback) {
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\ pour récupérer les entrées, a merger avec les précédentes
 function postSearchEnt(type, data, callback) {
+	_logger.info("recherche entree : " + data);
     sendRequestEnt({method: 'POST', path: '/' + type + '/_search'}, data, callback);
 }
 
@@ -326,7 +327,7 @@ function getIndicatorsEnt(options, callback) {
         }
     };
 
-    postSearchEnt('lv', data, function (error, result) {
+    postSearchEnt('entrees', data, function (error, result) {
         if (error) {
             callback(error);
         } else {

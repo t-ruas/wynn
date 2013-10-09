@@ -165,7 +165,7 @@ var routes = {
             }
         },
         {
-            pattern: /^\/service\/indicateurs/i,
+            pattern: /^\/service\/indicateurs$/i,
             handler: function (context, callback) {
                 if (authorizeOrFail(context, callback)) {
                     _data.getIndicators(context.content, function (error, result) {

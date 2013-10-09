@@ -54,7 +54,6 @@ darty.wynn.gui.accueil = (function () {
               darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
-            	console.log(darty.wynn.makeSimpleFiltersClone());
         console.log(result);
         }});
     }
@@ -68,7 +67,6 @@ darty.wynn.gui.accueil = (function () {
 		var ndate= new Date();
   		var m = (((ndate.getMinutes() )/15 | 0) * 15) % 60;
 		var h = (((ndate.getMinutes()/105 + .5) | 0) + ndate.getHours()) % 24;
-  		console.log(m, h)	
 
         window.setInterval(function () {
             if (refreshTimer) {

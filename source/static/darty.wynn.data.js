@@ -16,7 +16,6 @@ darty.wynn.data = (function () {
     }
 
     function postRequest(action, options, callback) {
-       console.log(action);
         $.ajax({
             url: 'service/' + action,
             type: 'POST',
