@@ -175,6 +175,16 @@ var routes = {
             }
         },
         {
+            pattern: /^\/service\/indicateursEnt/i,
+            handler: function (context, callback) {
+                if (authorizeOrFail(context, callback)) {
+                    _data.getIndicatorsEnt(context.content, function (error, result) {
+                        callback(error, {data: result});
+                    });
+                }
+            }
+        },
+        {
             pattern: /^\/service\/details/i,
             handler: function (context, callback) {
                 if (authorizeOrFail(context, callback)) {

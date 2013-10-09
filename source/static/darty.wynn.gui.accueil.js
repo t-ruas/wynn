@@ -23,7 +23,6 @@ darty.wynn.gui.accueil = (function () {
             	ca2minutes=result.ca2m;
             	dernierCa= result.ca;
             	result.caEvol=darty.wynn.formatEvo(100 * (result.ca2m - result.ca1y) / result.ca1y);
-            	console.log(result.ca2m, result.ca1y);
             	result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
             	
                 var pagefn = doT.template($('#navigation-bar').text());

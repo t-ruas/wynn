@@ -10,6 +10,7 @@ module.exports = {
     elasticSearch: {
         host: 'localhost',
         port: 9200,
-        index: 'wynn'
+        index: 'wynn',
+        indexEnt: 'entrees_mag'
     },
 };

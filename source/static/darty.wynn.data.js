@@ -6,12 +6,17 @@ darty.wynn.data = (function () {
     function getIndicateurs(options, callback) {
         postRequest('indicateurs', options, callback);
     }
+    
+    function getIndicateursEnt(options, callback) {
+        postRequest('indicateursEnt', options, callback);
+    }
 
     function getDetails(options, callback) {
         postRequest('details', options, callback);
     }
 
     function postRequest(action, options, callback) {
+       
         $.ajax({
             url: 'service/' + action,
             type: 'POST',
@@ -74,6 +79,7 @@ darty.wynn.data = (function () {
 
     return {
         getIndicateurs: getIndicateurs,
+        getIndicateursEnt: getIndicateursEnt,
         getDetails: getDetails,
         computeScore: computeScore,
         computeScoreEvol: computeScoreEvol,

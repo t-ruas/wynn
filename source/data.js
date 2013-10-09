@@ -43,6 +43,40 @@ function sendRequest(options, data, callback) {
     req.end();
 }
 
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\ pour récupérer les entrées, a merger avec les précédentes
+function postSearchEnt(type, data, callback) {
+    sendRequestEnt({method: 'POST', path: '/' + type + '/_search'}, data, callback);
+}
+
+function sendRequestEnt(options, data, callback) {
+    options.hostname = _config.elasticSearch.host;
+    options.port = _config.elasticSearch.port;
+    options.path = '/' + _config.elasticSearch.indexEnt + options.path;
+    var req = _http.request(options, function (response) {
+        var content = '';
+        response.on('data', function (chunk) {
+            content += chunk;
+        });
+        response.on('end', function () {
+            var result = JSON.parse(content);
+            if (result.error) {
+                callback(new _errors.Error('ElasticSearchError', result.error));
+            } else {
+                _logger.info('Réponse EslasticeSearch : ' + _util.inspect(result, {depth: null}));
+                callback(null, result);
+            }
+        });
+    }).on('error', function (error) {
+        callback(error);
+    });
+    if (data) {
+        _logger.info('Requête EslasticeSearch : ' + _util.inspect(data, {depth: null}));
+        req.write(JSON.stringify(data));
+    }
+    req.end();
+}
+
+
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 function round2(n) {
@@ -278,6 +312,37 @@ function getIndicators(options, callback) {
     });
 }
 
+function getIndicatorsEnt(options, callback) {
+
+    var fDates = prepareDateFilters();
+    var fEnt = {field: 'QENTREE'};
+    var fOrg = makeNavFilters(options, 'org');
+
+    var data = {
+        size: 0,
+        facets: {
+            'ent_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fEnt},
+            'ent_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, statistical: fEnt}
+        }
+    };
+
+    postSearchEnt('lv', data, function (error, result) {
+        if (error) {
+            callback(error);
+        } else {
+
+            var getEntFacet = function (name) {
+                return result.facets[name].total;
+            }
+
+            callback(null, {
+                ent2m: getEntFacet('ent_2m') ,
+                ent1y: getEntFacet('ent_1y'),
+            });
+        }
+    });
+}
+
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 function getDetails(options, callback) {
@@ -410,6 +475,7 @@ function getDetails(options, callback) {
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 exports.getIndicators = getIndicators;
+exports.getIndicatorsEnt = getIndicatorsEnt;
 exports.getDetails = getDetails;
 exports.getFilterText = getFilterText;
 exports.getBudget = getBudget;

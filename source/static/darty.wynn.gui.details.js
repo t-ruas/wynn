@@ -41,7 +41,6 @@ darty.wynn.gui.details = (function () {
             
             lineModel.lib = lineData.lib;
             lineModel.ddQuery = makeDrillDownQuery(lineData.cd);
-            console.log(lineData.cd);
             lineModel.dbQuery = makeDashboardQuery(lineData.cd);
             model.list.push(lineModel);
 
