@@ -16,9 +16,7 @@ darty.wynn.gui.accueil = (function () {
 	var dernierCa;
 	
     function refreshPage() {
-
-
-
+	
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
@@ -86,10 +84,33 @@ darty.wynn.gui.accueil = (function () {
             }
         });
         
-        $(document).on('click','#affichageCa', function () {
+        $(document).on('click','#affichageCa span', function () {
             window.location.assign(makeDrillUrl() );
         });
         
+		// Gestion de l'affichage du menu click, mouse Over/out
+		$(document).on('mouseenter','div#zone', function () {
+			$('div.menu').show("slow", function() {
+				//console.log('affichage'); // A retirer, ainsi que le callback inutile
+			})
+		}).on('mouseleave','div#zone', function () {
+			$('div.menu').hide("fast", function() {
+				//console.log('Masquage');// A retirer, ainsi que le callback inutile
+			});
+		}).on('click','div#zone',function(){
+			if ($('div.menu').is(':hidden')) {
+				$('div.menu').show("slow", function() { })
+			}
+			else {
+				$('div.menu').hide("fast", function() {	})
+			}
+		});
+		// Gestion du clic sur le menu déroulant
+		$(document).on('click','div.btn-menu',function(){
+			//console.log($(this).attr('id'));
+			alert($(this).text());
+		});
+		
         
         
         });
@@ -126,10 +147,9 @@ darty.wynn.gui.accueil = (function () {
 		
 		switch (nextRefresh)
 	{
-		
 		case 120:
 		$('#affichageCa').remove();	
-		$("#ligneARajouter").append("<th class=\"fixe\" id=\"affichageCa\">"+ca2m  +" €</th>");
+		$("#ligneARajouter").append("<th class=\"color_X fixe\" id=\"affichageCa\"><span>"+ca2m+" €</span></th>");
 		cumul=0;
 		break;
 		
@@ -139,7 +159,7 @@ darty.wynn.gui.accueil = (function () {
 		var aAfficher= darty.wynn.priceToStr(ca2m + cumul);
 		 
 		$('#affichageCa').remove();
-		$("#ligneARajouter").append("<th class=\"fixe\" id=\"affichageCa\">"  +aAfficher +" €</th>");		
+		$("#ligneARajouter").append("<th class=\"color_X fixe \" id=\"affichageCa\"><span>"+aAfficher+" €</span></th>");		
 	}}
 	
 	
@@ -221,5 +241,6 @@ darty.wynn.gui.accueil = (function () {
     return {
         start: start,
         calcEvol: calcEvol,
+		getScoreEvol: getScoreEvol
     };
 })();
