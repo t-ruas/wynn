@@ -1,3 +1,15 @@
+div.menu {
+display:none;
+}
+
+div#zone {
+position:absolute;
+float:left;
+width: 90px;
+background : LightGreen;
+padding: 2px 0px 4px 10px;
+border:1px solid black;
+} 
 
 body {
     margin: 0;
@@ -64,25 +76,12 @@ body {
     
 }
 
-
-
-
-
-
-
-th.value {color:rgb(90,153,211);}
-.evolution {color:rgb(0,177,72);text-align:right;width:70px;}
-.fixe {color:rgb(253,192,6);text-align:right;padding-right:5px;width:60px;}
-tr#remises>th.value {color:rgb(248,18,24);}
-div.CA tr>th.fixe,tr>th.evolution {color:rgb(90,153,211);}
+.evolution {text-align:right;width:70px;}
+.fixe {text-align:right;padding-right:5px;width:60px;color:rgb(91,155,213);border:1px solid black;}
 div.CA>table tr>th.fixe {font-size:72px;}
 div.CA>table tr>th.evolution {font-size:36px; float:right;}
-div.indicateurs .label {font-size: 18px;text-align:right;
-<!-- margin-right:30px; -->
-}
-div.indicateurs .value {font-size: 18;text-align:left;
-<!-- margin-left:30px; -->
-}
+div.indicateurs .label {font-size: 18px;text-align:right;}
+div.indicateurs .value {font-size: 18;text-align:right;}
 .liste {width:170px;text-align:right;}
 .CA,.CAevol {width:50px; text-align:right;}
 .OA,.REM,.PSE,.ACC,#OA,#REM,#PSE,#ACC {position:relative;display:none; width:50px; text-align:middle;}
@@ -99,26 +98,10 @@ border-color:black;}
 
 
 
-
-
-
-th.value {color:rgb(90,153,211);}
-.evolution {color:rgb(0,177,72);}
-.fixe {color:rgb(253,192,6);}
-tr#remises>th.value {color:rgb(248,18,24);}
-div.CA tr>th.fixe,tr>th.evolution {color:rgb(90,153,211);}
-div.CA>table tr>th.fixe {font-size:72px;}
-
-
-
-div.CA>table tr>th.evolution {font-size:36px; float:right;}
 div.indicateurs {width: 300px; margin-left: 128px; margin-top: 70px;}
-
-div.indicateurs .label {font-size: 24px;text-align:right;padding-right:30px;}
-div.indicateurs .value {font-size: 24px;text-align:right;padding-left:30px;}
-
 div.bottom-line {line-height:1px;font-size: 14px;margin-top: 55px;margin-left:85px;}
 .concretisation,.ventes,.entrees {display:inline;}
+
 #content-left {border-width:1px;border-style:dotted;border-color:black;float:left;width:500px;height:500px;font-family:Arial;}
 #content-right {width:400px; background:rgb(90,153,211);float:right;margin-right:400px;padding-left:10px;height:500px;}
 #content {border-width:1px;border-style:dotted;border-color:black;}
@@ -129,12 +112,11 @@ div.CA>table {width: 350px;text-align: right;margin-right: auto;margin-left: aut
 
 #affichageCa (cursor:pointer;)
 
-
-color_X {color:rgb(91,155,213)} <!-- blue -->
-                       .color_0 {color:rgb(255,0,0);} <!-- red -->
-                       .color_1 {color:rgb(255,192,0);} <!-- yellow -->
-                       .color_2 {color:rgb(146,208,80);} <!-- green -->
-                       .color_3 {color:rgb(0,176,80);} <!-- greenDark -->
-                       .color_gray {color:rgb(187,187,187);} <!-- gray-->
+.color_X {color:rgb(91,155,213)}
+.color_0 {color:rgb(255,0,0);} 
+.color_1 {color:rgb(255,192,0);}
+.color_2 {color:rgb(146,208,80);} 
+.color_3 {color:rgb(0,176,80);} 
+.color_gray {color:rgb(187,187,187);}
 
 

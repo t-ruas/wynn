@@ -13,39 +13,49 @@
             darty.wynn.gui.accueil.start();
         </script>
         <script id="indicateurs" type="text/x-dot-template">
+			<div id="zone"> <!-- Utiliser une fonction pour placer la box en dessous de la première case du tableau ?! -->
+				Zone menu 
+				<div class="menu">
+					<div id="org00" class="btn-menu">Catalogue</div>
+					<div id="org01" class="btn-menu">Univers</div>
+					<div id="org02" class="btn-menu">F. Mkg</div>
+					<div id="org03" class="btn-menu">F. Budget</div>
+					<div id="org04" class="btn-menu">Rayon</div>
+				</div>
+			</div>
             <div class="CA">
                 <table>
                     <tr id="ligneARajouter">
-                        <th  class="fixe " id="affichageCa">  €</th>
+                        <th  class="fixe color_X" id="affichageCa"><span> €</span></th>
                     </tr>
                     <tr>
-                        <th class="evolution"><%=it.caEvol %> %</th>
+                        <th class="evolution color_<%=darty.wynn.gui.accueil.getScoreEvol(it.ca2m, it.ca1y, it.caGlobal2m, null)%>"><%=it.caEvol %> %</th>
                     </tr>
                 </table>
             </div>
             <div class="indicateurs">
                 <table>
                     <tr id="accessoires"><th class="label">Accessoires</th>
-                        <th class="value"><%=it.vtAcc2m %> %</th><tr/>
+                        <th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.vtAcc2m, it.vtAcc1y, it.vtAccGlobal2m, null)%>"><%=it.vtAcc2m %> %</th><tr/>
                     <tr id="services"><th class="label">Services</th>
-                        <th class="value"><%=it.vtServ2m %> %</th><tr/>
+                        <th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.vtServ2m, it.vtServ1y, it.vtServGlobal2m, null)%>"><%=it.vtServ2m %> %</th><tr/>
                     <tr id="offresactives"><th class="label">O A</th>
-                        <th class="value"><%=it.vtOa2m %> %</th><tr/>
+                        <th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.vtOA2m, it.vtOA1y, it.vtOAGlobal2m, null)%>"><%=it.vtOa2m %> %</th><tr/>
                     <tr id="remises"><th class="label">Remise</th>
-                        <th class="value"><%=it.caRem2m %> %</th><tr/>
+                        <th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.caRem2m, it.caRem1y, it.caRemGlobal2m, null)%>"><%=it.caRem2m %> %</th><tr/>
                 </table>
             </div>
             <div class="bottom-line">
                 <div class="entrees">
                     <span class="label"> entrées </span>
                     <span class="fixe"><%=it.ent2m %></span>
-                    (<span class="evolution"><%=darty.wynn.gui.accueil.calcEvol(it.ent2m, it.ent1y)%> %</span>)
+                    (<span class="evolution color_<%=darty.wynn.gui.accueil.getScoreEvol(it.ent2m, it.ent1y, null, null)%>"><%=darty.wynn.gui.accueil.calcEvol(it.ent2m, it.ent1y)%> %</span>)
                 </div>
                 <div class="ventes">
                     <span class="entrees" class="label"> ventes </span>
                     <span class="fixe"><%=it.ent2m %></span>(
 
-                    <span class="evolution"><%=darty.wynn.gui.accueil.calcEvol(it.vt2m, it.vt1y)%> %</span>)
+                    <span class="evolution color_<%=darty.wynn.gui.accueil.calcEvol(it.vt2m, it.vt1y, null, null)%>"><%=darty.wynn.gui.accueil.calcEvol(it.vt2m, it.vt1y)%> %</span>)
                 </div>
                 <span class="concretisation"> concrétisation</span>
                 <span class="fixe"><%=it.concret %></span>
