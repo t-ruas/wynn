@@ -87,13 +87,16 @@ darty.wynn.gui.details = (function () {
 
     function makeDashboardQuery(cd) {
         var f = _w.makeSimpleFiltersClone();
+        f[f.agg] = cd;
         delete f.agg;
         return _w.makeQuery(f);
     }
 
     function makeDrillDownQuery(cd) {
         var f = _w.makeSimpleFiltersClone();
+        
         f[f.agg] = cd;
+        
         f.agg = f.agg.slice(0,3) + (parseInt(f.agg.slice(3)) + 1);
         return _w.makeQuery(f);
     }
