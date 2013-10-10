@@ -2,6 +2,7 @@
 darty.wynn.gui.accueil = (function () {
 
     var refreshTimer = null;
+    var refreshTimerCa = null;
     var lastRefresh = null;
     var nextRefresh = null;
     var timer = 120;
@@ -10,11 +11,10 @@ darty.wynn.gui.accueil = (function () {
 	var diffCaDebut;
 	var decoupage = 240;
 	var cumul = 0;
-	var diffCaParDecoupage; 
-	var minMax;
 	var ca2minutes;
 	var dernierCa;
-	
+	var diffCaParDecoupage; 
+	var minMax;
 	
 	
 	
@@ -27,14 +27,12 @@ darty.wynn.gui.accueil = (function () {
             	darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
             	if (error) {
             	} else {
-            		caAFficher();
             		
             		console.log(resultEnt);
             		result.ent2m = resultEnt.ent2m;
             		result.ent1y = resultEnt.ent1y;
-            		
-            		ca2minutes=888888;
-	            	dernierCa= 999999;
+            		ca2minutes =result.ca2m;
+            		dernierCa =result.ca;
 	            	result.caEvol=darty.wynn.formatEvo(100 * (result.ca2m - result.ca1y) / result.ca1y);
             		
             		result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
@@ -56,6 +54,7 @@ darty.wynn.gui.accueil = (function () {
                 console.log(result);
 
                 refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
+                refreshTimerCa = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
                 lastRefresh = new Date();
                 nextRefresh = new Date(lastRefresh.getTime() + darty.wynn.config.reqInterval);
             }
@@ -78,9 +77,16 @@ darty.wynn.gui.accueil = (function () {
             } else {
                 $('#refreshTimer').text('');
             }
-        }, darty.wynn.config.refreshInfo);		    
+            refreshTimerDisplay = Math.ceil((nextRefresh - new Date()) / 1000);
+        }, darty.wynn.config.refreshInfo);
         
-        		
+        window.setInterval(function () {
+            if (refreshTimerCa) {
+            	modificationCA();	
+            } else {
+            }
+        }, darty.wynn.config.refreshCa);
+        
         
         $(document).on('click','#refreshTimer', function () {
             if (refreshTimer) {
@@ -122,47 +128,39 @@ darty.wynn.gui.accueil = (function () {
         });
     }
     
-    function caAFficher () {
-        $(document).ready(function () {
-        setInterval(function(){
-				modificationCA(ca2minutes ,dernierCa);
-				},darty.wynn.config.refreshCa); 
-		return false;
-		});		
-		}
     
-    function modificationCA (ca2min, caActu){
-    	diffCaDebut= calcDiffCa(ca2min,caActu);
+    function modificationCA (){
+    	diffCaDebut= calcDiffCa();
     	
     	diffCaParDecoupage = Math.floor (diffCaDebut / decoupage);
     	minMax = returnMinMax (diffCaParDecoupage);
-    	recalculCaDecoupage (ca2min, minMax);
+    	recalculCaDecoupage (minMax);
     }
     
-			
 	
-		function getAleaNomb (min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+	function getAleaNomb (min, max) {
+    	return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 	
-	function calcDiffCa (avant, apres){
-		return apres - avant;
+	function calcDiffCa (){
+		return dernierCa - ca2minutes;
 	}
 	
-	function recalculCaDecoupage (ca2m, aTester) {
+	function recalculCaDecoupage ( aTester) {
 		
-		switch (nextRefresh)
+		switch (Math.ceil((nextRefresh - new Date()) / 1000))
 	{
 		case 120:
-		$('#affichageCa').remove();	
-		$("#ligneARajouter").append("<th class=\"color_X fixe\" id=\"affichageCa\"><span>"+ca2m+" €</span></th>");
 		cumul=0;
+		$('#affichageCa').remove();	
+		$("#ligneARajouter").append("<th class=\"color_X fixe\" id=\"affichageCa\"><span>"+ca2minutes+" €</span></th>");
+		
 		break;
 		
 		default :
 		var aleaNumb = getAleaNomb (minMax.min, minMax.max);
 		cumul += aleaNumb;
-		var aAfficher= darty.wynn.priceToStr(ca2m + cumul);
+		var aAfficher= darty.wynn.priceToStr(ca2minutes + cumul);
 		 
 		$('#affichageCa').remove();
 		$("#ligneARajouter").append("<th class=\"color_X fixe \" id=\"affichageCa\"><span>"+aAfficher+" €</span></th>");		
@@ -191,10 +189,6 @@ darty.wynn.gui.accueil = (function () {
 			]
 	}
 	
-	function getTimer () {
-		return timer;
-	}
-	
 	function getScoreEvol(val, histo, moyenne, budget) {
     var score = 0;
     (val > histo) && score++;
@@ -218,16 +212,6 @@ darty.wynn.gui.accueil = (function () {
 	
    function makeDrillUrl() {
    		
-   	/*var ancienLien = window.document.referrer;
-   	console.log(ancienLien);
-   	var url;
-   	if (ancienLien==""){
-   		url ="http://localhost:8090/details?agg=prd1"
-   	}else {
-   		url = ancienLien;
-   	} 	
-	return url;*/
-	
 	var param = window.location.search;
    		if (param == ""){
    		return "http://" + window.location.host + "/details?agg=prd1";	
