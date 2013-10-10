@@ -91,20 +91,20 @@ var routes = {
             }
         },
         {
-            pattern: /^\/logout/i,
+            pattern: /^\/logout$/i,
             handler: function (context, callback) {
                 logout(context);
                 callback(null, {redirect: 'login'});
             }
         },
         {
-            pattern: /^\/login/i,
+            pattern: /^\/login$/i,
             handler: function (context, callback) {
                 callback(null, {file: 'login.html'});
             }
         },
         {
-            pattern: /^\/accueil/i,
+            pattern: /^\/accueil$/i,
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
                     getRefData(context, function (error, result) {
@@ -118,7 +118,7 @@ var routes = {
             }
         },
         {
-            pattern: /^\/details/i,
+            pattern: /^\/details$/i,
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
                     getRefData(context, function (error, result) {
@@ -149,7 +149,7 @@ var routes = {
     ],
     'POST': [
         {
-            pattern: /^\/login/i,
+            pattern: /^\/login$/i,
             handler: function (context, callback) {
                 login(context, function (error) {
                     if (error) {
@@ -165,6 +165,17 @@ var routes = {
             }
         },
         {
+            pattern: /^\/service\/indicateursEnt$/i,
+            handler: function (context, callback) {
+                if (authorizeOrFail(context, callback)) {
+                    _data.getIndicatorsEnt(context.content, function (error, result) {
+                        callback(error, {data: result});
+                    });
+                }
+            }
+        },
+        
+        {
             pattern: /^\/service\/indicateurs$/i,
             handler: function (context, callback) {
                 if (authorizeOrFail(context, callback)) {
@@ -175,17 +186,7 @@ var routes = {
             }
         },
         {
-            pattern: /^\/service\/indicateursEnt/i,
-            handler: function (context, callback) {
-                if (authorizeOrFail(context, callback)) {
-                    _data.getIndicatorsEnt(context.content, function (error, result) {
-                        callback(error, {data: result});
-                    });
-                }
-            }
-        },
-        {
-            pattern: /^\/service\/details/i,
+            pattern: /^\/service\/details$/i,
             handler: function (context, callback) {
                 if (authorizeOrFail(context, callback)) {
                     _data.getDetails(context.content, function (error, result) {

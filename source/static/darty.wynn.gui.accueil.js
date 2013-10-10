@@ -27,12 +27,14 @@ darty.wynn.gui.accueil = (function () {
             	darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
             	if (error) {
             	} else {
+            		caAFficher();
+            		
             		console.log(resultEnt);
             		result.ent2m = resultEnt.ent2m;
             		result.ent1y = resultEnt.ent1y;
             		
-            		ca2minutes=result.ca2m;
-	            	dernierCa= result.ca;
+            		ca2minutes=888888;
+	            	dernierCa= 999999;
 	            	result.caEvol=darty.wynn.formatEvo(100 * (result.ca2m - result.ca1y) / result.ca1y);
             		
             		result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
@@ -64,7 +66,7 @@ darty.wynn.gui.accueil = (function () {
         $(document).ready(function () {
         refreshPage();
             
-		caAFficher();
+		
 		makeDrillUrl();
 		var ndate= new Date();
   		var m = (((ndate.getMinutes() )/15 | 0) * 15) % 60;

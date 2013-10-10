@@ -7,7 +7,6 @@ var _moment = require('moment');
 var _config = require('./config');
 var _errors = require('./errors');
 
-// http://www.elasticsearch.org/guide/
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
@@ -44,38 +43,8 @@ function sendRequest(options, data, callback) {
 }
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\ pour récupérer les entrées, a merger avec les précédentes
-function postSearchEnt(type, data, callback) {
-	_logger.info("recherche entree : " + data);
-    sendRequestEnt({method: 'POST', path: '/' + type + '/_search'}, data, callback);
-}
 
-function sendRequestEnt(options, data, callback) {
-    options.hostname = _config.elasticSearch.host;
-    options.port = _config.elasticSearch.port;
-    options.path = '/' + _config.elasticSearch.indexEnt + options.path;
-    var req = _http.request(options, function (response) {
-        var content = '';
-        response.on('data', function (chunk) {
-            content += chunk;
-        });
-        response.on('end', function () {
-            var result = JSON.parse(content);
-            if (result.error) {
-                callback(new _errors.Error('ElasticSearchError', result.error));
-            } else {
-                _logger.info('Réponse EslasticeSearch : ' + _util.inspect(result, {depth: null}));
-                callback(null, result);
-            }
-        });
-    }).on('error', function (error) {
-        callback(error);
-    });
-    if (data) {
-        _logger.info('Requête EslasticeSearch : ' + _util.inspect(data, {depth: null}));
-        req.write(JSON.stringify(data));
-    }
-    req.end();
-}
+
 
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
@@ -111,16 +80,16 @@ function prepareDateFilters() {
 
     var dates = new Array(3);
 
-    // TODO: remettre la date du jour.
-    dates[0] = new Date(2013, 09, 23, 14, 38, 49);
+    dates[0] = new Date();
     dates[1] = new Date(dates[0]);
     dates[1].setMinutes(dates[1].getMinutes() - 2);
     dates[2] = new Date(dates[1]);
     dates[2].setFullYear(dates[2].getFullYear() - 1);
-
+_logger.info('tableau Dates 1er: ' + _util.inspect(dates, {depth: null}));
     for (var i = 0; i < 3; i++) {
         dates[i] = makeDateFilter(dates[i]);
     }
+    _logger.info('tableau Dates : ' + _util.inspect(dates, {depth: null}));
 
     return dates;
 }
@@ -305,9 +274,7 @@ function getIndicators(options, callback) {
                 caRem1y: getCaFacet('ca_rem_1y'),
                 caRem2m: getCaFacet('ca_rem_2m'),
                 caRemGlobal2m: getCaFacet('ca_rem_global_2m'),
-                // TODO
-                ent2m: 15,
-                ent1y: 10,
+
             });
         }
     });
@@ -316,18 +283,18 @@ function getIndicators(options, callback) {
 function getIndicatorsEnt(options, callback) {
 
     var fDates = prepareDateFilters();
-    var fEnt = {field: 'QENTREE'};
+    var fEnt = {field: 'QENTRE'};
     var fOrg = makeNavFilters(options, 'org');
 
     var data = {
         size: 0,
         facets: {
-            'ent_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fEnt},
-            'ent_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, statistical: fEnt}
+            'ent_2m': {facet_filter: {and: [fDates[1]].concat(fOrg)}, statistical: fEnt},
+            'ent_1y': {facet_filter: {and: [fDates[2]].concat(fOrg)}, statistical: fEnt}
         }
     };
 
-    postSearchEnt('entrees', data, function (error, result) {
+    postSearch('entrees', data, function (error, result) {
         if (error) {
             callback(error);
         } else {
