@@ -2,6 +2,27 @@ div.menu {
 display:none;
 }
 
+div#ariane {
+display:inline-block;
+}
+div#ariane1, div#ariane2 {
+display:block;
+}
+
+.active {background-color : blue;}
+
+.noActive {background-color: gray;}
+
+#bouton span {
+border: 1px solid black;
+padding: 3px 10px;
+}
+
+#bouton {
+	float: right;
+	display: inline-block;
+}
+
 div#zone {
 position:absolute;
 float:left;
@@ -85,12 +106,19 @@ div.indicateurs .value {font-size: 18;text-align:right;}
 .liste {width:170px;text-align:right;}
 .CA,.CAevol {width:50px; text-align:right;}
 .OA,.REM,.PSE,.ACC,#OA,#REM,#PSE,#ACC {position:relative;display:none; width:50px; text-align:middle;}
+div.indicateurs {width: 300px; margin-left: 128px; margin-top: 70px;}
+div.bottom-line {line-height:1px;font-size: 14px;margin-top: 55px;margin-left:85px;}
+.concretisation,.ventes,.entrees {display:inline;}
+#content-left {border-width:1px;border-style:dotted;border-color:black;float:left;width:500px;height:500px;font-family:Arial;}
+#content-right {width:400px; background:rgb(90,153,211);float:right;margin-right:400px;padding-left:10px;height:500px;}
+#content {border-width:1px;border-style:dotted;border-color:black;}
+div.CA>table {width: 350px;text-align: right;margin-right: auto;margin-left: auto;margin-top: 10px;}
+
 
 #content {
 position:absolute;
 left:250px;
 top:32px;
-<!-- margin-left: 200px; -->
 margin-top:28px;
 border-width:1px;
 border-style:dotted;
@@ -98,14 +126,6 @@ border-color:black;}
 
 
 
-div.indicateurs {width: 300px; margin-left: 128px; margin-top: 70px;}
-div.bottom-line {line-height:1px;font-size: 14px;margin-top: 55px;margin-left:85px;}
-.concretisation,.ventes,.entrees {display:inline;}
-
-#content-left {border-width:1px;border-style:dotted;border-color:black;float:left;width:500px;height:500px;font-family:Arial;}
-#content-right {width:400px; background:rgb(90,153,211);float:right;margin-right:400px;padding-left:10px;height:500px;}
-#content {border-width:1px;border-style:dotted;border-color:black;}
-div.CA>table {width: 350px;text-align: right;margin-right: auto;margin-left: auto;margin-top: 10px;}
 
 
 #informations {display:none;}

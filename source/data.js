@@ -7,6 +7,7 @@ var _moment = require('moment');
 var _config = require('./config');
 var _errors = require('./errors');
 
+// http://www.elasticsearch.org/guide/
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
@@ -15,20 +16,23 @@ function postSearch(type, data, callback) {
 }
 
 function sendRequest(options, data, callback) {
+	// pour retrouver un libellé en particulier s'il manque
     options.hostname = _config.elasticSearch.host;
     options.port = _config.elasticSearch.port;
     options.path = '/' + _config.elasticSearch.index + options.path;
+    // On lance la requête
     var req = _http.request(options, function (response) {
         var content = '';
         response.on('data', function (chunk) {
-            content += chunk;
+		_logger.info('1.CHUNK : ' + chunk);
+		content += chunk;
         });
         response.on('end', function () {
             var result = JSON.parse(content);
             if (result.error) {
-                callback(new _errors.Error('ElasticSearchError', result.error));
+                callback(new _errors.Error('2 ElasticSearchError', result.error));
             } else {
-                _logger.info('Réponse EslasticeSearch : ' + _util.inspect(result, {depth: null}));
+                _logger.info('2 Réponse EslasticeSearch : ' + _util.inspect(result, {depth: null}));
                 callback(null, result);
             }
         });
@@ -72,6 +76,7 @@ function makeDateFilter(date) {
     };
 }
 
+// permet de retourner le budget pour chaque catégories
 function getBudget(callback) {
     callback(null, {ca: 10, vtPartAcc: 15, vtPartServ: 15, vtPartOa: 15, vtPartRem: 15});
 }
@@ -85,11 +90,11 @@ function prepareDateFilters() {
     dates[1].setMinutes(dates[1].getMinutes() - 2);
     dates[2] = new Date(dates[1]);
     dates[2].setFullYear(dates[2].getFullYear() - 1);
-_logger.info('tableau Dates 1er: ' + _util.inspect(dates, {depth: null}));
+	//_logger.info('tableau Dates 1er: ' + _util.inspect(dates, {depth: null}));
     for (var i = 0; i < 3; i++) {
         dates[i] = makeDateFilter(dates[i]);
     }
-    _logger.info('tableau Dates : ' + _util.inspect(dates, {depth: null}));
+    //_logger.info('tableau Dates : ' + _util.inspect(dates, {depth: null}));
 
     return dates;
 }
@@ -167,7 +172,7 @@ function getLib(field, code, callback) {
     if (!libCache[field.cd]) {
         libCache[field.cd] = {};
     }
-
+	// si le nom du libellé est dans le cache ok, sinon on le cherche
     if (code in libCache[field.cd]) {
         callback(null, libCache[field.cd][code]);
     } else {
@@ -179,7 +184,7 @@ function getLib(field, code, callback) {
             fields: [field.cd, field.lib],
             filter: {term: f}
         };
-
+		// pour retrouver un libellé en particulier s'il manque
         postSearch('lv', data, function (error, result) {
             if (error) {
                 callback(error);

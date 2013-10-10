@@ -2,7 +2,6 @@
 darty.wynn.gui.details = (function () {
 
     var _w = darty.wynn;
-
     var refreshTimer = null;
     var lastRefresh = null;
     var nextRefresh = null;
@@ -19,7 +18,7 @@ darty.wynn.gui.details = (function () {
             }
         });
     }
-
+	// function de répartition des données dans le template HTML
     function prepareModel(data) {
 
         var model = {
@@ -84,14 +83,14 @@ darty.wynn.gui.details = (function () {
             },
         }
     }
-
+	// function de création de la requ^te pour l'appel vers Dashboard
     function makeDashboardQuery(cd) {
         var f = _w.makeSimpleFiltersClone();
         f[f.agg] = cd;
         delete f.agg;
         return _w.makeQuery(f);
     }
-
+	// function de création de la requête pour l'appel en Drill Down
     function makeDrillDownQuery(cd) {
         var f = _w.makeSimpleFiltersClone();
         
@@ -100,10 +99,9 @@ darty.wynn.gui.details = (function () {
         f.agg = f.agg.slice(0,3) + (parseInt(f.agg.slice(3)) + 1);
         return _w.makeQuery(f);
     }
-
+	
     function start() {
         $(document).ready(function () {
-
             $(document).on('click', '#detailsTable .linkExpand', function () {
                 $('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
                 return false;
@@ -120,6 +118,34 @@ darty.wynn.gui.details = (function () {
                 }
             });
             
+			$(document).on('click', 'img#home', function () {
+                window.location.assign("http://" + window.location.host + "/accueil");
+            });
+			
+			// bouton de changement de dimension
+			$(document).on('click', 'div#bouton span.active', function () {
+				var param = {};
+				param.url = window.location.search;
+				param.split = param.url.split("&");
+				console.log(param.split[0].substring(5,8));
+				
+				var add = '';
+				if (param.split[0].substring(5,8) == 'org') { add = 'prd'; }
+				else { add = 'org'; }
+				
+				var url = '';
+				for (var n in param.split) {
+					if (n == 0) {
+						url += param.split[0].substring(0,5) + add + param.split[0].substring(8,9);
+					}
+					else {
+						url += '&'+param.split[n];
+					}
+				}
+				var toto = "http://" + window.location.host + "/details" + url;
+				window.location.assign(toto);
+			});
+			
             window.setInterval(function () {
                 if (refreshTimer) {
                     $('#refreshTimer').text('date des données ' + _w.formatTime(lastRefresh) + ' prochaine récupération dans ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's.');
@@ -127,12 +153,88 @@ darty.wynn.gui.details = (function () {
                     $('#refreshTimer').text('');
                 }
             }, 1000);
-
-            refreshPage();
+			refreshPage();
+			
+			getAriane();
         });
     }
-
+	function elemCount(array, dim) { // compte le nombre d'élements type dim dans l'array et retourne la valeur
+		var cpt = 0;
+		for (var u in array) {
+			if (array[u].substring(0,3) == dim) {
+				cpt++;
+			}
+		} 
+		return cpt;
+	}
+	function p(obj, dim) {
+		console.log(obj, dim);
+		for (var n in obj) {
+			if (obj[n].agg) {
+				// on compte le nombre d'élements 
+				var param = {};
+				param.url = window.location.search;
+				console.log(param);
+				var url = param.url.split("&");
+				
+				var cpt = elemCount(url, dim)
+				
+				cpt--; // on doit soustraire le filtre à enlever
+				urlBis = '';// on va stocker l'url dans une var, puis redirect dessus 
+				for (var u in url) { 
+					if (url[u].substring(0,3)==dim && cpt > 0) {
+						if (urlBis != '') urlBis += '&';
+						urlBis += url[u];
+						cpt--;
+					} 
+					else if (url[u].substring(0,3)==dim && cpt == 0) {}
+					else {
+						if (urlBis != '') urlBis += '&';
+						urlBis += url[u];
+					}
+				} 
+				var toto = "http://" + window.location.host + "/details" + urlBis;
+				window.location.assign(toto);
+			}
+			else {
+			}
+		}
+	}
+	
+	function getAriane() {
+		var text = {};
+		text.prdRep = 'Tous Produits';
+		text.orgRep = 'Darty France';
+		text.prd = '';
+		text.org = '';
+		text.intro1 = '<div id="ariane';
+		text.intro2 = '">'
+		text.endReq = '</div>'
+		
+		for(var index in _w.pageData.filtres) { 
+			if ( index.substring(0,3) == 'org') {
+				text.org = '<span id="'+_w.pageData.filtres[index].lib+'"> '+_w.pageData.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" onclick="darty.wynn.gui.details.p(obj, org);" alt="org" /></span>'+'</div>'
+			}
+			if ( index.substring(0,3) == 'prd') {
+				text.prd = '<div id="ariane1">'+'<span id="'+_w.pageData.filtres[index].lib+'"> '+_w.pageData.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" onclick="darty.wynn.gui.details.p(obj, prd);" alt="prd" /></span>'+'</div>';
+			}
+		}
+		$("#ariane1").remove();
+		$("#ariane2").remove();
+		// on enlève les 2 blocs à refaire ariane1 => Produits, ariane2 => Lieux
+		if (text.org != '') { $("#ariane").append(text.intro1+'2'+text.intro2+text.org+text.endReq); }
+		else { $("#ariane").append(text.intro1+'2'+text.intro2+text.orgRep+text.endReq); }
+		if (text.prd != '') { $("#ariane").append(text.intro1+'1'+text.intro2+text.prd+text.endReq); } 
+		else { $("#ariane").append(text.intro1+'1'+text.intro2+text.prdRep+text.endReq); }
+		setBouton(_w.pageData.filtres.agg.substring(0,3));
+	}
+	function setBouton(aggreg) {
+		var agg = 'span#'+aggreg;
+		$(agg).removeClass().addClass('noActive');
+	}
     return {
         start: start,
+		p: p
     };
+	
 })();
