@@ -15,23 +15,36 @@ darty.wynn.gui.accueil = (function () {
 	var ca2minutes;
 	var dernierCa;
 	
-    function refreshPage() {
 	
+	
+	
+	
+    function refreshPage() {
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
-            	ca2minutes=result.ca2m;
-            	dernierCa= result.ca;
-            	result.caEvol=darty.wynn.formatEvo(100 * (result.ca2m - result.ca1y) / result.ca1y);
-            	result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
+            	
+            	darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
+            	if (error) {
+            	} else {
+            		console.log(resultEnt);
+            		result.ent2m = resultEnt.ent2m;
+            		result.ent1y = resultEnt.ent1y;
+            		
+            		ca2minutes=result.ca2m;
+	            	dernierCa= result.ca;
+	            	result.caEvol=darty.wynn.formatEvo(100 * (result.ca2m - result.ca1y) / result.ca1y);
+            		
+            		result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
+	            	pagefn = doT.template($('#indicateurs').text());
+	                $('#content-left').html(pagefn(result));
+	                console.log('partie gauche chargee');
+        		}});
             	
                 var pagefn = doT.template($('#navigation-bar').text());
                 $('#content-header').html(pagefn(result));
                 console.log('Menu de navigation chargee');
 
-                pagefn = doT.template($('#indicateurs').text());
-                $('#content-left').html(pagefn(result));
-                console.log('partie gauche chargee');
 
                 pagefn = doT.template($('#load-ranking').text());
                 $('#content-right').html(pagefn(result));
@@ -39,21 +52,12 @@ darty.wynn.gui.accueil = (function () {
 
                 
                 console.log(result);
-                for (var i = 0, imax = result.length; i < imax; i++) {
-                	var u = result[i];
-                	
-                }
 
                 refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
                 lastRefresh = new Date();
                 nextRefresh = new Date(lastRefresh.getTime() + darty.wynn.config.reqInterval);
             }
         });
-              darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
-            if (error) {
-            } else {
-        console.log(result);
-        }});
     }
 
     function start() {
@@ -241,6 +245,6 @@ darty.wynn.gui.accueil = (function () {
     return {
         start: start,
         calcEvol: calcEvol,
-		getScoreEvol: getScoreEvol
+        getScoreEvol: getScoreEvol
     };
 })();
