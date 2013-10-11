@@ -1,42 +1,38 @@
-div.menu {
-display:none;
+div.menuDeroul {
+	display:none;
 }
-
+th#menu {
+	position : relative,
+}
+div.zone {
+	position : absolute;
+}
 div#ariane {
-display:inline-block;
+	display:inline-block;
 }
 div#ariane1, div#ariane2 {
-display:block;
+	display:block;
 }
-
 .active {background-color : blue;}
-
 .noActive {background-color: gray;}
-
 #bouton span {
-border: 1px solid black;
-padding: 3px 10px;
+	border: 1px solid black;
+	padding: 3px 10px;
 }
-
 #bouton {
 	float: right;
 	display: inline-block;
 }
-
 div#zone {
-position:absolute;
-float:left;
-width: 90px;
-background : LightGreen;
-padding: 2px 0px 4px 10px;
-border:1px solid black;
+	position:absolute;
+	background-color: #FFFFFF;
+	width: 90px;
+	margin: -10px 0px 0px -4px;
 } 
-
 body {
     margin: 0;
     font-family: arial;
 }
-
 #mainContent {
     position: absolute;
     top: 0px;
@@ -44,7 +40,6 @@ body {
     left: 0px;
     right: 43.75%;
 }
-
 #blueContent {
     position: absolute;
     top: 0px;
@@ -53,14 +48,12 @@ body {
     left: 56.25%;
     background-color: rgb(90, 153, 211);
 }
-
 #mainContentTop {
     position: absolute;
     top: 0px;
     height: 50px;
     width: 100%;
 }
-
 #mainContentMiddle {
     position: absolute;
     top: 50px;
@@ -68,23 +61,18 @@ body {
     width: 100%;
     overflow: auto;
 }
-
 #mainContentBottom {
     position: absolute;
     bottom: 0px;
     height: 50px;
     width: 100%;
 }
-
 #detailsTable {
     margin: 0px auto;
 }
-
-#detailsTable th,
-#detailsTable td {
+#detailsTable th, #detailsTable td {
     padding: 3px 6px;
 }
-
 #refreshTimer  {
     color: #7F7F7C;
     cursor: pointer;
@@ -96,7 +84,6 @@ body {
     margin-top:30px;
     
 }
-
 .evolution {text-align:right;width:70px;}
 .fixe {text-align:right;padding-right:5px;width:60px;color:rgb(91,155,213);}
 div.CA>table tr>th.fixe {font-size:72px;}
@@ -113,8 +100,8 @@ div.bottom-line {line-height:1px;font-size: 14px;margin-top: 55px;margin-left:85
 #content-right {width:400px; background:rgb(90,153,211);float:right;margin-right:400px;padding-left:10px;height:500px;}
 #content {border-width:1px;border-style:dotted;border-color:black;}
 div.CA>table {width: 350px;text-align: right;margin-right: auto;margin-left: auto;margin-top: 10px;}
-
-
+.btnX {background-color:#E6E6E6; color:black; }
+.btnY {background-color:#FFFFFF; color:black; font: bold;}
 #content {
 position:absolute;
 left:250px;
@@ -123,15 +110,8 @@ margin-top:28px;
 border-width:1px;
 border-style:dotted;
 border-color:black;}
-
-
-
-
-
 #informations {display:none;}
-
 #affichageCa (cursor:pointer;)
-
 .color_X {color:rgb(91,155,213)}
 .color_0 {color:rgb(255,0,0);} 
 .color_1 {color:rgb(255,192,0);}

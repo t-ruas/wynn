@@ -12,23 +12,29 @@
             darty.wynn.gui.details.start();
 			var prd = "prd";
 			var org = "org";
+			// TODO : envoyer l'objet depuis le serv en ajax et le "cacher"
+			obj.dims = {}
+			obj.dims.org = {"org1":"Filiale","org2":"ZDV","org3":"Magasin","org4":"Vendeur"};
+			obj.dims.prd = {"prd1":"Univers","prd2":"Rayon","prd3":"Gamme","prd4":"F. Budg","prd5":"F. Mkg","prd6":"Codic"} // couleur (R.K.), 
+			// sera ajouté avec les droits d'utilisateur
         </script>
 		<script type="text/javascript">
 			
 		</script>
         <script id="tmplDetailsTable" type="text/x-dot-template">
-			
-			
             <table id="detailsTable">
                 <thead>
                     <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th>Acc.</th>
-                        <th>Gar.</th>
-                        <th>OA.</th>
-                        <th>Rem.</th>
+					    <th id="menu">
+							 <div id="zone">									
+							</div>							
+						</th>
+                        <th class="tri"></th>
+                        <th class="tri"></th>
+                        <th class="tri">Acc.</th>
+                        <th class="tri">Gar.</th>
+                        <th class="tri">OA.</th>
+                        <th class="tri">Rem.</th>
                     </tr>
                 </thead>
                 <tbody>
