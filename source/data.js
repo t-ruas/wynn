@@ -32,7 +32,7 @@ function sendRequest(options, data, callback) {
             if (result.error) {
                 callback(new _errors.Error('2 ElasticSearchError', result.error));
             } else {
-                _logger.info('2 Réponse EslasticeSearch : ' + _util.inspect(result, {depth: null}));
+                _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(result, {depth: null}));
                 callback(null, result);
             }
         });
@@ -40,7 +40,7 @@ function sendRequest(options, data, callback) {
         callback(error);
     });
     if (data) {
-        _logger.info('Requête EslasticeSearch : ' + _util.inspect(data, {depth: null}));
+        _logger.info('Requête ElasticSearch : ' + _util.inspect(data, {depth: null}));
         req.write(JSON.stringify(data));
     }
     req.end();
@@ -329,17 +329,20 @@ function getDetails(options, callback) {
     var fRem = {term: {'FLAGREM': 'rem'}};
 
     var fLib = {
+		size: 999,
         field: aggField.cd,
         script: 'term + ";" + _source.' + aggField.lib
     };
 
     // on concatène le numéro de vente avec l'axe d'aggrégation pour avoir un count de ventes et non de lignes.
     var fVt = {
+		size: 999,
         field: aggField.cd,
         script: 'term + ";" + _source.NVENTE'
     };
 
     var fCa = {
+		size: 999,
         key_field: aggField.cd,
         value_field: 'PVTOTAL'
     };
@@ -380,7 +383,7 @@ function getDetails(options, callback) {
 
             var o = {};
 
-            var mergeCaList = function (p, terms) {
+			var mergeCaList = function (p, terms) {
                 for (var i = 0, imax = terms.length; i < imax; i++) {
                     var term = terms[i];
                     o[term.term][p] = term.total;
