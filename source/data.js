@@ -58,15 +58,11 @@ function dateToString(date) {
 }
 
 function makeDateFilter(date) {
-    // TODO: retirer.
-    return {};
     return {
         range: {
             'DATE': {
-                from: dateToString(new Date(date.getFullYear(), date.getMonth(), date.getDate())),
-                to: dateToString(date),
-                include_lower: true,
-                include_upper: false
+                gte: dateToString(new Date(date.getFullYear(), date.getMonth(), date.getDate())),
+                lt: dateToString(date)
             }
         }
     };
@@ -285,9 +281,17 @@ function getIndicatorsEnt(options, callback) {
     var fDates = prepareDateFilters();
     var fEnt = {field: 'QENTRE'};
     var fOrg = makeNavFilters(options, 'org');
+    var test = "\"range\": {\"DATE\": {\"from\": \"20130812 09:45\" ,\"to\":  \"20130812 09:45\"}}";
 
     var data = {
-        size: 0,
+    	"sort": [
+      {
+         "entree_mag.DVENTE": {
+            "order": "desc"
+         }
+      }
+   ],
+        size: 1,
         facets: {
             'ent_2m': {facet_filter: {and: [fDates[1]].concat(fOrg)}, statistical: fEnt},
             'ent_1y': {facet_filter: {and: [fDates[2]].concat(fOrg)}, statistical: fEnt}
@@ -298,7 +302,9 @@ function getIndicatorsEnt(options, callback) {
         if (error) {
             callback(error);
         } else {
-
+			
+			_logger.info('Réponse EslasticeSearch ent: ' + _util.inspect(result, {depth: null}));
+			
             var getEntFacet = function (name) {
                 return result.facets[name].total;
             }

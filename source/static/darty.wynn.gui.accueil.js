@@ -62,6 +62,7 @@ darty.wynn.gui.accueil = (function () {
     }
 
     function start() {
+    	console.log("kikou");
         $(document).ready(function () {
         refreshPage();
             
