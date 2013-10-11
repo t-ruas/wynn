@@ -20,8 +20,6 @@ darty.wynn.gui.details = (function () {
 					oneTime = true;
 					getMenuAgg(function(){
 					$("div.menuDeroul").css({"display":"hidden"});
-					
-					console.log('Hide !');
 				});
 				}
             }
@@ -135,7 +133,7 @@ darty.wynn.gui.details = (function () {
 			$(document).on('click', 'div#bouton span.active', function () {
 				var param = {};
 				param.url = window.location.search;
-				param.split = param.url.split("&");
+				param.split = window.location.search.split("&");
 				console.log(param.split[0].substring(5,8));
 				var add = '';
 				if (param.split[0].substring(5,8) == 'org') { add = 'prd'; }
@@ -143,14 +141,17 @@ darty.wynn.gui.details = (function () {
 				var url = '';
 				for (var n in param.split) {
 					if (n == 0) {
-						url += param.split[0].substring(0,5) + add + param.split[0].substring(8,9);
+						url += param.split[0].substring(0,5) + add;
+							if (add == 'org' && param.split[0].substring(8,9) < 5)
+							url += param.split[0].substring(8,9);
+							else
+							url += 4;
 					}
 					else {
 						url += '&'+param.split[n];
 					}
 				}
-				var toto = "http://" + window.location.host + "/details" + url;
-				window.location.assign(toto);
+				window.location.assign("http://" + window.location.host + "/details" + url);
 			});
 			
 			// Menu déroulant => Redirect => itself + Aggregat 
