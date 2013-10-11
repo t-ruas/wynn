@@ -7,10 +7,18 @@
         @@base_scripts@@
         @@scripts@@
         <script type="text/javascript">
+			obj = {{=JSON.stringify(it)}};
             darty.wynn.pageData = {{=JSON.stringify(it)}};
             darty.wynn.gui.details.start();
+			var prd = "prd";
+			var org = "org";
         </script>
+		<script type="text/javascript">
+			
+		</script>
         <script id="tmplDetailsTable" type="text/x-dot-template">
+			
+			
             <table id="detailsTable">
                 <thead>
                     <tr>
@@ -53,7 +61,18 @@
     <body>
         <div id="mainContent">
             <div id="mainContentTop">
-                <div id="breadcrumb">filtres....</div>
+                <div id="breadcrumb">
+					<div id="bouton-home">
+						<img src="/images/details/img-home.png" alt="" id="home"/>
+						<div id="ariane">
+						<div id="ariane1">Darty</div>
+						<div id="ariane2">Catalogue</div>
+						</div>
+						<div id="bouton">
+							<span id="prd" class="active">Produits</span><span id="org" class="active">Lieux</span>
+						</div>
+					</div>
+				</div>
             </div>
             <div id="mainContentMiddle">
             </div>

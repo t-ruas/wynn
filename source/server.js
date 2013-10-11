@@ -46,11 +46,12 @@ function login(context, callback) {
     });
 }
 
+// Détruit le cookie lors de la déconnexion
 function logout(context) {
     var cookies = new _cookies(context.request, context.response, _config.keys);
     cookies.set(_config.authCookieName, null);
 }
-
+// créé un cookie lors de la connexion
 function authorize(context) {
     var cookies = new _cookies(context.request, context.response, _config.keys);
     var cookie = cookies.get(_config.authCookieName, {signed: true});
@@ -60,6 +61,7 @@ function authorize(context) {
     }
 }
 
+// retourne true ou la page de log, si l'on est pas logué ! 
 function authorizeOrRedirect(context, callback) {
     if (!authorize(context)) {
         callback(null, {redirect: 'login'});
@@ -68,6 +70,7 @@ function authorizeOrRedirect(context, callback) {
     }
 }
 
+// retourne true si c'est autorisé, 403 si l'utilisateur n'a pas accès
 function authorizeOrFail(context, callback) {
     if (!authorize(context)) {
         callback(null, {status: 403});
@@ -117,14 +120,17 @@ var routes = {
                 }
             }
         },
-        {
-            pattern: /^\/details$/i,
+        {			
+			// on envoie la page avec quelques informations dans le result.
+			pattern: /^\/details$/i,
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
+                    // on récupère les données qui seront necessaire à la conception de la page (données envoyées avec le template)
                     getRefData(context, function (error, result) {
                         if (error) {
                             callback(error);
                         } else {
+                            _logger.info('KIKI !!!!!! ' + result.filtres);
                             callback(error, {file: 'details.html', fileData: result});
                         }
                     });
@@ -198,18 +204,21 @@ var routes = {
     ]
 };
 
-// Récupération des données de référentiels déposées sur les pages: filtres, budget, ordre.
+// Récupération des données de référentiels déposées sur les pages: 
+// filtres, budget, ordre.
 function getRefData(context, callback) {
     var data = {};
     _data.getFilterText(context.path.query, function (error, result) {
         if (error) {
             callback(error);
         } else {
+			// ajout des filtres
             data.filtres = result;
             _data.getBudget(function (error, result) {
                 if (error) {
                     callback(error);
                 } else {
+					// ajout des budget
                     data.budget = result;
                     callback(error, data);
                 }
