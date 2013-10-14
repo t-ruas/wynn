@@ -81,10 +81,10 @@ body {
     float:right;
     font-size: 8px;
     background-color: #D7D7F4; 
-    margin-top:30px;
+    margin-top:19%;
     
 }
-.evolution {text-align:right;width:70px;}
+.evolution {text-align:right;width:150px;}
 .fixe {text-align:right;padding-right:5px;width:60px;color:rgb(91,155,213);}
 div.CA>table tr>th.fixe {font-size:72px;}
 div.CA>table tr>th.evolution {font-size:36px; float:right;}

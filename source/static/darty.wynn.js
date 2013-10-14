@@ -30,7 +30,7 @@ darty.wynn.formatPrice = function (n) {
 };
 
 darty.wynn.formatEvo = function (n) {
-    return isNaN(n) ? 'n/a' : ((n < 0 ? '- ' : '+ ') + n + '%');
+    return isNaN(n) ? 'n/a' : ((n < 0 ? '- ' : '+ ') + Math.abs(n).toFixed(2) + '%');
 };
 
 darty.wynn.formatPrct = function (n) {

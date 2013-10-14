@@ -130,7 +130,6 @@ var routes = {
                         if (error) {
                             callback(error);
                         } else {
-                            _logger.info('KIKI !!!!!! ' + result.filtres);
                             callback(error, {file: 'details.html', fileData: result});
                         }
                     });

@@ -32,7 +32,7 @@ function sendRequest(options, data, callback) {
             if (result.error) {
                 callback(new _errors.Error('2 ElasticSearchError', result.error));
             } else {
-              //  _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(result, {depth: null}));
+               // _logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(result, {depth: null}));
 
                 callback(null, result);
             }
@@ -41,7 +41,7 @@ function sendRequest(options, data, callback) {
         callback(error);
     });
     if (data) {
-        _logger.info('Requête ElasticSearch : ' + _util.inspect(data, {depth: null}));
+       // _logger.info('Requête ElasticSearch : ' + _util.inspect(data, {depth: null}));
         req.write(JSON.stringify(data));
     }
     req.end();
@@ -63,22 +63,39 @@ function dateToString(date) {
     return _moment(date).format('YYYYMMDDHHmm');
 }
 
-function makeDateFilter(date, dateRef) {
+function makeDateFilter(date) {
 
+//_logger.info('2 Réponse ElasticSearch : ' + _util.inspect(date, {depth: null}));
 
+    return {
+        range: {
+            'DATE': {
+            	lte: dateToString(date),
+                gte: dateToString(date.setHours(0,0,0,0))
 
+               
+            }
+        }
+    };
+}
+
+function makeDateFilterLib(date) {
 
 
     return {
         range: {
             'DATE': {
-                gte: dateToString(date),
+            	lte: dateToString(date),
+                gte: dateToString(date.setHours(0,0,0,0))
 
-                lte: dateToString(dateRef)
+               
             }
         }
     };
 }
+
+
+
 
 // permet de retourner le budget pour chaque catégories
 function getBudget(callback) {
@@ -87,14 +104,9 @@ function getBudget(callback) {
 
 function prepareDateFilters(tempsComptSet) {
 
-    var dates = new Array(4);
-	var dateRef;
-
-
+    var dates = new Array(5);
 	dates[0] = new Date(2013, 8, 27, 15, 57, 56);
-	 
     dates[0].setMinutes(dates[0].getMinutes() -  _config.tempsChargReel);
-    dateRef=dates[0];
     dates[1] = new Date(dates[0]);
     dates[1].setMinutes(dates[1].getMinutes() -  _config.tempsChargTalend);
     if (tempsComptSet !=null){
@@ -105,13 +117,20 @@ function prepareDateFilters(tempsComptSet) {
 
     dates[3] = new Date(dates[1]);
     dates[3].setDate(dates[3].getDate() - _config.jour1an);
+    dates[4] = new Date(dates[0]);
+    
 	
 
 	
 
 
-    for (var i = 0; i < 4; i++) {
-        dates[i] = makeDateFilter(dates[i], dateRef );
+    for (var i = 0; i < 5; i++) {
+		if (i != 4){
+        	dates[i] = makeDateFilter(dates[i]);
+       	}
+       	else {
+       		dates[4] = makeDateFilterLib (dates[4]);
+       	}
 
     }
   
@@ -152,6 +171,7 @@ function makeNavFilters(options, prefix) {
 
 // Traduit {prd1: 'CD1'} en {prd1: {cd: 'CD1', lib: 'LB1'}}.
 function getFilterText(options, callback) {
+	_logger.info('2 Réponse ElasticSearch JE RENTRE DEDANS DEBUT: ' + _util.inspect(options.length, {depth: null}));
     var o = {};
     var cancel = false;
     var i = 0;
@@ -162,10 +182,12 @@ function getFilterText(options, callback) {
                 getLib(filterFields[n], options[n], function (error, result) {
                     // En cas d'erreur sur un des codes, on sort en erreur et ignore tous les autres retours.
                     if (error) {
+                    	_logger.info('2 Réponse ERROR : ' + _util.inspect(error, {depth: null}));
                         callback(error);
                         cancel = true;
                     }
                     if (!cancel) {
+                    	_logger.info('2 Réponse ElasticSearch JE RENTRE DEDANS : ' + _util.inspect(options, {depth: null}));
                         o[n] = {cd: options[n], lib: result};
                         if (!--i) {
                             callback(null, o);
@@ -177,6 +199,8 @@ function getFilterText(options, callback) {
             }
         })(m);
     }
+    
+    _logger.info('2 Réponse ElasticSearch JE RENTRE DEDANS FIN: ' + _util.inspect(i, {depth: null}));
     if (!i) {
         callback(null, o);
     }
@@ -204,11 +228,14 @@ function getLib(field, code, callback) {
             fields: [field.cd, field.lib],
             filter: {term: f}
         };
+        
 		// pour retrouver un libellé en particulier s'il manque
         postSearch('lv', data, function (error, result) {
             if (error) {
                 callback(error);
             } else {
+            	
+            	_logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(result, {depth: null}));
                 if (result.hits.hits.length) {
                     libCache[field.cd][code] = result.hits.hits[0].fields[field.lib];
                     callback(null, libCache[field.cd][code]);
@@ -381,7 +408,7 @@ function getDetails(options, callback) {
     var data = {
         size: 0,
         facets: {
-            'lib': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fLib},
+            'lib': {facet_filter: {and: [fDates[4]].concat(fPrd).concat(fOrg)}, terms: fLib},
             'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
@@ -416,6 +443,7 @@ function getDetails(options, callback) {
 				
                 for (var i = 0, imax = terms.length; i < imax; i++) {
                     var term = terms[i];
+                    //_logger.info('2 Réponse ElasticSearch TERM: ' + _util.inspect(term.total_count, {depth: null}));
                     o[term.term][p] = term.total_count;
                    // _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(o[terms[i].term][p], {depth: null}));
                 }
@@ -442,6 +470,7 @@ function getDetails(options, callback) {
                     cd: parts[0],
                     lib: parts[1]
                 };
+               // _logger.info('2 Réponse ElasticSearch TERM: ' + _util.inspect(o, {depth: null})); 
                 // On en profite pour remplir le cache des libellés.
                 if (!libCache[aggField.cd][parts[0]]) {
                     libCache[aggField.cd][parts[0]] = parts[1];
@@ -451,7 +480,6 @@ function getDetails(options, callback) {
             mergeCaList('ca', result.facets['ca'].terms);
             mergeCaList('ca2m', result.facets['ca_2m'].terms);
             mergeCaList('ca1y', result.facets['ca_1y'].terms);
-            _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(o, {depth: null}));
             mergeCaList('caGlobal1y', result.facets['ca_global_1y'].terms);
             mergeCaList('caGlobal2m', result.facets['ca_global_2m'].terms);
             mergeVtList('vt2m', result.facets['vt_2m'].terms);
@@ -468,6 +496,7 @@ function getDetails(options, callback) {
             mergeCaList('caRem1y', result.facets['ca_rem_1y'].terms);
             mergeCaList('caRem2m', result.facets['ca_rem_2m'].terms);
             mergeCaList('caRemGlobal2m', result.facets['ca_rem_global_2m'].terms);
+            
 
 
             var u = [];
