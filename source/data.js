@@ -32,7 +32,8 @@ function sendRequest(options, data, callback) {
             if (result.error) {
                 callback(new _errors.Error('2 ElasticSearchError', result.error));
             } else {
-                _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(result, {depth: null}));
+              //  _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(result, {depth: null}));
+
                 callback(null, result);
             }
         });
@@ -58,15 +59,22 @@ function round2(n) {
 }
 
 function dateToString(date) {
-    return _moment().format('YYYYMMDDHHmm');
+
+    return _moment(date).format('YYYYMMDDHHmm');
 }
 
-function makeDateFilter(date) {
+function makeDateFilter(date, dateRef) {
+
+
+
+
+
     return {
         range: {
             'DATE': {
-                gte: dateToString(new Date(date.getFullYear(), date.getMonth(), date.getDate())),
-                lt: dateToString(date)
+                gte: dateToString(date),
+
+                lte: dateToString(dateRef)
             }
         }
     };
@@ -77,20 +85,36 @@ function getBudget(callback) {
     callback(null, {ca: 10, vtPartAcc: 15, vtPartServ: 15, vtPartOa: 15, vtPartRem: 15});
 }
 
-function prepareDateFilters() {
+function prepareDateFilters(tempsComptSet) {
 
-    var dates = new Array(3);
+    var dates = new Array(4);
+	var dateRef;
 
-    dates[0] = new Date();
+
+	dates[0] = new Date(2013, 8, 27, 15, 57, 56);
+	 
+    dates[0].setMinutes(dates[0].getMinutes() -  _config.tempsChargReel);
+    dateRef=dates[0];
     dates[1] = new Date(dates[0]);
-    dates[1].setMinutes(dates[1].getMinutes() - 2);
+    dates[1].setMinutes(dates[1].getMinutes() -  _config.tempsChargTalend);
+    if (tempsComptSet !=null){
+    	dates[1] = dates[1].setMinutes(dates[1].getMinutes() -  tempsComptSet);
+   		}
     dates[2] = new Date(dates[1]);
-    dates[2].setFullYear(dates[2].getFullYear() - 1);
-	//_logger.info('tableau Dates 1er: ' + _util.inspect(dates, {depth: null}));
-    for (var i = 0; i < 3; i++) {
-        dates[i] = makeDateFilter(dates[i]);
+    dates[2].setDate(dates[2].getDate() - _config.jourCalcMoyeEnt);
+
+    dates[3] = new Date(dates[1]);
+    dates[3].setDate(dates[3].getDate() - _config.jour1an);
+	
+
+	
+
+
+    for (var i = 0; i < 4; i++) {
+        dates[i] = makeDateFilter(dates[i], dateRef );
+
     }
-    //_logger.info('tableau Dates : ' + _util.inspect(dates, {depth: null}));
+  
 
     return dates;
 }
@@ -217,28 +241,30 @@ function getIndicators(options, callback) {
         size: 0,
         facets: {
             'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, statistical: fCa},
-            'ca_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, statistical: fCa},
+            'ca_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fCa},
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fCa},
-            'ca_global_1y': {facet_filter: {and: [fDates[2]].concat(fPrd)}, statistical: fCa},
+            'ca_global_1y': {facet_filter: {and: [fDates[3]].concat(fPrd)}, statistical: fCa},
             'ca_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fCa},
-            'vt_acc_1y': {facet_filter: {and: [fDates[2], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_acc_1y': {facet_filter: {and: [fDates[3], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd)}, terms: fVt},
-            'vt_serv_1y': {facet_filter: {and: [fDates[2], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_serv_1y': {facet_filter: {and: [fDates[3], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_serv_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_serv_global_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd)}, terms: fVt},
-            'vt_oa_1y': {facet_filter: {and: [fDates[2], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_oa_1y': {facet_filter: {and: [fDates[3], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},
-            'ca_rem_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},
+            'ca_rem_1y': {facet_filter: {and: [fDates[3], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},
             'ca_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},
             'ca_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms: fCa},
-            'vt_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt},
-            'vt_global_1y': {facet_filter: {and: [fDates[2]].concat(fPrd)}, terms: fVt},
+            'vt_global_1y': {facet_filter: {and: [fDates[3]].concat(fPrd)}, terms: fVt},
             'vt_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fVt}
         }
     };
+
+
 
     postSearch('lv', data, function (error, result) {
         if (error) {
@@ -283,23 +309,20 @@ function getIndicators(options, callback) {
 
 function getIndicatorsEnt(options, callback) {
 
-    var fDates = prepareDateFilters();
+    var fDates = prepareDateFilters(_config.derniereEntrees);
     var fEnt = {field: 'QENTRE'};
+	var fDat = {field: 'DATE'};
     var fOrg = makeNavFilters(options, 'org');
-    var test = "\"range\": {\"DATE\": {\"from\": \"20130812 09:45\" ,\"to\":  \"20130812 09:45\"}}";
+
 
     var data = {
-    	"sort": [
-      {
-         "entree_mag.DVENTE": {
-            "order": "desc"
-         }
-      }
-   ],
-        size: 1,
+
+        size: 0,
         facets: {
             'ent_2m': {facet_filter: {and: [fDates[1]].concat(fOrg)}, statistical: fEnt},
-            'ent_1y': {facet_filter: {and: [fDates[2]].concat(fOrg)}, statistical: fEnt}
+            'ent_1y': {facet_filter: {and: [fDates[3]].concat(fOrg)}, statistical: fEnt},
+            'ent_dat': {facet_filter: {and: [fDates[2]].concat(fOrg)}, statistical: fDat}
+
         }
     };
 
@@ -308,7 +331,7 @@ function getIndicatorsEnt(options, callback) {
             callback(error);
         } else {
 			
-			_logger.info('Réponse EslasticeSearch ent: ' + _util.inspect(result, {depth: null}));
+			
 			
             var getEntFacet = function (name) {
                 return result.facets[name].total;
@@ -317,6 +340,7 @@ function getIndicatorsEnt(options, callback) {
             callback(null, {
                 ent2m: getEntFacet('ent_2m') ,
                 ent1y: getEntFacet('ent_1y'),
+				entDat: getEntFacet('ent_dat'),
             });
         }
     });
@@ -327,7 +351,6 @@ function getIndicatorsEnt(options, callback) {
 function getDetails(options, callback) {
 
     var aggField = filterFields[options.agg];
-
     var fDates = prepareDateFilters();
     var fAcc = {term: {'FLAGPM': 'acc'}};
     var fServ = {term: {'FLAGTYPART': 'p'}};
@@ -352,32 +375,31 @@ function getDetails(options, callback) {
         key_field: aggField.cd,
         value_field: 'PVTOTAL'
     };
-
     var fPrd = makeNavFilters(options, 'prd');
     var fOrg = makeNavFilters(options, 'org');
 
     var data = {
         size: 0,
         facets: {
-            'lib': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms: fLib},
+            'lib': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fLib},
             'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
-            'ca_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
+            'ca_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
-            'ca_global_1y': {facet_filter: {and: [fDates[2]].concat(fPrd)}, terms_stats: fCa},
+            'ca_global_1y': {facet_filter: {and: [fDates[3]].concat(fPrd)}, terms_stats: fCa},
             'ca_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fCa},
-            'vt_acc_1y': {facet_filter: {and: [fDates[2], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_acc_1y': {facet_filter: {and: [fDates[3], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd)}, terms: fVt},
-            'vt_serv_1y': {facet_filter: {and: [fDates[2], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_serv_1y': {facet_filter: {and: [fDates[3], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_serv_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_serv_global_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd)}, terms: fVt},
-            'vt_oa_1y': {facet_filter: {and: [fDates[2], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_oa_1y': {facet_filter: {and: [fDates[3], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},
-            'ca_rem_1y': {facet_filter: {and: [fDates[2], fRem].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
+            'ca_rem_1y': {facet_filter: {and: [fDates[3], fRem].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms_stats: fCa},
-            'vt_1y': {facet_filter: {and: [fDates[2]].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
         }
     };
@@ -386,13 +408,16 @@ function getDetails(options, callback) {
         if (error) {
             callback(error);
         } else {
-
+		
+		
             var o = {};
 
 			var mergeCaList = function (p, terms) {
+				
                 for (var i = 0, imax = terms.length; i < imax; i++) {
                     var term = terms[i];
-                    o[term.term][p] = term.total;
+                    o[term.term][p] = term.total_count;
+                   // _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(o[terms[i].term][p], {depth: null}));
                 }
             }
 
@@ -426,6 +451,7 @@ function getDetails(options, callback) {
             mergeCaList('ca', result.facets['ca'].terms);
             mergeCaList('ca2m', result.facets['ca_2m'].terms);
             mergeCaList('ca1y', result.facets['ca_1y'].terms);
+            _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(o, {depth: null}));
             mergeCaList('caGlobal1y', result.facets['ca_global_1y'].terms);
             mergeCaList('caGlobal2m', result.facets['ca_global_2m'].terms);
             mergeVtList('vt2m', result.facets['vt_2m'].terms);
@@ -442,6 +468,7 @@ function getDetails(options, callback) {
             mergeCaList('caRem1y', result.facets['ca_rem_1y'].terms);
             mergeCaList('caRem2m', result.facets['ca_rem_2m'].terms);
             mergeCaList('caRemGlobal2m', result.facets['ca_rem_global_2m'].terms);
+
 
             var u = [];
 
