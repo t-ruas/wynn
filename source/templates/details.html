@@ -29,32 +29,32 @@
 							 <div id="zone">									
 							</div>							
 						</th>
-                        <th class="tri"></th>
-                        <th class="tri"></th>
-                        <th class="tri">Acc.</th>
-                        <th class="tri">Gar.</th>
-                        <th class="tri">OA.</th>
-                        <th class="tri">Rem.</th>
+                        <th class="table-header" id="1">CA <img src="images/details/fleche-top.png" class="hideImage" alt="" /></th>
+                        <th class="table-header" id="2">% <img src="images/details/fleche-top.png" class="hideImage" alt=""/></th>
+                        <th class="table-header" id="3">Acc. <img src="images/details/fleche-top-blue.png" class="hideImage" alt=""/></th>
+                        <th class="table-header" id="4">Gar. <img src="images/details/fleche-top-blue.png" class="hideImage" alt=""/></th>
+                        <th class="table-header" id="5">OA. <img src="images/details/fleche-top-blue.png" class="hideImage" alt=""/></th>
+                        <th class="table-header" id="6">Rem. <img src="images/details/fleche-top-blue.png" class="hideImage" alt=""/></th>
                     </tr>
                 </thead>
                 <tbody>
                     <%~it.list:line%>
                         <tr>
-                            <td><a href="/details?<%=line.ddQuery%>"><%=line.lib%></a></td>
-                            <td><a href="/accueil?<%=line.dbQuery%>"><%=line.ca%></a></td>
-                            <td class="<%=line.caEvo.cls%>"><a href="#" class="linkExpand"><%=line.caEvo.val%></a></td>
-                            <td class="<%=line.acc.cls%>"><%=line.acc.val%></td>
-                            <td class="<%=line.serv.cls%>"><%=line.serv.val%></td>
-                            <td class="<%=line.oa.cls%>"><%=line.oa.val%></td>
-                            <td class="<%=line.rem.cls%>"><%=line.rem.val%></td>
+                            <td class="content"><a href="/details?<%=line.ddQuery%>"><%=line.lib%></a></td>
+                            <td class="content color_X"><a href="/accueil?<%=line.dbQuery%>"><%=line.ca%></a></td>
+                            <td class="content color_1 <%=line.caEvo.cls%>"><span class="linkExpand"><%=line.caEvo.val%></span></td>
+                            <td class="content <%=line.acc.cls%>"><%=line.acc.val%></td>
+                            <td class="content <%=line.serv.cls%>"><%=line.serv.val%></td>
+                            <td class="content <%=line.oa.cls%>"><%=line.oa.val%></td>
+                            <td class="content <%=line.rem.cls%>"><%=line.rem.val%></td>
                         </tr>
                     <%~%>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td></td>
-                        <td><%=it.totals.ca%></td>
-                        <td class="<%=it.totals.caEvo.cls%>"><%=it.totals.caEvo.val%></td>
+                        <td class="color_X"><%=it.totals.ca%></td>
+                        <td class="color_1 <%=it.totals.caEvo.cls%>"><%=it.totals.caEvo.val%></td>
                         <td class="<%=it.totals.acc.cls%>"><%=it.totals.acc.val%></td>
                         <td class="<%=it.totals.serv.cls%>"><%=it.totals.serv.val%></td>
                         <td class="<%=it.totals.oa.cls%>"><%=it.totals.oa.val%></td>
@@ -71,8 +71,8 @@
 					<div id="bouton-home">
 						<img src="/images/details/img-home.png" alt="" id="home"/>
 						<div id="ariane">
-						<div id="ariane1">Darty</div>
-						<div id="ariane2">Catalogue</div>
+						<div id="ariane1" class="org">Darty</div>
+						<div id="ariane2" class="prd">Catalogue</div>
 						</div>
 						<div id="bouton">
 							<span id="prd" class="active">Produits</span><span id="org" class="active">Lieux</span>

@@ -37,7 +37,7 @@ darty.wynn.gui.accueil = (function () {
             		
             		result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
 	            	pagefn = doT.template($('#indicateurs').text());
-	                $('#content-left').html(pagefn(result));
+	                $('#mainContent').html(pagefn(result));
 	                console.log('partie gauche chargee');
         		}});
             	
@@ -47,7 +47,7 @@ darty.wynn.gui.accueil = (function () {
 
 
                 pagefn = doT.template($('#load-ranking').text());
-                $('#content-right').html(pagefn(result));
+                $('#blueContent').html(pagefn(result));
                 console.log('partie droite chargee');
 
                 

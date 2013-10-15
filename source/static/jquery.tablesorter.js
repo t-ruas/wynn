@@ -785,7 +785,7 @@
                         }
                     });
                     // apply easy methods that trigger binded events
-                    $this.bind("update", function () {
+                    $this.bind("update", function () { // TODO : Remove that ! 
                         var me = this;
                         setTimeout(function () {
                             // rebuild parsers.
