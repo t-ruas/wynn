@@ -80,15 +80,14 @@ function makeDateFilter(date) {
 }
 
 function makeDateFilterLib(date) {
-
-
+var tempDate = new Date (date);
+tempDate.setDate(tempDate.getDate() - _config.jour1an);
+tempDate.setHours(0,0,0,0);
     return {
         range: {
             'DATE': {
             	lte: dateToString(date),
-                gte: dateToString(date.setHours(0,0,0,0))
-
-               
+                gte: dateToString(tempDate)
             }
         }
     };
@@ -171,7 +170,6 @@ function makeNavFilters(options, prefix) {
 
 // Traduit {prd1: 'CD1'} en {prd1: {cd: 'CD1', lib: 'LB1'}}.
 function getFilterText(options, callback) {
-	_logger.info('2 Réponse ElasticSearch JE RENTRE DEDANS DEBUT: ' + _util.inspect(options.length, {depth: null}));
     var o = {};
     var cancel = false;
     var i = 0;
@@ -179,6 +177,7 @@ function getFilterText(options, callback) {
         (function (n) {
             if (n in filterFields) {
                 i++;
+                _logger.info('2 Réponse test : ' + _util.inspect(filterFields[n], {depth: null}));
                 getLib(filterFields[n], options[n], function (error, result) {
                     // En cas d'erreur sur un des codes, on sort en erreur et ignore tous les autres retours.
                     if (error) {
@@ -187,7 +186,6 @@ function getFilterText(options, callback) {
                         cancel = true;
                     }
                     if (!cancel) {
-                    	_logger.info('2 Réponse ElasticSearch JE RENTRE DEDANS : ' + _util.inspect(options, {depth: null}));
                         o[n] = {cd: options[n], lib: result};
                         if (!--i) {
                             callback(null, o);
@@ -200,7 +198,6 @@ function getFilterText(options, callback) {
         })(m);
     }
     
-    _logger.info('2 Réponse ElasticSearch JE RENTRE DEDANS FIN: ' + _util.inspect(i, {depth: null}));
     if (!i) {
         callback(null, o);
     }
@@ -228,14 +225,14 @@ function getLib(field, code, callback) {
             fields: [field.cd, field.lib],
             filter: {term: f}
         };
-        
+        _logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(data, {depth: null}));
 		// pour retrouver un libellé en particulier s'il manque
         postSearch('lv', data, function (error, result) {
             if (error) {
                 callback(error);
             } else {
             	
-            	_logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(result, {depth: null}));
+            	
                 if (result.hits.hits.length) {
                     libCache[field.cd][code] = result.hits.hits[0].fields[field.lib];
                     callback(null, libCache[field.cd][code]);
@@ -430,7 +427,7 @@ function getDetails(options, callback) {
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
         }
     };
-
+_logger.info('2 Réponse ElasticSearch OOO: ' + _util.inspect(data, {depth: null}));
     postSearch('lv', data, function (error, result) {
         if (error) {
             callback(error);
@@ -443,7 +440,7 @@ function getDetails(options, callback) {
 				
                 for (var i = 0, imax = terms.length; i < imax; i++) {
                     var term = terms[i];
-                    //_logger.info('2 Réponse ElasticSearch TERM: ' + _util.inspect(term.total_count, {depth: null}));
+                   // _logger.info('2 Réponse ElasticSearch TERM: ' + _util.inspect(term.total_count, {depth: null}));
                     o[term.term][p] = term.total_count;
                    // _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(o[terms[i].term][p], {depth: null}));
                 }
@@ -472,9 +469,11 @@ function getDetails(options, callback) {
                 };
                // _logger.info('2 Réponse ElasticSearch TERM: ' + _util.inspect(o, {depth: null})); 
                 // On en profite pour remplir le cache des libellés.
+                 
                 if (!libCache[aggField.cd][parts[0]]) {
                     libCache[aggField.cd][parts[0]] = parts[1];
                 }
+                
             }
 
             mergeCaList('ca', result.facets['ca'].terms);
