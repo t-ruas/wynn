@@ -126,10 +126,12 @@ var routes = {
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
                     // on récupère les données qui seront necessaire à la conception de la page (données envoyées avec le template)
+                    
                     getRefData(context, function (error, result) {
                         if (error) {
                             callback(error);
                         } else {
+                      _logger.info('2 Réponse dans RefData : ' + _util.inspect(result, {depth: null}));
                             callback(error, {file: 'details.html', fileData: result});
                         }
                     });
@@ -206,13 +208,19 @@ var routes = {
 // Récupération des données de référentiels déposées sur les pages: 
 // filtres, budget, ordre.
 function getRefData(context, callback) {
+	  	
     var data = {};
     _data.getFilterText(context.path.query, function (error, result) {
+    	
         if (error) {
+            
             callback(error);
         } else {
+        	_logger.info('2 Réponse dans RefData : ' + _util.inspect(result, {depth: null}));
+        	
 			// ajout des filtres
             data.filtres = result;
+            
             _data.getBudget(function (error, result) {
                 if (error) {
                     callback(error);
