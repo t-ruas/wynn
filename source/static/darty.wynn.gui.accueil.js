@@ -199,6 +199,8 @@ darty.wynn.gui.accueil = (function () {
     (val > histo) && score++;
     (val > histo + (histo * moyenne) / 100) && score++;
     (val > histo + (histo * budget) / 100) && score++;
+    console.log (val, histo, moyenne, budget);
+    console.log (score);
     return score;
 	}
 	

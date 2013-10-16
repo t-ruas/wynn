@@ -13,9 +13,7 @@ var darty = {
 
 darty.wynn.priceToStr = function (n) {
     var a = n.toString().split('.');
-    console.log(a);
     a[0] = a[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    console.log(a[0]);
 	a.join(','); 
 	a=parseInt(a)
     return a;

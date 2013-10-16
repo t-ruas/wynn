@@ -67,6 +67,7 @@ darty.wynn.data = (function () {
         (val > histo) && score++;
         (val > moyenne) && score++;
         budget && (val > histo + (histo * budget) / 100) && score++;
+        console.log(score);
         return score;
     }
 

@@ -7,16 +7,17 @@ div#bouton-home {
 	position: relative;
 	top: 5px;
 }
-.noActive {background-color: white;
-font-weight: bold;}
+.noActive {background-color: green;
+font-weight: bold;
+color:black;}
 div#bouton>span {
 	border: 1px solid black;
 	padding: 3px 10px;
 }
 .active {
-background-color: green;
+background-color: white;
 font-weight: bold;
-color: white;}
+color: black;}
 #bouton {
 	position: relative;
 	display: inline-block;
@@ -90,7 +91,6 @@ td.content {
 }
 #detailsTable th, #detailsTable td {
     padding: 3px 6px;
-	border: 1px solid black;
 	line-height: 170%;
 }
 
@@ -139,7 +139,6 @@ div.zone {
 
 div#zone {
 	position:absolute;
-	border: 1px dotted black;
 	margin: -11px 0px 0px 0px;
 	padding : 1px;
 	width: 120px;

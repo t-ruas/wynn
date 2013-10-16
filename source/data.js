@@ -41,7 +41,7 @@ function sendRequest(options, data, callback) {
         callback(error);
     });
     if (data) {
-       // _logger.info('Requête ElasticSearch : ' + _util.inspect(data, {depth: null}));
+        _logger.info('Requête ElasticSearch : ' + _util.inspect(data, {depth: null}));
         req.write(JSON.stringify(data));
     }
     req.end();
