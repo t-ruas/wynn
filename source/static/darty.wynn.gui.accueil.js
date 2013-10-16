@@ -73,8 +73,11 @@ darty.wynn.gui.accueil = (function () {
 		var h = (((ndate.getMinutes()/105 + .5) | 0) + ndate.getHours()) % 24;
 
         window.setInterval(function () {
+			var tex = {};
+			tex.un = 'date des données ';
+			tex.deux = ' prochaine récupération dans ';
             if (refreshTimer) {
-                $('#refreshTimer').text('date des données ' + darty.wynn.formatTime(lastRefresh) + ' prochaine récupération dans ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's.');
+                $('#refreshTimer').text(darty.wynn.formatTime(lastRefresh) + ' ( ' + Math.ceil((nextRefresh - new Date()) / 1000) + ' s)');
             } else {
                 $('#refreshTimer').text('');
             }

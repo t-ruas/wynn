@@ -224,8 +224,11 @@ darty.wynn.gui.details = (function () {
 			
 			
             window.setInterval(function () {
+				var tex = {};
+				tex.un = 'date des données ';
+				tex.deux = ' prochaine récupération dans ';
                 if (refreshTimer) {
-                    $('#refreshTimer').text('date des données ' + _w.formatTime(lastRefresh) + ' prochaine récupération dans ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's.');
+                    $('#refreshTimer').text(_w.formatTime(lastRefresh) + ' ( ' + Math.ceil((nextRefresh - new Date()) / 1000) + ' s)');
                 } else {
                     $('#refreshTimer').text('');
                 }

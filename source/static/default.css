@@ -82,15 +82,18 @@ thead>tr>th {
 /************
 Table Content 
 ************/
-
+td.content.first-column {
+	text-align: left;
+}
 td.content {
-	text-align : right;
+	text-align: right;
 }
 #detailsTable th, #detailsTable td {
     padding: 3px 6px;
 	border: 1px solid black;
 	line-height: 170%;
 }
+
 td a {
 text-decoration: none;
 color: black;
@@ -202,12 +205,13 @@ body {
     color: #7F7F7C;
     cursor: pointer;
     text-align: right;
-    width: 30%;
+    width: 14%;
     font-size: 80%;
     background-color: #D7D7F4; 
 	bottom: 1%;
 	position: absolute;
 	right: 2%;
+	padding: 2px 15px 2px 2px;
 }
 .CA {width:50%; 
 margin-left: auto;
