@@ -22,19 +22,22 @@
 			
 		</script>
         <script id="tmplDetailsTable" type="text/x-dot-template">
-            <table id="detailsTable">
+            <!-- <div id="menu"> -->
+				
+			<!-- </div> -->
+			<table id="detailsTable">
                 <thead>
                     <tr>
 					    <th id="menu">
-							 <div id="zone">									
+							<div id="zone">									
 							</div>							
 						</th>
-                        <th class="table-header" id="1">CA <img src="images/details/fleche-top.png" class="hideImage" alt="" /></th>
-                        <th class="table-header" id="2">% <img src="images/details/fleche-top.png" class="hideImage" alt=""/></th>
-                        <th class="table-header" id="3">Acc. <img src="images/details/fleche-top-blue.png" class="hideImage" alt=""/></th>
-                        <th class="table-header" id="4">Gar. <img src="images/details/fleche-top-blue.png" class="hideImage" alt=""/></th>
-                        <th class="table-header" id="5">OA. <img src="images/details/fleche-top-blue.png" class="hideImage" alt=""/></th>
-                        <th class="table-header" id="6">Rem. <img src="images/details/fleche-top-blue.png" class="hideImage" alt=""/></th>
+                        <th id="1">CA</th>
+                        <th id="2">%</th>
+                        <th id="3">Acc.</th>
+                        <th id="4">Gar.</th>
+                        <th id="5">OA.</th>
+                        <th id="6">Rem.</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,12 +50,12 @@
                             <td class="content <%=line.serv.cls%>"><%=line.serv.val%></td>
                             <td class="content <%=line.oa.cls%>"><%=line.oa.val%></td>
                             <td class="content <%=line.rem.cls%>"><%=line.rem.val%></td>
-                        </tr>
+						</tr>
                     <%~%>
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td></td>
+						<td></td>
                         <td class="color_X"><%=it.totals.ca%></td>
                         <td class="color_1 <%=it.totals.caEvo.cls%>"><%=it.totals.caEvo.val%></td>
                         <td class="<%=it.totals.acc.cls%>"><%=it.totals.acc.val%></td>

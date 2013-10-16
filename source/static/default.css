@@ -7,12 +7,16 @@ div#bouton-home {
 	position: relative;
 	top: 5px;
 }
-.noActive {background-color: gray;}
+.noActive {background-color: white;
+font-weight: bold;}
 div#bouton>span {
 	border: 1px solid black;
 	padding: 3px 10px;
 }
-.active {background-color : blue;}
+.active {
+background-color: green;
+font-weight: bold;
+color: white;}
 #bouton {
 	position: relative;
 	display: inline-block;
@@ -81,11 +85,11 @@ Table Content
 
 td.content {
 	text-align : right;
-	font-size : 15px;
 }
 #detailsTable th, #detailsTable td {
     padding: 3px 6px;
 	border: 1px solid black;
+	line-height: 170%;
 }
 td a {
 text-decoration: none;
@@ -132,13 +136,20 @@ div.zone {
 
 div#zone {
 	position:absolute;
-	background-color: blue;
-	width: 85px;
-	margin: -10px 0px 0px 0px;
+	border: 1px dotted black;
+	margin: -11px 0px 0px 0px;
+	padding : 1px;
+	width: 120px;
 } 
 
+div#zone span {
+	text-align: left;
+}
 div#zone img{
 	padding: 0px 0px 0px 4px;
+	top: 5px;
+	right: 2px;
+	position:absolute;	
 }
 
 /*
@@ -149,6 +160,7 @@ div#zone img{
 body {
     margin: 0;
     font-family: arial;
+	font-size:100%;
 }
 
 #mainContent {
@@ -191,27 +203,64 @@ body {
     cursor: pointer;
     text-align: right;
     width: 30%;
-    font-size: 9px;
+    font-size: 80%;
     background-color: #D7D7F4; 
-    margin-top:19%;
-    bottom: 1%;
+	bottom: 1%;
 	position: absolute;
 	right: 2%;
 }
-.CA {width:70%; 
+.CA {width:50%; 
 margin-left: auto;
 margin-right: auto;
-text-align:center;}
+word-wrap: break-word;
+margin-top: 7%;
+text-align: right;
+}
+.CA table { 
+width : 100%}
 
+div.CA th.fixe {
+	width: 100%;
+	font-size: 400%;
+}
+div.CA th.fixe span{
+	text-align: right;
+}
+div.CA th.evolution {
+	width: 100%;
+	font-size: 175%;
+	text-align: right;
+	float:right;
+}
+.indicateurs {
+	width: 30%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top : 5%;
+}
+.indicateurs .label {
+	width: 45%;
+	text-align: left;
+	font-size: 160%;
+	font-weight: lighter;
+}
+.indicateurs .value {
+	width: 45%;
+	text-align: right;
+	font-size: 180%;
+	font-weight: lighter;
+}
+.bottom-line {
+	width: 60%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 3%;
+	text-align: center;
+}
 
-div.CA>table tr>th.fixe {font-size:72px;}
-div.CA>table tr>th.evolution {font-size:36px; float:right;}
-div.indicateurs .label {font-size: 18px;text-align:right;}
 .liste {width:170px;text-align:right;}
 
 .OA,.REM,.PSE,.ACC,#OA,#REM,#PSE,#ACC {position:relative;display:none; width:50px; text-align:middle;}
-div.indicateurs {width: 300px; margin-left: 128px; margin-top: 70px;}
-div.bottom-line {line-height:1px;font-size: 14px;margin-top: 55px;margin-left:85px;}
 .concretisation,.ventes,.entrees {display:inline;}
 
 
@@ -234,7 +283,6 @@ border-width:1px;
 border-style:dotted;
 border-color:black;}
 #informations {display:none;}
-/*#affichageCa (cursor:pointer;)*/
 
 .color_X {color:rgb(91,155,213)}
 

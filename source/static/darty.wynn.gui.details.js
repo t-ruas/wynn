@@ -16,13 +16,14 @@ darty.wynn.gui.details = (function () {
                 refreshTimer = window.setTimeout(refreshPage, _w.config.reqInterval);
                 lastRefresh = new Date();
                 nextRefresh = new Date(lastRefresh.getTime() + _w.config.reqInterval);
-				if (oneTime === false) {
-					oneTime = true;
-					getMenuAgg(function(){
+				getMenuAgg(function(){ // une fois le code généré, on le masque 
 					$("div.menuDeroul").css({"display":"hidden"});
 				});
+				if ((obj.filtres.agg.substring(0,3) == 'prd' && obj.filtres.agg.substring(3,4) == '6' )||
+					(obj.filtres.agg.substring(0,3) == 'org' && obj.filtres.agg.substring(3,4) == '4' )) {
+					$("table#detailsTable").find("a").removeAttr("href");
 				}
-            }
+			}
         });
     }
 	
@@ -108,6 +109,10 @@ darty.wynn.gui.details = (function () {
         return _w.makeQuery(f);
     }
 	
+	function removeLinks() {
+		
+	}
+	
     function start() {
         $(document).ready(function () {
 			// agrandir le tableau avec le volet droit 
@@ -123,10 +128,6 @@ darty.wynn.gui.details = (function () {
 				$('table').attr('id','detailsTable');
                 return false;
             });
-			
-			$( "th.table-header img.hideImage" ).bind( "click", function() {
-				alert('Le kiki de coco ! ');
-			});
 			
 			// Boutons de tri du tableau
             $(document).on('click', 'tr th.table-header', function () {
@@ -194,7 +195,7 @@ darty.wynn.gui.details = (function () {
 			// Menu déroulant => Affiche les options d'aggregat 
 			$(document).on('click', 'div#zone span', function () {
                 if($('div.menuDeroul').is(":hidden"))
-					$('div.menuDeroul').show("slow", function(){}); 
+					$('div.menuDeroul').show("fast", function(){}); 
 				else
 					$('div.menuDeroul').hide("fast", function(){});
 				console.log('Menu deroulant !');
@@ -203,6 +204,15 @@ darty.wynn.gui.details = (function () {
 			// Menu déroulant => Affiche les options d'aggregat 
 			$(document).on('click', 'div#zone img', function () {
                 console.log('tri sur la première colonne :)')
+				$("table#detailsTable").tablesorter({sortList: [[1,0]]})
+				var elem = $("div#zone img").attr("src");
+					if (elem == 'images/details/fleche-top.png')
+						$("div#zone img").attr("src","images/details/fleche-bottom.png");
+					else if (elem == 'images/details/fleche-bottom.png')
+						$("div#zone img").attr("src","images/details/fleche-top.png");
+					else
+						alert('Cheater !');
+						
             });
 			
 			// bouton d'activation de test TEST !!! 
@@ -309,13 +319,11 @@ darty.wynn.gui.details = (function () {
 	}
 	
 	function tablesorterControler(choix) { // fonction de tri du tableau (reçoit l'id du bloc html en arg)
-		console.log(choix);
 		$("table#detailsTable").tablesorter( {sortList: [[choix,0]]} );
 	}
 	
 	// function de set du menu Déroulant !
 	function getMenuAgg(callback) {
-		console.log('1'+obj);
 		var o = {};
 		// catcher la  dimension d'aggreg 
 		o.agg = {};
