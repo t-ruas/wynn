@@ -13,8 +13,12 @@ var darty = {
 
 darty.wynn.priceToStr = function (n) {
     var a = n.toString().split('.');
+    console.log(a);
     a[0] = a[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    return a.join(',');
+    console.log(a[0]);
+	a.join(','); 
+	a=parseInt(a)
+    return a;
 };
 
 darty.wynn.getPrct = function (a, b) {
@@ -26,11 +30,11 @@ darty.wynn.getEvol = function (a, b) {
 }
 
 darty.wynn.formatPrice = function (n) {
-    return isNaN(n) ? 'n/a' : (darty.wynn.priceToStr(n) + '€');
+    return isNaN(n) ? 0 + ' €': (darty.wynn.priceToStr(n) + ' €');
 };
 
 darty.wynn.formatEvo = function (n) {
-    return isNaN(n) ? 'n/a' : ((n < 0 ? '- ' : '+ ') + Math.abs(n).toFixed(2) + '%');
+    return isNaN(n) ? 'n/a' : ((n < 0 ? '- ' : '+ ') + Math.abs(n).toFixed(1) + '%');
 };
 
 darty.wynn.formatPrct = function (n) {
@@ -38,7 +42,7 @@ darty.wynn.formatPrct = function (n) {
 };
 
 darty.wynn.formatConcret = function (n) {
-    return isNaN(n) ? 'x' : (n.toFixed(2) + ' %');
+    return isNaN(n) ? 'x' : (n.toFixed(1) + ' %');
 };
 
 darty.wynn.formatTime = function (d) {

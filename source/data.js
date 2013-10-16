@@ -87,7 +87,7 @@ tempDate.setHours(0,0,0,0);
         range: {
             'DATE': {
             	lte: dateToString(date),
-                gte: dateToString(date.setHours(0,0,0,0))
+                gte: dateToString(tempDate)
             }
         }
     };

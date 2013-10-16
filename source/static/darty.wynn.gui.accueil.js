@@ -62,7 +62,7 @@ darty.wynn.gui.accueil = (function () {
     }
 
     function start() {
-    	console.log("kikou");
+
         $(document).ready(function () {
         refreshPage();
             
@@ -155,9 +155,10 @@ darty.wynn.gui.accueil = (function () {
 		switch (Math.ceil((nextRefresh - new Date()) / 1000))
 	{
 		case 120:
+		var vraiCA = darty.wynn.priceToStr(ca2minutes);
 		cumul=0;
 		$('#affichageCa').remove();	
-		$("#ligneARajouter").append("<th class=\"color_X fixe\" id=\"affichageCa\"><span>"+ca2minutes+" €</span></th>");
+		$("#ligneARajouter").append("<th class=\"color_X fixe\" id=\"affichageCa\"><span>"+vraiCA+" €</span></th>");
 		
 		break;
 		
