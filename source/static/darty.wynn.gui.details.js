@@ -109,25 +109,18 @@ darty.wynn.gui.details = (function () {
         return _w.makeQuery(f);
     }
 	
-	function removeLinks() {
-		
-	}
-	
     function start() {
         $(document).ready(function () {
 			// agrandir le tableau avec le volet droit 
             $(document).on('click', '#detailsTable .linkExpand', function () {
                 $('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
-				$('table').removeAttr("id");
-				$('table').attr('id','detailsTableExpanded');
-                return false;
+				if($('#detailsTable').attr('class'))
+					$('#detailsTable').removeClass();
+				else
+					$('#detailsTable').addClass('reducted');
+				return false;
             });
-			$(document).on('click', '#detailsTableExpanded .linkExpand', function () {
-                $('#detailsTableExpanded th:nth-child(3), #detailsTableExpanded td:nth-child(3)').nextAll().toggle();
-				$('table').removeAttr("id");
-				$('table').attr('id','detailsTable');
-                return false;
-            });
+			
 			
 			// Boutons de tri du tableau
             $(document).on('click', 'tr th.table-header', function () {
@@ -182,9 +175,7 @@ darty.wynn.gui.details = (function () {
 			
 			// bouton de suppression des filtres  
 			$(document).on('click', 'div#bouton-home div#ariane div img', function () {
-                var text='';
-				text=$(this).parent().parent().attr('class');
-				removeFilter($(this).parent().parent().attr('class'));
+				darty.wynn.removeFilters('details',$(this).parent().parent().attr('class') );
             });
 			
 			// Bouton Home => Redirect => Accueil 
@@ -239,7 +230,7 @@ darty.wynn.gui.details = (function () {
     }
 	
 	// function de clic les croix des filtres 
-	function elemCount(dim) { // compte le nombre d'élements type dim dans l'array et retourne la valeur
+	/*function elemCount(dim) { // compte le nombre d'élements type dim dans l'array et retourne la valeur
 		var cpt = 0;
 		obj = _w.pageData.filtres;
 		for (var u in obj) {
@@ -248,36 +239,47 @@ darty.wynn.gui.details = (function () {
 		} 
 		return cpt;
 	}
-	function constructUrl(dim, cpt) {
+	function constructUrl(type, dim, cpt) {
 		// dim représente le niveau de celui que l'on doit exclure
 		// cpt représente le niveau de celui que l'on doit exclure 
 		obj = _w.pageData.filtres; // 3 trucs : agg, org, puis prd 
 		var result = '';
+		var symbol = false;
 		for (var n in obj) {
-			if (n.substring(0,3) == 'agg') {
-				// pour ne pas mettre l'&
-				result += n + '=' +obj[n];
+			console.log(n);
+			
+			if(n.substring(0,3) == 'agg') {
+				result += n + '=' +obj[n]; // pour ne pas mettre l'&
+				symbol = true;
 			}
 			else if (n.substring(0,3) == dim && n.substring(3,4) == cpt) {
-				// on ne le prend pas
+				// on exclue de l'url le filtre que l'on enlève
 			}
 			else {
-				result += '&' + n + '=' +obj[n].cd;
+				if (symbol){
+					result+= '&'; 
+				}
+				result += n + '=' +obj[n].cd;
+				symbol = true;
 			}
 		}
 		return result;
 	}
-	function removeFilter(dim) { // au clic, il faut que le filtre de niveau le plus haut soit enlevé !
+	function removeFilter(type,dim) { // au clic, il faut que le filtre de niveau le plus haut soit enlevé !
 		obj = _w.pageData;
 		for (var n in obj.filtres) {
 			if (n.substring(0,3) == dim) { // TODO : check par l'objet plutôt que par l'url !  
-				var url = window.location.search.split("&");
 				var cpt = elemCount(dim); 
-				url = constructUrl(dim, cpt);
-				window.location.assign("http://" + window.location.host + "/details?" + url);
+				url = constructUrl(type, dim, cpt);
+				if (url != '' && type == "accueil")
+					window.location.assign("http://" + window.location.host + "/accueil?" + url);
+				else if (url != '' && type == "details")
+					window.location.assign("http://" + window.location.host + "/details?" + url);
+				else
+					window.location.assign("http://" + window.location.host + "/accueil");
 			}
 		}
-	}
+	}*/
 	
 	// function d'installation du fil d'ariane
 	function setBouton(aggreg) {
@@ -303,22 +305,26 @@ darty.wynn.gui.details = (function () {
 				text.prd = '<span id="'+_w.pageData.filtres[index].lib+' class="prd" "> '+_w.pageData.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" alt="prd" /></span>'+'</div>';
 			}
 		}
-		$("#ariane1").remove();
-		$("#ariane2").remove();
+		/*$("#ariane1").remove();
+		$("#ariane2").remove();*/
 		// on enlève les 2 blocs à refaire ariane1 => Produits, ariane2 => Lieux
-		if (text.org != '') { // si pas de filtre org 
-			$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.org+text.endReq);
-		}
-		else {  // si filtre org 
-			$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.orgRep+text.endReq); 
-		}
-		if (text.prd != '') {  // si pas de filtre prd
-			$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prd+text.endReq); 
-		} 
-		else {  // si filtre prd
-			$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prdRep+text.endReq); 
-		}
-		setBouton(_w.pageData.filtres.agg.substring(0,3));
+		
+		$('#bouton-home').append("<img src='/images/details/img-home.png' alt='' id='home' width='36px' height='36px' /><div id='ariane'></div>").each(function(){
+			if (text.org != '') { // si pas de filtre org 
+				$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.org+text.endReq);
+			}
+			else {  // si filtre org 
+				$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.orgRep+text.endReq); 
+			}
+			if (text.prd != '') {  // si pas de filtre prd
+				$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prd+text.endReq); 
+			} 
+			else {  // si filtre prd
+				$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prdRep+text.endReq); 
+			}
+			setBouton(_w.pageData.filtres.agg.substring(0,3));
+		});
+		
 	}
 	
 	function tablesorterControler(choix) { // fonction de tri du tableau (reçoit l'id du bloc html en arg)
@@ -376,8 +382,7 @@ darty.wynn.gui.details = (function () {
 		callback();
 	}	
     return {
-        start: start,
-		removeFilter: removeFilter
+        start: start
     };
 	
 })();

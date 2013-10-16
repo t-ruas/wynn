@@ -81,4 +81,41 @@ darty.wynn.makeQuery = function (o) {
         args.push(n + '=' + o[n]);
     }
     return args.join('&');
+}
+
+darty.wynn.removeFilters = function(type, dim) {
+	obj = darty.wynn.pageData;
+		// on récupère le niveau de filtre à enlever 
+		var cpt = 0;
+		for (var u in obj.filtres) {
+			if (u.substring(0,3) == dim)
+				cpt=u.substring(3,4);
+		} 
+		
+		// on construit l'url a renvoyer 
+		var result = '' 
+		var symbol = false;
+		for (var n in obj.filtres) {
+			if(n.substring(0,3) == 'agg') {
+				result += n + '=' +obj.filtres[n]; // pour ne pas mettre l'&
+				symbol = true;
+			}
+			else if (n.substring(0,3) == dim && n.substring(3,4) == cpt) {
+				// on exclue de l'url le filtre que l'on enlève
+			}
+			else {
+				if (symbol)
+					result+= '&'; 
+				result += n + '=' +obj.filtres[n].cd;
+				symbol = true;
+			}
+		}
+		
+		// on selectionne la redirection logique
+		if (result != '' && type == "accueil")
+			window.location.assign("http://" + window.location.host + "/accueil?" + result);
+		else if (result != '' && type == "details")
+			window.location.assign("http://" + window.location.host + "/details?" + result);
+		else
+			window.location.assign("http://" + window.location.host + "/accueil");
 };

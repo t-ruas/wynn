@@ -7,23 +7,23 @@ div#bouton-home {
 	position: relative;
 	top: 5px;
 }
-.noActive {background-color: green;
-font-weight: bold;
-color:black;}
 div#bouton>span {
 	border: 1px solid black;
 	padding: 3px 10px;
 }
+.noActive {
+	background-color: green;
+	font-weight: bold;
+	color:black;}
 .active {
-background-color: white;
-font-weight: bold;
-color: black;}
+	background-color: white;
+	font-weight: bold;
+	color: black;}
 #bouton {
 	position: relative;
 	display: inline-block;
 	top: 20px;
-	float: right;
-}
+	float: right;}
 div#ariane {
 	display:inline-block;
 	width: 25%;
@@ -42,14 +42,6 @@ div#ariane1, div#ariane2 {
 /************
 Table Header 
 ************/
-th.table-header {
-	width : 12%;
-}
-th#menu {
-	position : relative;
-	width: 24%;
-	min-width: 100px;
-}
 th.headerSortDown
 {
 background-image:url("images/details/fleche-bottom.png");
@@ -64,10 +56,6 @@ background-position:right;
 }
 .tri {
 	min-width: 50px;
-	
-}
-.hideImage {
-/*display: none;*/
 }
 div.menuDeroul {
 	display:none;
@@ -91,25 +79,36 @@ td.content {
 }
 #detailsTable th, #detailsTable td {
     padding: 3px 6px;
+	border: 1px solid black;
 	line-height: 170%;
+	width: 12%;
+	max-width: 20%;
 }
-
-td a {
-text-decoration: none;
-color: black;
+#detailsTable.reducted  th{ /* Laisser en dessous du detailsTable! */
+	width: 20%;
+}
+th#menu {
+	position : relative;
+	width: 28%;
+	min-width: 100px;
+	max-width: 60%;
+}
+#detailsTable.reducted th#menu { /* Laisser en dessous du th#menu! */
+	width: 60%;
+	min-width: 100px;
+	max-width: 60%;
 }
 #detailsTable {
     margin: 0px auto;
 	width: 80%;
 }
-
-#detailsTableExpanded {
-	margin: 0px auto;
-	width: 35%;
+#detailsTable.reducted {
+	width: 50%; 
 }
-#detailsTableExpanded th, #detailsTableExpanded td {
-    padding: 3px 6px;
-	border: 1px solid black;
+
+td a {
+text-decoration: none;
+color: black;
 }
 
 .color_X a {color:rgb(91,155,213)}
@@ -117,8 +116,6 @@ color: black;
 .color_1 a{color:rgb(255,192,0);}
 .color_2 a{color:rgb(146,208,80);} 
 .color_3 a{color:rgb(0,176,80);} 
-
-
 
 /*
  
@@ -140,10 +137,10 @@ div.zone {
 div#zone {
 	position:absolute;
 	margin: -11px 0px 0px 0px;
+	border: 1px dotted black;
 	padding : 1px;
 	width: 120px;
 } 
-
 div#zone span {
 	text-align: left;
 }
@@ -268,7 +265,12 @@ div.CA th.evolution {
 
 
 #content-right {
-width:400px; background:rgb(90,153,211);float:right;margin-right:400px;padding-left:10px;height:500px;}
+width:400px; 
+background:rgb(90,153,211);
+float:right;
+margin-right:400px;
+padding-left:10px;
+height:500px;}
 #content {position: absolute;
 top: 0px;
 bottom: 0px;
