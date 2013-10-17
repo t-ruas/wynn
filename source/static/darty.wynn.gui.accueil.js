@@ -1,5 +1,6 @@
-
 darty.wynn.gui.accueil = (function () {
+
+	// tablesorter doc : http://tablesorter.com/docs
 
 	var _w = darty.wynn;
     var refreshTimer = null;
@@ -17,10 +18,7 @@ darty.wynn.gui.accueil = (function () {
 	var diffCaParDecoupage; 
 	var minMax;
 	
-	
-	
-	
-    function refreshPage() {
+    function refreshPage() { // controler de la page 
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
@@ -28,7 +26,6 @@ darty.wynn.gui.accueil = (function () {
             	darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
             	if (error) {
             	} else {
-            		
             		console.log(resultEnt);
             		result.ent2m = resultEnt.ent2m;
             		result.ent1y = resultEnt.ent1y;
@@ -46,12 +43,10 @@ darty.wynn.gui.accueil = (function () {
                 $('#content-header').html(pagefn(result));
                 console.log('Menu de navigation chargee');
 
-
                 pagefn = doT.template($('#load-ranking').text());
                 $('#blueContent').html(pagefn(result));
                 console.log('partie droite chargee');
 
-                
                 console.log(result);
 
                 refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
@@ -65,8 +60,7 @@ darty.wynn.gui.accueil = (function () {
     function start() {
 
         $(document).ready(function () {
-        refreshPage();
-            
+        refreshPage();  
 		
 		makeDrillUrl();
 		var ndate= new Date();
@@ -91,7 +85,6 @@ darty.wynn.gui.accueil = (function () {
             }
         }, darty.wynn.config.refreshCa);
         
-        
         $(document).on('click','#refreshTimer', function () {
             if (refreshTimer) {
                 window.clearTimeout(refreshTimer);
@@ -113,69 +106,10 @@ darty.wynn.gui.accueil = (function () {
 			window.location.assign("http://" + window.location.host + "/accueil");
 		});
         
-        getAriane();
+		darty.wynn.setFilters('accueil');
         });
     }
-    
-	function setBouton(aggreg) {
-		var agg = 'span#'+aggreg;
-		$(agg).removeClass().addClass('noActive');
-	}
-	function getAriane() { // pour la ligne prd, afficher le filtre prd le plus haut
-						   // pour la ligne org, afficher le filtre org le plus haut 
-		var text = {};
-		text.prdRep = 'Tous Produits';
-		text.orgRep = 'Darty France';
-		text.prd = '';
-		text.org = '';
-		text.intro1 = '<div id="ariane';
-		text.intro2 = '>'
-		text.endReq = '</div>'
-		
-		console.log('kiki ! XXX')
-		
-		for(var index in _w.pageData.filtres) { 
-			if (index.substring(0,3) == 'org') {
-				// on ne permet pas d'enlever les scripts par la croix : '<span id="X.img"><img src="/images/details/croix.png" alt="org" /></span>'
-				text.org = '<span id="'+_w.pageData.filtres[index].lib+' class="org" "> '+_w.pageData.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" alt="org" /></span>'+'</div>'
-			}	// on ne permet pas d'enlever les scripts par la croix : '<span id="X.img"><img src="/images/details/croix.png" alt="org" /></span>'
-			if (index.substring(0,3) == 'prd') {
-				text.prd = '<span id="'+_w.pageData.filtres[index].lib+' class="prd" "> '+_w.pageData.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" alt="org" /></span>'+'</div>';
-			}
-		}
-		
-		// on enlève les 2 blocs à refaire ariane1 => Produits, ariane2 => Lieux
-		$('#bouton-home').append("<img src='/images/details/img-home.png' alt='' id='home' width='36px' height='36px' /><div id='ariane'></div>").each(function(){
-			if (text.org != '') { // si pas de filtre org 
-				$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.org+text.endReq);
-			}
-			else {  // si filtre org 
-				$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.orgRep+text.endReq); 
-			}
-			if (text.prd != '') {  // si pas de filtre prd
-				$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prd+text.endReq); 
-			} 
-			else {  // si filtre prd
-				$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prdRep+text.endReq); 
-			}
-			console.log('Le kiki de Kiki XXX');
-			//setBouton(_w.pageData.filtres.agg.substring(0,3));
-		});/*
-		if (text.org != '') { // si pas de filtre org 
-			$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.org+text.endReq);
-		}
-		else {  // si filtre org 
-			$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.orgRep+text.endReq); 
-		}
-		if (text.prd != '') {  // si pas de filtre prd
-			$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prd+text.endReq); 
-		} 
-		else {  // si filtre prd
-			$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prdRep+text.endReq); 
-		}
-		setBouton(_w.pageData.filtres.agg.substring(0,3));*/
-	}
-	    
+    	
     function modificationCA (){
     	diffCaDebut= calcDiffCa();
     	

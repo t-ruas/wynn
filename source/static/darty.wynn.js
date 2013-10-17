@@ -91,7 +91,7 @@ darty.wynn.removeFilters = function(type, dim) {
 			if (u.substring(0,3) == dim)
 				cpt=u.substring(3,4);
 		} 
-		
+		console.log('héhé ! ');
 		// on construit l'url a renvoyer 
 		var result = '' 
 		var symbol = false;
@@ -110,7 +110,7 @@ darty.wynn.removeFilters = function(type, dim) {
 				symbol = true;
 			}
 		}
-		
+		console.log('hahah');
 		// on selectionne la redirection logique
 		if (result != '' && type == "accueil")
 			window.location.assign("http://" + window.location.host + "/accueil?" + result);
@@ -118,4 +118,38 @@ darty.wynn.removeFilters = function(type, dim) {
 			window.location.assign("http://" + window.location.host + "/details?" + result);
 		else
 			window.location.assign("http://" + window.location.host + "/accueil");
+}
+
+darty.wynn.setFilters = function(type) {
+	var text = {};
+	text.prdRep = 'Tous Produits';
+	text.orgRep = 'Darty France';
+	text.prd = '';
+	text.org = '';
+	text.intro1 = '<div id="ariane';
+	text.intro2 = '>'
+	text.endReq = '</div>'
+	var obj = darty.wynn.pageData;
+	for(var index in obj.filtres) { 
+		if (index.substring(0,3) == 'org')
+			text.org = '<span id="'+obj.filtres[index].lib+' class="org" "> '+obj.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" alt="org" /></span>'+'</div>'
+		else if (index.substring(0,3) == 'prd')
+			text.prd = '<span id="'+obj.filtres[index].lib+' class="prd" "> '+obj.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" alt="prd" /></span>'+'</div>';
+	}
+	// on enlève les 2 blocs à refaire ariane1 => Produits, ariane2 => Lieux
+	
+	$('#bouton-home').append("<img src='/images/details/img-home.png' alt='' id='home' width='36px' height='36px' /><div id='ariane'></div>").each(function(){
+		if (text.org != '') // si pas de filtre org 
+			$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.org+text.endReq);
+		else   // si filtre org 
+			$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.orgRep+text.endReq); 
+		if (text.prd != '')  // si pas de filtre prd
+			$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prd+text.endReq); 
+		else  // si filtre prd
+			$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prdRep+text.endReq); 
+		if (type == 'details') {
+			var agg = 'span#'+obj.filtres.agg.substring(0,3);
+			$(agg).removeClass().addClass('noActive');
+		}
+	});
 };

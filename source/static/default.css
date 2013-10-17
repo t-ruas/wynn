@@ -22,15 +22,15 @@ div#bouton>span {
 #bouton {
 	position: relative;
 	display: inline-block;
-	top: 20px;
+	top: 17px;	
 	float: right;}
+#bouton-home img {
+	margin: 0% 1% ;}
 div#ariane {
 	display:inline-block;
-	width: 25%;
-}
+	width: 25%;}
 div#ariane1, div#ariane2 {
-	display:block;
-}
+	display:block;}
 /* 
 
 
@@ -201,13 +201,12 @@ body {
     color: #7F7F7C;
     cursor: pointer;
     text-align: right;
-    width: 14%;
     font-size: 80%;
     background-color: #D7D7F4; 
-	bottom: 1%;
 	position: absolute;
 	right: 2%;
-	padding: 2px 15px 2px 2px;
+	padding: 2px 2%;
+	bottom: 1px;
 }
 .CA {width:50%; 
 margin-left: auto;

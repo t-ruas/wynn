@@ -7,7 +7,7 @@ darty.wynn.gui.details = (function () {
     var nextRefresh = null;
 
 	var oneTime = false;
-    function refreshPage() {
+    function refreshPage() { // controler de la page
         refreshTimer = null;
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
@@ -140,20 +140,21 @@ darty.wynn.gui.details = (function () {
 			// Bouton radio de choix de dimension
 			$(document).on('click', 'div#bouton span.active', function () {
 				var split = window.location.search.split("&");
-				var add = '';
-				if (split[0].substring(5,8) == 'org') { add = 'prd'; }
-				else { add = 'org'; }
+				var agg = '';
+				if (split[0].substring(5,8) == 'org') 
+					agg = 'prd'; 
+				else
+					agg = 'org';
 				var url = '';
 				for (var n in split) {
 					if (n == 0) {
-							if (add == 'org' && split[0].substring(8,9) < 5)
-								url += split[0].substring(0,5) + add + split[0].substring(8,9);
+							if (split[0].substring(8,9) < 5)
+								url += split[0].substring(0,5) + agg + split[0].substring(8,9);
 							else
-								url += split[0].substring(0,5) + add + '4';
+								url += split[0].substring(0,5) + agg + '4';
 					}
-					else {
+					else
 						url += '&'+split[n];
-					}
 				}
 				window.location.assign("http://" + window.location.host + "/details" + url);
 			});
@@ -195,7 +196,8 @@ darty.wynn.gui.details = (function () {
 			// Menu déroulant => Affiche les options d'aggregat 
 			$(document).on('click', 'div#zone img', function () {
                 console.log('tri sur la première colonne :)')
-				$("table#detailsTable").tablesorter({sortList: [[1,0]]})
+				$("table").tablesorter({
+				}); 
 				var elem = $("div#zone img").attr("src");
 					if (elem == 'images/details/fleche-top.png')
 						$("div#zone img").attr("src","images/details/fleche-bottom.png");
@@ -224,108 +226,10 @@ darty.wynn.gui.details = (function () {
                     $('#refreshTimer').text('');
                 }
             }, 1000);
-			getAriane();
+			darty.wynn.setFilters('details');
 			refreshPage();
         });
     }
-	
-	// function de clic les croix des filtres 
-	/*function elemCount(dim) { // compte le nombre d'élements type dim dans l'array et retourne la valeur
-		var cpt = 0;
-		obj = _w.pageData.filtres;
-		for (var u in obj) {
-			if (u.substring(0,3) == dim)
-				cpt=u.substring(3,4);
-		} 
-		return cpt;
-	}
-	function constructUrl(type, dim, cpt) {
-		// dim représente le niveau de celui que l'on doit exclure
-		// cpt représente le niveau de celui que l'on doit exclure 
-		obj = _w.pageData.filtres; // 3 trucs : agg, org, puis prd 
-		var result = '';
-		var symbol = false;
-		for (var n in obj) {
-			console.log(n);
-			
-			if(n.substring(0,3) == 'agg') {
-				result += n + '=' +obj[n]; // pour ne pas mettre l'&
-				symbol = true;
-			}
-			else if (n.substring(0,3) == dim && n.substring(3,4) == cpt) {
-				// on exclue de l'url le filtre que l'on enlève
-			}
-			else {
-				if (symbol){
-					result+= '&'; 
-				}
-				result += n + '=' +obj[n].cd;
-				symbol = true;
-			}
-		}
-		return result;
-	}
-	function removeFilter(type,dim) { // au clic, il faut que le filtre de niveau le plus haut soit enlevé !
-		obj = _w.pageData;
-		for (var n in obj.filtres) {
-			if (n.substring(0,3) == dim) { // TODO : check par l'objet plutôt que par l'url !  
-				var cpt = elemCount(dim); 
-				url = constructUrl(type, dim, cpt);
-				if (url != '' && type == "accueil")
-					window.location.assign("http://" + window.location.host + "/accueil?" + url);
-				else if (url != '' && type == "details")
-					window.location.assign("http://" + window.location.host + "/details?" + url);
-				else
-					window.location.assign("http://" + window.location.host + "/accueil");
-			}
-		}
-	}*/
-	
-	// function d'installation du fil d'ariane
-	function setBouton(aggreg) {
-		var agg = 'span#'+aggreg;
-		$(agg).removeClass().addClass('noActive');
-	}
-	function getAriane() { // pour la ligne prd, afficher le filtre prd le plus haut
-						   // pour la ligne org, afficher le filtre org le plus haut 
-		var text = {};
-		text.prdRep = 'Tous Produits';
-		text.orgRep = 'Darty France';
-		text.prd = '';
-		text.org = '';
-		text.intro1 = '<div id="ariane';
-		text.intro2 = '>'
-		text.endReq = '</div>'
-		
-		for(var index in _w.pageData.filtres) { 
-			if (index.substring(0,3) == 'org') {
-				text.org = '<span id="'+_w.pageData.filtres[index].lib+' class="org" "> '+_w.pageData.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" alt="org" /></span>'+'</div>'
-			}
-			if (index.substring(0,3) == 'prd') {
-				text.prd = '<span id="'+_w.pageData.filtres[index].lib+' class="prd" "> '+_w.pageData.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" alt="prd" /></span>'+'</div>';
-			}
-		}
-		/*$("#ariane1").remove();
-		$("#ariane2").remove();*/
-		// on enlève les 2 blocs à refaire ariane1 => Produits, ariane2 => Lieux
-		
-		$('#bouton-home').append("<img src='/images/details/img-home.png' alt='' id='home' width='36px' height='36px' /><div id='ariane'></div>").each(function(){
-			if (text.org != '') { // si pas de filtre org 
-				$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.org+text.endReq);
-			}
-			else {  // si filtre org 
-				$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.orgRep+text.endReq); 
-			}
-			if (text.prd != '') {  // si pas de filtre prd
-				$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prd+text.endReq); 
-			} 
-			else {  // si filtre prd
-				$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prdRep+text.endReq); 
-			}
-			setBouton(_w.pageData.filtres.agg.substring(0,3));
-		});
-		
-	}
 	
 	function tablesorterControler(choix) { // fonction de tri du tableau (reçoit l'id du bloc html en arg)
 		$("table#detailsTable").tablesorter( {sortList: [[choix,0]]} );
