@@ -228,6 +228,8 @@ darty.wynn.gui.details = (function () {
             }, 1000);
 			darty.wynn.setFilters('details');
 			refreshPage();
+			$("table").tablesorter({ }); 
+			$('div#delete').remove();
         });
     }
 	

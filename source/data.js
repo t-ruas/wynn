@@ -105,17 +105,17 @@ function prepareDateFilters(tempsComptSet) {
 
     var dates = new Array(5);
 	dates[0] = new Date(2013, 8, 27, 15, 57, 56);
-    dates[0].setMinutes(dates[0].getMinutes() -  _config.tempsChargReel);
+    dates[0].setMinutes(dates[0].getMinutes() -  _config.tempsChargReel); // 2min
     dates[1] = new Date(dates[0]);
-    dates[1].setMinutes(dates[1].getMinutes() -  _config.tempsChargTalend);
-    if (tempsComptSet !=null){
-    	dates[1] = dates[1].setMinutes(dates[1].getMinutes() -  tempsComptSet);
-   		}
-    dates[2] = new Date(dates[1]);
-    dates[2].setDate(dates[2].getDate() - _config.jourCalcMoyeEnt);
+    dates[1].setMinutes(dates[1].getMinutes() -  _config.tempsChargTalend); // 4min
+    if (tempsComptSet != null){
+    	dates[1] = dates[1].setMinutes(dates[1].getMinutes() -  tempsComptSet); // 19 min
+   	}
+    dates[2] = new Date(dates[1]); 
+    dates[2].setDate(dates[2].getDate() - _config.jourCalcMoyeEnt);  // 26 min
 
     dates[3] = new Date(dates[1]);
-    dates[3].setDate(dates[3].getDate() - _config.jour1an);
+    dates[3].setDate(dates[3].getDate() - _config.jour1an); // 
     dates[4] = new Date(dates[0]);
     
 	
@@ -246,7 +246,7 @@ function getLib(field, code, callback) {
 }
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
-
+// Accueil
 function getIndicators(options, callback) {
 
     var fDates = prepareDateFilters();
@@ -260,7 +260,7 @@ function getIndicators(options, callback) {
 
     var fPrd = makeNavFilters(options, 'prd');
     var fOrg = makeNavFilters(options, 'org');
-
+	
     var data = {
         size: 0,
         facets: {
@@ -289,20 +289,19 @@ function getIndicators(options, callback) {
     };
 
 
-
     postSearch('lv', data, function (error, result) {
         if (error) {
             callback(error);
         } else {
-
+			// fonction d'aggreg sur facet
             var getCaFacet = function (name) {
                 return result.facets[name].total;
             }
-
+			// fonction d'aggreg sur facet 
             var getVtFacet = function (name) {
                 return result.facets[name].terms.length;
             }
-
+			// fonction de retour des valeurs
             callback(null, {
                 ca: getCaFacet('ca'),
                 ca2m: getCaFacet('ca_2m'),
@@ -371,7 +370,7 @@ function getIndicatorsEnt(options, callback) {
 }
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
-
+// Details
 function getDetails(options, callback) {
 
     var aggField = filterFields[options.agg];
@@ -427,7 +426,9 @@ function getDetails(options, callback) {
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
         }
     };
-_logger.info('2 Réponse ElasticSearch OOO: ' + _util.inspect(data, {depth: null}));
+	_logger.info('2 Réponse ElasticSearch OOO: ' + _util.inspect(data, {depth: null}));
+	_logger.info('Test des dates : ' + _util.inspect(fDates, {depth: null}));
+
     postSearch('lv', data, function (error, result) {
         if (error) {
             callback(error);
@@ -440,9 +441,9 @@ _logger.info('2 Réponse ElasticSearch OOO: ' + _util.inspect(data, {depth: null
 				
                 for (var i = 0, imax = terms.length; i < imax; i++) {
                     var term = terms[i];
-                   // _logger.info('2 Réponse ElasticSearch TERM: ' + _util.inspect(term.total_count, {depth: null}));
+					// _logger.info('2 Réponse ElasticSearch TERM: ' + _util.inspect(term.total_count, {depth: null}));
                     o[term.term][p] = term.total_count;
-                   // _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(o[terms[i].term][p], {depth: null}));
+					// _logger.info('2 Réponse ElasticSearch : ' + _util.inspect(o[terms[i].term][p], {depth: null}));
                 }
             }
 

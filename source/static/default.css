@@ -1,11 +1,11 @@
 /* Fil d'ariane : */
 
 div#bouton-home {
-	width: 95%;
+	width: 96%;
 	margin-left: auto;
 	margin-right: auto;
-	position: relative;
-	top: 5px;
+	position: absolute;
+	top: 20px;
 }
 div#bouton>span {
 	border: 1px solid black;
@@ -75,12 +75,12 @@ td.content.first-column {
 	text-align: left;
 }
 td.content {
-	text-align: right;
+	text-align: center;
 }
 #detailsTable th, #detailsTable td {
     padding: 3px 6px;
 	/*border: 1px solid black;*/
-	line-height: 170%;
+	line-height: 220%;
 	width: 12%;
 	max-width: 20%;
 }
@@ -100,7 +100,9 @@ th#menu {
 }
 #detailsTable {
     margin: 0px auto;
-	width: 80%;
+	width: 96%;
+	background-color: rgb(230, 251, 232);
+	border: 1.5px solid lightgray;
 }
 #detailsTable.reducted {
 	width: 50%; 
@@ -156,45 +158,6 @@ div#delete {
 div#zone span {
 	margin-left: 8px;
 }
-/* on divise la div#zone en 2 parties ! */
-
-/*
-#mainContent {
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-    right: 43.75%;
-}
-#blueContent {
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    right: 0px;
-    left: 56.25%;
-    background-color: rgb(90, 153, 211);
-}
-#mainContentTop {
-    position: absolute;
-    top: 0px;
-    height: 50px;
-    width: 100%;
-}
-#mainContentMiddle {
-    position: absolute;
-    top: 80px;
-    bottom: 50px;
-    width: 100%;
-    overflow: auto;
-}
-#mainContentBottom {
-    position: absolute;
-    bottom: 0px;
-    height: 50px;
-    width: 100%;
-}
-*/
-
 
 body {
     margin: 0;
@@ -335,3 +298,9 @@ border-color:black;}
 .color_2 {color:rgb(146,208,80);} 
 .color_3 {color:rgb(0,176,80);} 
 .color_gray {color:rgb(187,187,187);}
+
+.color_underline_0 {border-bottom : 5px solid rgb(255,0,0);} 
+.color_underline_1 {border-bottom : 5px solid rgb(255,192,0);}
+.color_underline_2 {border-bottom : 5px solid rgb(146,208,80);} 
+.color_underline_3 {border-bottom : 5px solid rgb(0,176,80);} 
+.color_underline_gray {border-bottom : 5px solid rgb(187,187,187);}
