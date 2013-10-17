@@ -185,7 +185,7 @@ darty.wynn.gui.details = (function () {
             });
 			
 			// Menu déroulant => Affiche les options d'aggregat 
-			$(document).on('click', 'div#zone span', function () {
+			$(document).on('click', 'div#zone', function () {
                 if($('div.menuDeroul').is(":hidden"))
 					$('div.menuDeroul').show("fast", function(){}); 
 				else
@@ -193,19 +193,19 @@ darty.wynn.gui.details = (function () {
 				console.log('Menu deroulant !');
             });
 			
+			$(document).on('mouseenter', 'th', function() {
+				alert("Reste dans la fenêtre ! ")
+			}), ('mouseleave', 'th', function(){
+				alert("Ca c'est drôle ! ")
+			});
+			
 			// Menu déroulant => Affiche les options d'aggregat 
-			$(document).on('click', 'div#zone img', function () {
+			$(document).on('click', 'div#delete>img', function () {
                 console.log('tri sur la première colonne :)')
 				$("table").tablesorter({
 				}); 
-				var elem = $("div#zone img").attr("src");
-					if (elem == 'images/details/fleche-top.png')
-						$("div#zone img").attr("src","images/details/fleche-bottom.png");
-					else if (elem == 'images/details/fleche-bottom.png')
-						$("div#zone img").attr("src","images/details/fleche-top.png");
-					else
-						alert('Cheater !');
-						
+				$('div#zone').parent().addClass('headerSortDown');
+				var elem = $("div#delete").remove();		
             });
 			
 			// bouton d'activation de test TEST !!! 
@@ -274,14 +274,15 @@ darty.wynn.gui.details = (function () {
 		if (o.render.fin != '') { 
 			o.render.dbt = '<div id="zone">';
 			o.render.end = '</div>'
-			o.render.imgTri = '<img src="images/details/fleche-top.png" alt="" class="" />';
+			o.render.imgTri = '<img src="images/details/fleche-top.png" />';
 			if (o.render.name != '') { // si jamais il y a un nom, on le rajoute
 				var tmp = '';
 				tmp = o.render.fin;
-				o.render.fin = '<span>' + o.render.name + '</span>' + o.render.imgTri + tmp;
+				o.render.fin = '<span>' + o.render.name + '</span>' + tmp;
 			}
-			$('#zone').remove();
-			$('#menu').append(o.render.dbt+o.render.fin+o.render.end);
+			//$('#zone').remove();
+			$('#zone').append(o.render.fin);
+			$('#delete').append(o.render.imgTri);
 		}
 		callback();
 	}	

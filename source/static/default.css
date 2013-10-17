@@ -79,7 +79,7 @@ td.content {
 }
 #detailsTable th, #detailsTable td {
     padding: 3px 6px;
-	border: 1px solid black;
+	/*border: 1px solid black;*/
 	line-height: 170%;
 	width: 12%;
 	max-width: 20%;
@@ -135,24 +135,64 @@ div.zone {
 
 
 div#zone {
-	position:absolute;
-	margin: -11px 0px 0px 0px;
-	border: 1px dotted black;
-	padding : 1px;
-	width: 120px;
-} 
-div#zone span {
+	position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 40%;
+	background: lightgray;
 	text-align: left;
+	color:white;
+	font-weight:bold;
+} 
+div#delete {
+	position: absolute;
+	text-align: right;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 60%;
 }
-div#zone img{
-	padding: 0px 0px 0px 4px;
-	top: 5px;
-	right: 2px;
-	position:absolute;	
+div#zone span {
+	margin-left: 8px;
 }
+/* on divise la div#zone en 2 parties ! */
 
 /*
-
+#mainContent {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 43.75%;
+}
+#blueContent {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 56.25%;
+    background-color: rgb(90, 153, 211);
+}
+#mainContentTop {
+    position: absolute;
+    top: 0px;
+    height: 50px;
+    width: 100%;
+}
+#mainContentMiddle {
+    position: absolute;
+    top: 80px;
+    bottom: 50px;
+    width: 100%;
+    overflow: auto;
+}
+#mainContentBottom {
+    position: absolute;
+    bottom: 0px;
+    height: 50px;
+    width: 100%;
+}
 */
 
 
