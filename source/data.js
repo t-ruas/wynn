@@ -225,7 +225,7 @@ function getLib(field, code, callback) {
             fields: [field.cd, field.lib],
             filter: {term: f}
         };
-        _logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(data, {depth: null}));
+       // _logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(data, {depth: null}));
 		// pour retrouver un libellé en particulier s'il manque
         postSearch('lv', data, function (error, result) {
             if (error) {
@@ -288,6 +288,7 @@ function getIndicators(options, callback) {
         }
     };
 
+ _logger.info('indicateurs: ' + _util.inspect(data, {depth: null}));
 
     postSearch('lv', data, function (error, result) {
         if (error) {
@@ -348,6 +349,14 @@ function getIndicatorsEnt(options, callback) {
 
         }
     };
+    _logger.info('AFFICHAGE: ' + _util.inspect(data, {depth: null}));
+    _logger.info('AFFICHAGE: ' + _util.inspect(data.facets.ent_2m.facet_filter.and[0].range.DATE.lte, {depth: null}));
+// a enlever, car en dur
+data.facets.ent_2m.facet_filter.and[0].range.DATE.lte= 201308120945;
+data.facets.ent_2m.facet_filter.and[0].range.DATE.gte= 201308120000;
+data.facets.ent_dat.facet_filter.and[0].range.DATE.lte= 201308120945;
+data.facets.ent_dat.facet_filter.and[0].range.DATE.gte= 201308120000;
+
 
     postSearch('entrees', data, function (error, result) {
         if (error) {
@@ -355,15 +364,19 @@ function getIndicatorsEnt(options, callback) {
         } else {
 			
 			
-			
+			_logger.info('AFFICHAGE: ' + _util.inspect(result, {depth: null}));
             var getEntFacet = function (name) {
                 return result.facets[name].total;
+            }
+            var getMaxDate = function (name) {
+                return result.facets[name].max;
             }
 
             callback(null, {
                 ent2m: getEntFacet('ent_2m') ,
                 ent1y: getEntFacet('ent_1y'),
-				entDat: getEntFacet('ent_dat'),
+				entDat: getMaxDate('ent_dat'),
+				
             });
         }
     });
@@ -426,8 +439,6 @@ function getDetails(options, callback) {
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
         }
     };
-	_logger.info('2 Réponse ElasticSearch OOO: ' + _util.inspect(data, {depth: null}));
-	_logger.info('Test des dates : ' + _util.inspect(fDates, {depth: null}));
 
     postSearch('lv', data, function (error, result) {
         if (error) {

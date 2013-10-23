@@ -200,6 +200,16 @@ body {
     width: 100%;
 }
 
+#probErreurEnt {
+	text-align: left;
+	font-size: 80%;
+    background-color: red; 
+	position: absolute;
+	left: 2%;
+	padding: 2px 2%;
+	bottom: 1px;
+}
+
 #refreshTimer  {
     color: #7F7F7C;
     cursor: pointer;

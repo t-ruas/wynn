@@ -17,22 +17,20 @@
                 <table>
                     <tr id="ligneARajouter">
                         <th  class="fixe color_X" id="affichageCa"><span> €</span></th>
-                    </tr>
-                    <tr>
                         <th class="evolution color_<%=darty.wynn.gui.accueil.getScoreEvol(it.ca2m, it.ca1y, it.caGlobal2m, null)%>"><%=it.caEvol %> </th>
                     </tr>
+                    
+                       
+                    
                 </table>
             </div>
             <div class="indicateurs">
                 <table>
                     <tr id="accessoires"><th class="label">Accessoires</th>
-                        <th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.vtAcc2m, it.vtAcc1y, it.vtAccGlobal2m, null)%>"><%=it.vtAcc2m %> %</th><tr/>
-                    <tr id="services"><th class="label">Services</th>
-                        <th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.vtServ2m, it.vtServ1y, it.vtServGlobal2m, null)%>"><%=it.vtServ2m %> %</th><tr/>
-                    <tr id="offresactives"><th class="label">O A</th>
-                        <th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.vtOA2m, it.vtOA1y, it.vtOAGlobal2m, null)%>"><%=it.vtOa2m %> %</th><tr/>
-                    <tr id="remises"><th class="label">Remise</th>
-                        <th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.caRem2m, it.caRem1y, it.caRemGlobal2m, null)%>"><%=it.caRem2m %> %</th><tr/>
+                        <th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.vtAcc2m, it.vtAcc1y, it.vtAccGlobal2m, null)%>"><%=it.vtAcc2m %> %</th>
+                    	<th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.vtServ2m, it.vtServ1y, it.vtServGlobal2m, null)%>"><%=it.vtServ2m %> %</th>
+                    	<th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.vtOA2m, it.vtOA1y, it.vtOAGlobal2m, null)%>"><%=it.vtOa2m %> %</th>
+                    	<th class="value color_<%=darty.wynn.gui.accueil.getScoreEvol(it.caRem2m, it.caRem1y, it.caRemGlobal2m, null)%>"><%=it.caRem2m %> %</th><tr/>
                 </table>
             </div>
             <div class="bottom-line">
@@ -50,6 +48,7 @@
                 <span class="concretisation"> concrétisation</span>
                 <span class="fixe"><%=it.concret %></span>
             </div>
+            <div > <span id="probErreurEnt">il y a une erreur avec les entrées</span> </div>
              <div id="refreshTimer"> </div>
         </script>
 

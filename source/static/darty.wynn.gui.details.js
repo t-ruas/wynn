@@ -194,9 +194,9 @@ darty.wynn.gui.details = (function () {
             });
 			
 			$(document).on('mouseenter', 'th', function() {
-				alert("Reste dans la fenêtre ! ")
+				//alert("Reste dans la fenêtre ! ")
 			}), ('mouseleave', 'th', function(){
-				alert("Ca c'est drôle ! ")
+				//alert("Ca c'est drôle ! ")
 			});
 			
 			// Menu déroulant => Affiche les options d'aggregat 

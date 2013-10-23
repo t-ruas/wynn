@@ -36,6 +36,7 @@ darty.wynn.gui.accueil = (function () {
             		result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
 	            	pagefn = doT.template($('#indicateurs').text());
 	                $('#mainContentMid').html(pagefn(result));
+	                testEnt(resultEnt);
 	                console.log('partie gauche chargee');
         		}});
             	
@@ -117,6 +118,25 @@ darty.wynn.gui.accueil = (function () {
     	minMax = returnMinMax (diffCaParDecoupage);
     	recalculCaDecoupage (minMax);
     }
+    
+    function testEnt (StatEntrees){
+    	var entrees = StatEntrees.entDat.toString();
+    	var lastRefresh15m = lastRefresh;
+		lastRefresh15m.setTime(lastRefresh15m.getTime() - 15 * 60 * 1000);
+    	var dernierChargEnt = new Date (entrees.slice (0,4), entrees.slice (4,6) -1, entrees.slice (6,8), entrees.slice (6,8), entrees.slice (8,10), 0);
+		$("#probErreurEnt").html ("");
+		
+    	if ( darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)   > 100 || darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)   < -100 || isNaN(darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)  ) ){
+			console.log("blabla");
+			$("#probErreurEnt").append ("Evolution d'entrée incohérente.");    		
+    	}
+    	
+    	if  ( dernierChargEnt.getTime() < lastRefresh15m.getTime()    ){
+    		console.log("blabla2");
+    		$("#probErreurEnt").append (" Pas d'entrées depuis : " + darty.wynn.formatTime(dernierChargEnt));    
+    	}
+
+    }
     	
 	function getAleaNomb (min, max) {
     	return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -134,7 +154,7 @@ darty.wynn.gui.accueil = (function () {
 		var vraiCA = darty.wynn.priceToStr(ca2minutes);
 		cumul=0;
 		$('#affichageCa').remove();	
-		$("#ligneARajouter").append("<th class=\"color_X fixe\" id=\"affichageCa\"><span>"+vraiCA+" €</span></th>");
+		$("#ligneARajouter").prepend("<th class=\"color_X fixe\" id=\"affichageCa\"><span>"+vraiCA+" €</span></th>");
 		
 		break;
 		
@@ -144,7 +164,7 @@ darty.wynn.gui.accueil = (function () {
 		var aAfficher= darty.wynn.priceToStr(ca2minutes + cumul);
 		 
 		$('#affichageCa').remove();
-		$("#ligneARajouter").append("<th class=\"color_X fixe \" id=\"affichageCa\"><span>"+aAfficher+" €</span></th>");		
+		$("#ligneARajouter").prepend("<th class=\"color_X fixe \" id=\"affichageCa\"><span>"+aAfficher+" €</span></th>");		
 	}}
 	
 	function getUrl () {
