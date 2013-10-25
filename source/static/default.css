@@ -77,6 +77,10 @@ td.content.first-column {
 td.content {
 	text-align: center;
 }
+
+.libelle {
+	font-size:100%;
+}
 #detailsTable th, #detailsTable td {
     padding: 3px 6px;
 	/*border: 1px solid black;*/

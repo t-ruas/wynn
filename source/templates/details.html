@@ -45,7 +45,7 @@
                 <tbody>
                     <%~it.list:line%>
                         <tr>
-                            <td class="content first-column"><a href="/details?<%=line.ddQuery%>"><%=line.lib%></a></td>
+                            <td class="content first-column"> <div class="code"><a href="/details?<%=line.ddQuery%>"><%=line.cd%></a> </div>  <div class="libelle"><a href="/details?<%=line.ddQuery%>"><%=line.lib%></a></div> </td>
                             <td class="content color_X"><a href="/accueil?<%=line.dbQuery%>"><%=line.ca%></a></td>
                             <td class="content color_ <%=line.caEvo.cls%>"><span class="linkExpand"><%=line.caEvo.val%></span></td>
                             <td class="content color_underline_0 <%=line.acc.cls%>"><%=line.acc.val%></td>

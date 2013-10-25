@@ -12,6 +12,7 @@ darty.wynn.gui.details = (function () {
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
+            	console.log (result);
                 $('#mainContentMiddle').html(doT.template($('#tmplDetailsTable').text())(prepareModel(result)));
                 refreshTimer = window.setTimeout(refreshPage, _w.config.reqInterval);
                 lastRefresh = new Date();
@@ -22,7 +23,15 @@ darty.wynn.gui.details = (function () {
 				if ((obj.filtres.agg.substring(0,3) == 'prd' && obj.filtres.agg.substring(3,4) == '6' )||
 					(obj.filtres.agg.substring(0,3) == 'org' && obj.filtres.agg.substring(3,4) == '4' )) {
 					$("table#detailsTable").find("a").removeAttr("href");
+					$(".libelle").css ("font-size","60%"); 
 				}
+				else
+				{
+					$(".code").remove();
+				}
+				
+				
+				
 			}
         });
     }
@@ -44,10 +53,11 @@ darty.wynn.gui.details = (function () {
         for (var j = 0, jmax = data.length; j < jmax; j++) {
 
             var lineData = data[j];
-
-            var lineModel = createLineModel(lineData);
             
+            var lineModel = createLineModel(lineData);
+            lineModel.cd = lineData.cd;
             lineModel.lib = lineData.lib;
+            console.log (lineModel);
             lineModel.ddQuery = makeDrillDownQuery(lineData.cd);
             lineModel.dbQuery = makeDashboardQuery(lineData.cd);
             model.list.push(lineModel);

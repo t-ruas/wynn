@@ -40,7 +40,6 @@ darty.wynn.data = (function () {
     // Calcul de valeurs supplémentaires sur une ligne aggrégée.
     function computeLineValues(data) {
 		console.log (data);
-		console.log ("evol", data.caEvo2m, "evol 1 Y",data.ca1y );
         data.caEvo2m = _w.getEvol(data.ca2m, data.ca1y);
         
         data.caEvoGlobal2m = _w.getEvol(data.caGlobal2m, data.caGlobal1y);
