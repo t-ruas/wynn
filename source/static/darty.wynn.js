@@ -1,4 +1,4 @@
-
+// fab
 var darty = {
     wynn: {
         gui: {},
@@ -12,10 +12,15 @@ var darty = {
 };
 
 darty.wynn.priceToStr = function (n) {
-    var a = n.toString().split('.');
+	//var b = 
+    var a = Math.abs(n).toFixed(0).toString().split('.');
+	
+	// console.log(a);
     a[0] = a[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+	// console.log('a de 0 vaut : ' + a[0]);
 	a.join(','); 
-	a=parseInt(a)
+	//a=parseInt(a)
+	// console.log( 'voici a  : ' + a + ' b : ' );
     return a;
 };
 
@@ -28,15 +33,17 @@ darty.wynn.getEvol = function (a, b) {
 }
 
 darty.wynn.formatPrice = function (n) {
-    return isNaN(n) ? 0 + ' €': (darty.wynn.priceToStr(n) + ' €');
+    return isNaN(n) ? 0 + ' €': (darty.wynn.priceToStr(n)) + ' €';
 };
 
 darty.wynn.formatEvo = function (n) {
-    return isNaN(n) ? 'n/a' : ((n < 0 ? '- ' : '+ ') + Math.abs(n).toFixed(1) + '%');
+	//console.log(n);
+    return isNaN(n) ? '- %' : ((n < 0 ? '- ' : '+ ') + Math.abs(n).toFixed(1) + ' %');
 };
 
 darty.wynn.formatPrct = function (n) {
-    return isNaN(n) ? 'n/a' : (n + '%');
+	// console.log('Valeur n : ' + n );
+    return isNaN(n) ? ' 0 %' : (Math.abs(n).toFixed(1) + ' %');
 };
 
 darty.wynn.formatConcret = function (n) {
@@ -58,10 +65,10 @@ darty.wynn.pad = function (str, n, c) {
 // Associe une class css à un score, selon le score maximal possible sur l'indicateur.
 darty.wynn.score2Cls = function (score, max) {
     switch (score) {
-        case 0: return 'score_0';
-        case 1: return max === 4 ? 'score_1' : 'score_2';
-        case 2: return max === 4 ? 'score_2' : 'score_3';
-        case 3: return 'score_3';
+        case 0: return '0';
+        case 1: return max === 4 ? '1' : '2';
+        case 2: return max === 4 ? '2' : '3';
+        case 3: return '3';
     }
 };
 
@@ -91,7 +98,6 @@ darty.wynn.removeFilters = function(type, dim) {
 			if (u.substring(0,3) == dim)
 				cpt=u.substring(3,4);
 		} 
-		console.log('héhé ! ');
 		// on construit l'url a renvoyer 
 		var result = '' 
 		var symbol = false;
@@ -110,7 +116,6 @@ darty.wynn.removeFilters = function(type, dim) {
 				symbol = true;
 			}
 		}
-		console.log('hahah');
 		// on selectionne la redirection logique
 		if (result != '' && type == "accueil")
 			window.location.assign("http://" + window.location.host + "/accueil?" + result);
@@ -132,13 +137,13 @@ darty.wynn.setFilters = function(type) {
 	var obj = darty.wynn.pageData;
 	for(var index in obj.filtres) { 
 		if (index.substring(0,3) == 'org')
-			text.org = '<span id="'+obj.filtres[index].lib+' class="org" "> '+obj.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" alt="org" /></span>'+'</div>'
+			text.org = '<span id="'+obj.filtres[index].lib+' class="org" "> '+obj.filtres[index].lib +' </span><span id="X.img"><img src="/img/details/croix.png" alt="org" /></span>'+'</div>'
 		else if (index.substring(0,3) == 'prd')
-			text.prd = '<span id="'+obj.filtres[index].lib+' class="prd" "> '+obj.filtres[index].lib +' </span><span id="X.img"><img src="/images/details/croix.png" alt="prd" /></span>'+'</div>';
+			text.prd = '<span id="'+obj.filtres[index].lib+' class="prd" "> '+obj.filtres[index].lib +' </span><span id="X.img"><img src="/img/details/croix.png" alt="prd" /></span>'+'</div>';
 	}
 	// on enlève les 2 blocs à refaire ariane1 => Produits, ariane2 => Lieux
 	
-	$('#bouton-home').append("<img src='/images/details/img-home.png' alt='' id='home' width='36px' height='36px' /><div id='ariane'></div>").each(function(){
+	$('#bouton-home').append("<img src='/img/details/img-home.png' width='3%' height='auto' alt='' id='home' /><div id='ariane'></div>").each(function(){
 		if (text.org != '') // si pas de filtre org 
 			$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.org+text.endReq);
 		else   // si filtre org 

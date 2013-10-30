@@ -1,4 +1,4 @@
-
+// fab
 darty.wynn.gui.details = (function () {
 //window.event.cancelBubble = true;
     var _w = darty.wynn;
@@ -12,8 +12,9 @@ darty.wynn.gui.details = (function () {
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
-            	console.log (result);
-                $('#mainContentMiddle').html(doT.template($('#tmplDetailsTable').text())(prepareModel(result)));
+            	$('#mainContentMiddle').html(doT.template($('#tmplDetailsTable').text())(prepareModel(result)));
+                // console.log('result : ');
+				// console.log(result);
                 refreshTimer = window.setTimeout(refreshPage, _w.config.reqInterval);
                 lastRefresh = new Date();
                 nextRefresh = new Date(lastRefresh.getTime() + _w.config.reqInterval);
@@ -23,15 +24,13 @@ darty.wynn.gui.details = (function () {
 				if ((obj.filtres.agg.substring(0,3) == 'prd' && obj.filtres.agg.substring(3,4) == '6' )||
 					(obj.filtres.agg.substring(0,3) == 'org' && obj.filtres.agg.substring(3,4) == '4' )) {
 					$("table#detailsTable").find("a").removeAttr("href");
-					$(".libelle").css ("font-size","60%"); 
+					$(".libelle").css("font-size","60%"); // contrôle ?!? Vérification ?!
+					// console.log($('.first-column div.code a').text());
 				}
 				else
 				{
 					$(".code").remove();
 				}
-				
-				
-				
 			}
         });
     }
@@ -42,37 +41,49 @@ darty.wynn.gui.details = (function () {
         var model = {
             list: []
         };
-
+		var sum = {}; // guillaume
+		
         var fields = ['ca1y', 'ca2m', 'vt1y', 'vt2m', 'vtAcc1y', 'vtAcc2m', 'vtServ1y', 'vtServ2m', 'vtOa1y', 'vtOa2m', 'caRem1y', 'caRem2m'];
         var t = {};
 
         for (var i = 0, imax = fields.length; i < imax; i++) {
-            t[fields[i]] = 0;
+            t[fields[i]] = 0; // init
+			sum[fields[i]] = 0;
         }
 
+        // console.log('data : X : ');
+		// console.log(data)
+		var cptNotZero = 1;
         for (var j = 0, jmax = data.length; j < jmax; j++) {
-
-            var lineData = data[j];
-            
-            var lineModel = createLineModel(lineData);
-            lineModel.cd = lineData.cd;
-            lineModel.lib = lineData.lib;
-            console.log (lineModel);
-            lineModel.ddQuery = makeDrillDownQuery(lineData.cd);
-            lineModel.dbQuery = makeDashboardQuery(lineData.cd);
-            model.list.push(lineModel);
-
-            // Accumulation des valeurs.
-            for (var i = 0, imax = fields.length; i < imax; i++) {
-                t[fields[i]] += lineData[fields[i]];
-            }
+			cptNotZero ++;
+			
+			var lineData = data[j]; // lineData contient toutes les infos d'une ligne
+			// console.log('lineData : ');
+            // console.log(lineData);
+			var lineModel = createLineModel(lineData); // on créé la ligne
+			lineModel.cd = lineData.cd;
+            lineModel.lib = lineData.lib; 	// on rajoute le lib
+            lineModel.ddQuery = makeDrillDownQuery(lineData.cd); // on rajoute les liens
+            lineModel.dbQuery = makeDashboardQuery(lineData.cd); // le second lien
+			lineModel.order = typeof lineData.ordre === 'number' ? lineData.ordre : cptNotZero;
+            model.list.push(lineModel); 	// on rajoute dans la liste de model.
+			createSumLine(lineData, sum);
         }
 
-        model.totals = createLineModel(t);
+        model.totals = createLineModel(sum);
 
         return model;
     }
-
+	
+	function createSumLine(data, sum) { // somme les valeurs d'une ligne pour l'ensemble
+		var fields = ['ca1y', 'ca2m', 'vt1y', 'vt2m', 'vtAcc1y', 'vtAcc2m', 'vtServ1y', 'vtServ2m', 'vtOa1y', 'vtOa2m', 'caRem1y', 'caRem2m'];
+		for (y = 0; y < fields.length; y++)
+		{
+			if (typeof data[fields[y]] === 'number')
+				sum[fields[y]] += data[fields[y]];
+		}
+	}
+	
     // Ajout d'un objet sur les données de la ligne pour ne pas mélanger les valeurs d'affichage avec les données numériques en entrée.
     function createLineModel(data) {
 
@@ -82,24 +93,45 @@ darty.wynn.gui.details = (function () {
             ca: _w.formatPrice(data.ca2m),
             caEvo: {
                 val: _w.formatEvo(data.caEvo2m),
-                cls: isNaN(data.caEvo2m) ? '' : _w.score2Cls(_w.data.computeScoreEvol(data.ca2m, data.ca1y, data.caEvoGlobal2m, _w.pageData.budget.ca), 4)
-            },
+                cls: isNaN(data.caEvo2m) ? 'gray' : _w.score2Cls(_w.data.computeScoreEvol(data.ca2m, data.ca1y, data.caEvoGlobal2m, _w.pageData.budget.ca), 4)
+            },// delete de là : 
             acc: {
                 val: _w.formatPrct(data.vtPartAcc2m),
-                cls: isNaN(data.vtPartAcc2m) ? '' : _w.score2Cls(_w.data.computeScore(data.vtPartAcc2m, data.vtPartAcc1y, data.vtPartAccGlobal2m), 3)
+                cls: isNaN(data.vtPartAcc2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(data.vtPartAcc2m, data.vtPartAcc1y, data.vtPartAccGlobal2m), 3)
             },
             serv: {
                 val: _w.formatPrct(data.vtPartServ2m),
-                cls: isNaN(data.vtPartServ2m) ? '' : _w.score2Cls(_w.data.computeScore(data.vtPartServ2m, data.vtPartServ1y, data.vtParServGlobal2m), 3)
+                cls: isNaN(data.vtPartServ2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(data.vtPartServ2m, data.vtPartServ1y, data.vtParServGlobal2m), 3)
             },
             oa: {
                 val: _w.formatPrct(data.vtPartOa2m),
-                cls: isNaN(data.vtPartOa2m) ? '' : _w.score2Cls(_w.data.computeScore(data.vtPartOa2m, data.vtPartOa1y, data.vtPartOaGlobal2m), 3)
+                cls: isNaN(data.vtPartOa2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(data.vtPartOa2m, data.vtPartOa1y, data.vtPartOaGlobal2m), 3)
             },
             rem: {
                 val: _w.formatPrct(data.caPartRem2m),
-                cls: isNaN(data.caPartRem2m) ? '' : _w.score2Cls(_w.data.computeScore(data.caPartRem2m, data.caPartRem1y, data.caPartRemGlobal2m), 3)
+				//val: _w.formatPrct(data.evolRem),
+                cls: isNaN(data.caPartRem2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(data.caPartRem2m, data.caPartRem1y, data.caPartRemGlobal2m), 3)
+            }, // jusqu'à là ! 
+			/*
+			acc: {
+                val: _w.formatPrct(data.caPartAcc2m),
+                cls: isNaN(data.caPartAcc2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(data.caPartAcc2m, data.caPartAcc1y, data.caPartAccGlobal2m), 3)
             },
+			serv: {
+                val: _w.formatPrct(data.caPartServ2m),
+                cls: isNaN(data.caPartServ2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(data.caPartServ2m, data.caPartServ1y, data.caPartServGlobal2m), 3)
+            },
+			rem: {
+                val: _w.formatPrct(data.caPartRem2m),
+                cls: isNaN(data.caPartRem2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(data.caPartRem2m, data.caPartRem1y, data.caPartRemGlobal2m), 3)
+            },
+			oa: {
+                val: _w.formatPrct(data.caPartOa2m),
+                cls: isNaN(data.caPartOa2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(data.caPartOa2m, data.caPartOa1y, data.caPartOaGlobal2m), 3)
+            },
+			
+			
+			*/
         }
     }
 	// function de création de la requ^te pour l'appel vers Dashboard
@@ -136,7 +168,7 @@ darty.wynn.gui.details = (function () {
             $(document).on('click', 'tr th.table-header', function () {
 				if ($(this).attr('id'))
 					tablesorterControler($(this).attr('id'));
-                console.log('tri ! ');
+                // console.log('tri ! ');
             });
 			
 			// Bouton Refresh Timer 
@@ -170,7 +202,7 @@ darty.wynn.gui.details = (function () {
 			});
 			
 			// Menu déroulant => Redirect => itself + Aggregat 
-			$(document).on('click', 'div.btn-menu', function () {
+			$(document).on('click', 'div.btn-menu.btnY', function () {
 				if ($(this).attr('id')) {
 					var text = '';
 					split = window.location.search.split("&");
@@ -180,8 +212,8 @@ darty.wynn.gui.details = (function () {
 						else 
 							text += '&'+split[i];
 					}
+					window.location.assign("http://" + window.location.host + "/details" + text);
 				}
-				window.location.assign("http://" + window.location.host + "/details" + text);
 			});
 			
 			// bouton de suppression des filtres  
@@ -200,19 +232,43 @@ darty.wynn.gui.details = (function () {
 					$('div.menuDeroul').show("fast", function(){}); 
 				else
 					$('div.menuDeroul').hide("fast", function(){});
-				console.log('Menu deroulant !');
+				// console.log('Menu deroulant !');
             });
 			
-			$(document).on('mouseenter', 'th', function() {
-				//alert("Reste dans la fenêtre ! ")
-			}), ('mouseleave', 'th', function(){
-				//alert("Ca c'est drôle ! ")
-			});
+			// $(document).on('mouseenter', 'th', function() {
+				// alert("Reste dans la fenêtre ! ")
+			// }), ('mouseleave', 'th', function(){
+				// alert("Ca c'est drôle ! ")
+			// });
 			
 			// Menu déroulant => Affiche les options d'aggregat 
-			$(document).on('click', 'div#delete>img', function () {
-                console.log('tri sur la première colonne :)')
-				$("table").tablesorter({
+			$(document).on('click', 'div#delete img', function () {
+                // console.log('tri sur la première colonne :)')
+				$("table").tablesorter({ // configuration du tri de tableau ! 
+					headers: { 
+					0: {
+						sorter:'subclass'
+						},
+					1: { 
+						sorter:'currency' 
+						}, 
+					2: {
+						sorter:'percent'
+						},
+					3: {
+						sorter:'percent'
+						},
+					4: {
+						sorter:'percent'
+						},
+					5: {
+						sorter:'percent'
+						},
+					6: {
+						sorter:'percent'
+						}
+					} 
+				
 				}); 
 				$('div#zone').parent().addClass('headerSortDown');
 				var elem = $("div#delete").remove();		
@@ -286,7 +342,7 @@ darty.wynn.gui.details = (function () {
 		if (o.render.fin != '') { 
 			o.render.dbt = '<div id="zone">';
 			o.render.end = '</div>'
-			o.render.imgTri = '<img src="images/details/fleche-top.png" />';
+			o.render.imgTri = '<img src="img/details/fleche-top.png" />';
 			if (o.render.name != '') { // si jamais il y a un nom, on le rajoute
 				var tmp = '';
 				tmp = o.render.fin;

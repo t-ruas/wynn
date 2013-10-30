@@ -1,4 +1,4 @@
-darty.wynn.gui.accueil = (function () {
+darty.wynn.gui.accueil = (function () { // fab
 
 	// tablesorter doc : http://tablesorter.com/docs
 
@@ -26,7 +26,8 @@ darty.wynn.gui.accueil = (function () {
             	darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
             	if (error) {
             	} else {
-            		console.log(resultEnt);
+					// console.log('resultEnt :');
+					// console.log(resultEnt);
             		result.ent2m = resultEnt.ent2m;
             		result.ent1y = resultEnt.ent1y;
             		ca2minutes =result.ca2m;
@@ -37,18 +38,19 @@ darty.wynn.gui.accueil = (function () {
 	            	pagefn = doT.template($('#indicateurs').text());
 	                $('#mainContentMid').html(pagefn(result));
 	                testEnt(resultEnt);
-	                console.log('partie gauche chargee');
+	                // console.log('partie gauche chargee');
         		}});
             	
                 var pagefn = doT.template($('#navigation-bar').text());
                 $('#content-header').html(pagefn(result));
-                console.log('Menu de navigation chargee');
+                // console.log('Menu de navigation chargee');
 
-                pagefn = doT.template($('#load-ranking').text());
-                $('#blueContent').html(pagefn(result));
-                console.log('partie droite chargee');
-
-                console.log(result);
+                // pagefn = doT.template($('#load-ranking').text());
+                // $('#blueContent').html(pagefn(result));
+                // console.log('partie droite chargee');
+				
+				// console.log('result :');
+                // console.log(result);
 
                 refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
                 refreshTimerCa = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
@@ -127,12 +129,12 @@ darty.wynn.gui.accueil = (function () {
 		$("#probErreurEnt").html ("");
 		
     	if ( darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)   > 100 || darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)   < -100 || isNaN(darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)  ) ){
-			console.log("blabla");
+			// console.log("blabla");
 			$("#probErreurEnt").append ("Evolution d'entrée incohérente.");    		
     	}
     	
     	if  ( dernierChargEnt.getTime() < lastRefresh15m.getTime()    ){
-    		console.log("blabla2");
+    		// console.log("blabla2");
     		$("#probErreurEnt").append (" Pas d'entrées depuis : " + darty.wynn.formatTime(dernierChargEnt));    
     	}
 
@@ -162,6 +164,7 @@ darty.wynn.gui.accueil = (function () {
 		var aleaNumb = getAleaNomb (minMax.min, minMax.max);
 		cumul += aleaNumb;
 		var aAfficher= darty.wynn.priceToStr(ca2minutes + cumul);
+		// console.log('aAfficher : '+ aAfficher)
 		 
 		$('#affichageCa').remove();
 		$("#ligneARajouter").prepend("<th class=\"color_X fixe \" id=\"affichageCa\"><span>"+aAfficher+" €</span></th>");		
@@ -186,16 +189,6 @@ darty.wynn.gui.accueil = (function () {
 			,{id : ca, couleur : data.caPT}
 			,{id : ca, couleur : data.caPT}  
 			]
-	}
-	
-	function getScoreEvol(val, histo, moyenne, budget) {
-    var score = 0;
-    (val > histo) && score++;
-    (val > histo + (histo * moyenne) / 100) && score++;
-    (val > histo + (histo * budget) / 100) && score++;
-    console.log (val, histo, moyenne, budget);
-    console.log (score);
-    return score;
 	}
 	
 	function calcEvol (_1y, _2m) {
@@ -225,7 +218,6 @@ darty.wynn.gui.accueil = (function () {
 	
     return {
         start: start,
-        calcEvol: calcEvol,
-        getScoreEvol: getScoreEvol
+        calcEvol: calcEvol
     };
 })();

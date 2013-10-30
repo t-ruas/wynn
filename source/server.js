@@ -127,11 +127,11 @@ var routes = {
                 if (authorizeOrRedirect(context, callback)) {
                     // on récupère les données qui seront necessaire à la conception de la page (données envoyées avec le template)
                     
-                    getRefData(context, function (error, result) {
+						getRefData(context, function (error, result) {
                         if (error) {
                             callback(error);
                         } else {
-                      _logger.info('2 Réponse dans RefData : ' + _util.inspect(result, {depth: null}));
+							_logger.info('2 Réponse dans RefData : ' + _util.inspect(result, {depth: null}));
                             callback(error, {file: 'details.html', fileData: result});
                         }
                     });
@@ -213,14 +213,11 @@ function getRefData(context, callback) {
     _data.getFilterText(context.path.query, function (error, result) {
     	
         if (error) {
-            
             callback(error);
         } else {
-        	_logger.info('2 Réponse dans RefData : ' + _util.inspect(result, {depth: null}));
-        	
+        	/*_logger.info('2 Réponse dans RefData : ' + _util.inspect(result, {depth: null}));*/
 			// ajout des filtres
             data.filtres = result;
-            
             _data.getBudget(function (error, result) {
                 if (error) {
                     callback(error);

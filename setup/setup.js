@@ -18,9 +18,13 @@ var files = {
         'static/darty.wynn.gui.accueil.js',
         'static/darty.wynn.gui.details.js',
     ],
+	jsClientMin: [
+		'static/darty.wynn.min.js',
+	],
     templates: [
         'templates/accueil.html',
         'templates/details.html',
+		'templates/login.html',
     ],
     jsBase: [
         // http://jquery.com/
@@ -58,10 +62,11 @@ var actions = {
         {type: 'importFiles', files: [files.jsBaseMin, files.jsServer, files.setup, files.templates, files.misc]},
         {type: 'importDirectories', directories: ['static/images']},
         {type: 'importDirectories', directories: ['static/styles']},
-        {type: 'minifyFiles', files: [files.jsClient], destination: 'static/darty.win.min.js'},
+        {type: 'minifyFiles', files: [files.jsClient], destination: 'static/darty.wynn.min.js'},
         {type: 'replacePattern', pattern: /\\{\\{/g, value: '<%', files: ['static/doT.min.js']},
         {type: 'replacePattern', pattern: /\\}\\}/g, value: '%>', files: ['static/doT.min.js']},
-        {type: 'replacePattern', pattern: /@@scripts@@/g, value: 'darty.wynn.min.js', files: files.templates},
+        {type: 'replacePattern', pattern: /@@scripts@@/g, value: _build.generateScriptTags([files.jsClientMin]), files: files.templates},
+        /*	{type: 'replacePattern', pattern: /@@scripts@@/g, value: 'darty.wynn.min.js', files: files.templates},	*/
         {type: 'replacePattern', pattern: /@@base_scripts@@/g, value: _build.generateScriptTags([files.jsBaseMin]), files: files.templates},
         {type: 'createDirectory', directory: 'logs'},
     ]

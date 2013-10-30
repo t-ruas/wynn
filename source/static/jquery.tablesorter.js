@@ -22,12 +22,10 @@
  * @desc Create a tablesorter interface and sort on the first and secound column column headers.
  * 
  * @example $('table').tablesorter({ headers: { 0: { sorter: false}, 1: {sorter: false} } });
- *          
  * @desc Create a tablesorter interface and disableing the first and second  column headers.
  *      
  * 
  * @example $('table').tablesorter({ headers: { 0: {sorter:"integer"}, 1: {sorter:"currency"} } });
- * 
  * @desc Create a tablesorter interface and set a column parser for the first
  *       and second column.
  * 
@@ -320,11 +318,12 @@
             }
 
             function appendToTable(table, cache) {
-
                 if (table.config.debug) {
                     var appendTime = new Date()
                 }
-
+				
+				// console.log(cache)
+				
                 var c = cache,
                     r = c.row,
                     n = c.normalized,
@@ -332,7 +331,6 @@
                     checkCell = (n[0].length - 1),
                     tableBody = $(table.tBodies[0]),
                     rows = [];
-
 
                 for (var i = 0; i < totalRows; i++) {
                     var pos = n[i][checkCell];
@@ -343,18 +341,22 @@
 
                         //var o = ;
                         var l = r[pos].length;
+						// console.log(' l : '  + l);
+						//alert('l : '+ l)
                         for (var j = 0; j < l; j++) {
                             tableBody[0].appendChild(r[pos][j]);
+							// console.log('j : ' + j);
                         }
 
                         // 
                     }
                 }
+				//alert('fini ?')
+				// console.log('fini ? ');
 
-
+				// console.log(table.config.appender);
 
                 if (table.config.appender) {
-
                     table.config.appender(table, rows);
                 }
 
@@ -366,10 +368,11 @@
 
                 // apply table widgets
                 applyWidget(table);
-
+				//alert('pause ! ');
                 // trigger sortend
                 setTimeout(function () {
                     $(table).trigger("sortEnd");
+					// console.log('trié ! ');
                 }, 0);
 
             };
@@ -503,7 +506,6 @@
                 var c = table.config.widgets;
                 var l = c.length;
                 for (var i = 0; i < l; i++) {
-
                     getWidgetById(c[i]).format(table);
                 }
 
@@ -713,11 +715,13 @@
                     // this is to big, perhaps break it out?
                     $headers.click(
 
-                    function (e) {
-						if (e.target.nodeName == "TH")
-							console.log('ok pour click');
-						else
-							return;
+                    function (e) { // console.log() 
+						if (e.target.nodeName == "TH") {
+							// console.log('ok pour click');
+						}
+						else {
+							return; }// pour ne pas 
+						
                         var totalRows = ($this[0].tBodies[0] && $this[0].tBodies[0].rows.length) || 0;
                         if (!this.sortDisabled && totalRows > 0) {
                             // Only call sortStart if sorting is
@@ -727,8 +731,9 @@
                             var $cell = $(this);
                             // get current column index
                             var i = this.column;
+							// console.log('this.column : ' + i);
                             // get current column sort order
-                            this.order = this.count++ % 2;
+                            this.order = this.count++ % 2; // alterne pour savoir si croissant-1/decroissant-0 
 							// always sort on the locked order.
 							if(this.lockedOrder) this.order = this.lockedOrder;
 							
@@ -737,6 +742,7 @@
                             if (!e[config.sortMultiSortKey]) {
                                 // flush the sort list
                                 config.sortList = [];
+								// console.log('Tri forcé ! ');
                                 if (config.sortForce != null) {
                                     var a = config.sortForce;
                                     for (var j = 0; j < a.length; j++) {
@@ -744,6 +750,7 @@
                                             config.sortList.push(a[j]);
                                         }
                                     }
+									
                                 }
                                 // add column to sort list
                                 config.sortList.push([i, this.order]);
@@ -751,6 +758,7 @@
                             } else {
                                 // the user has clicked on an all
                                 // ready sortet column.
+								// console.log('tri non forcé ! ');
                                 if (isValueInArray(i, config.sortList)) {
                                     // revers the sorting direction
                                     // for all tables.
@@ -765,6 +773,7 @@
                                     }
                                 } else {
                                     // add column to sort list array
+									// console.log('3eme effet kiscool ! ')
                                     config.sortList.push([i, this.order]);
                                 }
                             };
@@ -909,9 +918,29 @@
         is: function (s) {
             return /^[£$€?.]/.test(s);
         }, format: function (s) {
-            return $.tablesorter.formatFloat(s.replace(new RegExp(/[£$€]/g), ""));
+			var n = s.length;
+			var y = s.substring(0, n-2)
+			//console.log('n = length : ' + n);
+			var u = y.split(' ');
+			var result = '';
+			for (var i = 0; i < u.length; i++)
+			{
+				result+=parseInt(u[i]);
+			} 
+			return parseInt(result);
+            // return $.tablesorter.formatFloat(s.replace(new RegExp(/[£$€] /g), ""));
         }, type: "numeric"
     });
+	
+	ts.addParser({
+		id:"subclass",
+		is: function (s) {
+			return false;
+		}, format : function (s) {
+			return parseInt(s.split(',')[1]);
+		}, type:'numeric'
+			
+	});
 
     ts.addParser({
         id: "ipAddress",
