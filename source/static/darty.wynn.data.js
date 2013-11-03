@@ -104,6 +104,7 @@ darty.wynn.data = (function () {
 	}
 	
     function computeScore(val, histo, moyenne, budget) {
+		console.log('val : ' + val+ ', histo : ' +histo+ ', moyenne : ' +moyenne+ ', budget : ' +budget );
         var score = 0;
         (val > histo) && score++;
         (val > moyenne) && score++;

@@ -65,10 +65,8 @@ function dateToString(date) {
 }
 
 function makeDateFilter(date) {
-
-//_logger.info('2 Réponse ElasticSearch : ' + _util.inspect(date, {depth: null}));
-
-    return {
+	//_logger.info('2 Réponse ElasticSearch : ' + _util.inspect(date, {depth: null}));
+	return {
         range: {
             'DATE': {
             	lte: dateToString(date),
@@ -81,9 +79,9 @@ function makeDateFilter(date) {
 }
 
 function makeDateFilterLib(date) {
-var tempDate = new Date (date);
-tempDate.setDate(tempDate.getDate() - _config.jour1an);
-tempDate.setHours(0,0,0,0);
+	var tempDate = new Date (date);
+	tempDate.setDate(tempDate.getDate() - _config.jour1an);
+	tempDate.setHours(0,0,0,0);
     return {
         range: {
             'DATE': {
@@ -96,7 +94,38 @@ tempDate.setHours(0,0,0,0);
 
 // permet de retourner le budget pour chaque catégories
 function getBudget(callback) {
-    callback(null, {ca: 10, vtPartAcc: 15, vtPartServ: 15, vtPartOa: 15, vtPartRem: 15});
+	// TODO : var value_of_date = getdate();
+	// get date du jour et la mettre dans value_of_date
+	var value_of_date = '20131030'
+	//var f = '{"DATE":'+value_of_date+'}';
+	var f = {"DATE":value_of_date};
+	var data = {
+		size: 1,
+		fields: ['CA','ACCESSOIRES', 'OFFRESACTIVES', 'REMISE', 'SERVICES'],
+		filter: {term: f}
+	}
+	/*
+	{
+		"size" : 1,
+		"fields" : ["CA","ACCESSOIRES", "OFFRESACTIVES", "REMISE", "SERVICES"],
+		"filter" : {"term" :{"DATE" : "20131029"}}
+	}
+	*/
+	
+	postSearch('budget', data, function (error, result) {
+            if (error) {
+                callback(error);
+            } else {
+				if (result.hits.hits.length) {
+                    callback(null, result.hits.hits[0].fields);
+                } else {
+                    callback(new _errors.Error('NotFoundError'));
+                }
+            }
+        });	
+	
+	// postSearch method to call Budget Values ! 
+    // callback(null, {ca: 10, vtPartAcc: 15, vtPartServ: 15, vtPartOa: 15, vtPartRem: 15});
 }
 
 function prepareDateFilters(tempsComptSet) {
@@ -208,13 +237,16 @@ function getLib(field, code, callback) {
     } else {
         var f = {};
         f[field.cd] = code;
-
+		// console.log('INTERREST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+		// console.log(f);
         var data = {
             size: 1,
             fields: [field.cd, field.lib],
             filter: {term: f}
         };
-		// _logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(data, {depth: null}));
+		
+		
+		_logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(data, {depth: null}));
 		// pour retrouver un libellé en particulier s'il manque
         postSearch('lv', data, function (error, result) {
             if (error) {

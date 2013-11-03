@@ -164,11 +164,10 @@ darty.wynn.gui.details = (function () {
             });
 			
 			
-			// Boutons de tri du tableau
+			// Boutons de tri du tableau TODO remove ! 
             $(document).on('click', 'tr th.table-header', function () {
 				if ($(this).attr('id'))
 					tablesorterControler($(this).attr('id'));
-                // console.log('tri ! ');
             });
 			
 			// Bouton Refresh Timer 
@@ -217,12 +216,12 @@ darty.wynn.gui.details = (function () {
 			});
 			
 			// bouton de suppression des filtres  
-			$(document).on('click', 'div#bouton-home div#ariane div img', function () {
+			$(document).on('click', 'div#ariane span.close', function () { // TODO : Clic sur l'img ... 
 				darty.wynn.removeFilters('details',$(this).parent().parent().attr('class') );
             });
 			
 			// Bouton Home => Redirect => Accueil 
-			$(document).on('click', 'img#home', function () {
+			$(document).on('click', 'span#home', function () {
                 window.location.assign("http://" + window.location.host + "/accueil");
             });
 			
@@ -243,8 +242,7 @@ darty.wynn.gui.details = (function () {
 			
 			// Menu déroulant => Affiche les options d'aggregat 
 			$(document).on('click', 'div#delete img', function () {
-                // console.log('tri sur la première colonne :)')
-				$("table").tablesorter({ // configuration du tri de tableau ! 
+                $("table").tablesorter({ // configuration du tri de tableau ! 
 					headers: { 
 					0: {
 						sorter:'subclass'
@@ -271,8 +269,21 @@ darty.wynn.gui.details = (function () {
 				
 				}); 
 				$('div#zone').parent().addClass('headerSortDown');
-				var elem = $("div#delete").remove();		
+				var elem = $("div#delete").remove();
+				$('div#zone').append('<a><img class="arrow" src="./img/arrow.png"></a>')
             });
+			$(document).on('click','th img', function() {
+				//$(this).parent.remove();
+				console.log('error : ' + $(this).alt);
+				if($(this).attr('src').substring(11,12) === '.'){
+					// var edouard = $(this).removeAttr('src');
+					$(this).attr({src:'./img/arrowDown.png'});
+				}
+				else {
+					//$(this).removeAttr('src');
+					$(this).attr({src:'./img/arrow.png'});
+				}
+			});
 			
 			// bouton d'activation de test TEST !!! 
 			$(document).on('click', 'div#blueContent', function () {
@@ -342,7 +353,7 @@ darty.wynn.gui.details = (function () {
 		if (o.render.fin != '') { 
 			o.render.dbt = '<div id="zone">';
 			o.render.end = '</div>'
-			o.render.imgTri = '<img src="img/details/fleche-top.png" />';
+			o.render.imgTri = '<img class="arrow" src="./img/arrow.png">';
 			if (o.render.name != '') { // si jamais il y a un nom, on le rajoute
 				var tmp = '';
 				tmp = o.render.fin;

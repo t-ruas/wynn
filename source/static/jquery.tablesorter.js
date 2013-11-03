@@ -716,7 +716,17 @@
                     $headers.click(
 
                     function (e) { // console.log() 
-						if (e.target.nodeName == "TH") {
+						if (e.target.nodeName == "TH" || e.target.nodeName == "IMG") {
+							if (e.target.nodeName == 'IMG') {
+								/*if($(this).attr('src').substring(11,12) === '.'){
+									console.log('UP');
+									$(this).attr({src:'./img/arrowDown.png'});
+								}
+								else {
+									console.log('DOWN');
+									$(this).attr({src:'./img/arrow.png'});
+								}*/
+							}
 							// console.log('ok pour click');
 						}
 						else {

@@ -110,6 +110,8 @@ var routes = {
             pattern: /^\/accueil$/i,
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
+					console.log('CONTEXT : ');
+					console.log(context);
                     getRefData(context, function (error, result) {
                         if (error) {
                             callback(error);
@@ -126,7 +128,7 @@ var routes = {
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
                     // on récupère les données qui seront necessaire à la conception de la page (données envoyées avec le template)
-                    
+						
 						getRefData(context, function (error, result) {
                         if (error) {
                             callback(error);
@@ -218,12 +220,14 @@ function getRefData(context, callback) {
         	/*_logger.info('2 Réponse dans RefData : ' + _util.inspect(result, {depth: null}));*/
 			// ajout des filtres
             data.filtres = result;
-            _data.getBudget(function (error, result) {
+				_data.getBudget(function (error, result) {
                 if (error) {
                     callback(error);
                 } else {
 					// ajout des budget
                     data.budget = result;
+					console.log('DATA_BUDGET LOADING ! >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+					console.log(result);
                     callback(error, data);
                 }
             });

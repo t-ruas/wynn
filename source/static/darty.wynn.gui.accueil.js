@@ -36,7 +36,7 @@ darty.wynn.gui.accueil = (function () { // fab
             		
             		result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
 	            	pagefn = doT.template($('#indicateurs').text());
-	                $('#mainContentMid').html(pagefn(result));
+	                $('#mainContentMiddle_home').html(pagefn(result));
 	                testEnt(resultEnt);
 	                // console.log('partie gauche chargee');
         		}});
@@ -45,8 +45,8 @@ darty.wynn.gui.accueil = (function () { // fab
                 $('#content-header').html(pagefn(result));
                 // console.log('Menu de navigation chargee');
 
-                // pagefn = doT.template($('#load-ranking').text());
-                // $('#blueContent').html(pagefn(result));
+                pagefn = doT.template($('#top-blue-part').text());
+                $('#blueContentTop').html(pagefn(result));
                 // console.log('partie droite chargee');
 				
 				// console.log('result :');
@@ -65,7 +65,7 @@ darty.wynn.gui.accueil = (function () { // fab
         $(document).ready(function () {
         refreshPage();  
 		
-		makeDrillUrl();
+		//makeDrillUrl();
 		var ndate= new Date();
   		var m = (((ndate.getMinutes() )/15 | 0) * 15) % 60;
 		var h = (((ndate.getMinutes()/105 + .5) | 0) + ndate.getHours()) % 24;
@@ -96,16 +96,15 @@ darty.wynn.gui.accueil = (function () { // fab
             }
         });
         
-		// bouton de suppression des filtres  
-		$(document).on('click', 'div#bouton-home div#ariane div img', function () {
-			darty.wynn.removeFilters('accueil', $(this).parent().parent().attr('class'));
+		$(document).on('click', 'div#ariane', function () { // TODO : Clic sur l'img ...
+			darty.wynn.removeFilters('accueil',$(this).parent().parent().attr('class') );
 		});
 		
-        $(document).on('click','#affichageCa span', function () {
+        $(document).on('click','div#CA_chiffre p', function () { // DONE : accueil.html => clic sur le p de CA
             window.location.assign(makeDrillUrl() );
         });
         
-		$(document).on('click', 'img#home', function () {
+		$(document).on('click', 'span#home', function () {
 			window.location.assign("http://" + window.location.host + "/accueil");
 		});
         
@@ -150,25 +149,26 @@ darty.wynn.gui.accueil = (function () { // fab
 	
 	function recalculCaDecoupage ( aTester) {
 		
-		switch (Math.ceil((nextRefresh - new Date()) / 1000))
-	{
-		case 120:
-		var vraiCA = darty.wynn.priceToStr(ca2minutes);
-		cumul=0;
-		$('#affichageCa').remove();	
-		$("#ligneARajouter").prepend("<th class=\"color_X fixe\" id=\"affichageCa\"><span>"+vraiCA+" €</span></th>");
-		
-		break;
-		
-		default :
-		var aleaNumb = getAleaNomb (minMax.min, minMax.max);
-		cumul += aleaNumb;
-		var aAfficher= darty.wynn.priceToStr(ca2minutes + cumul);
-		// console.log('aAfficher : '+ aAfficher)
-		 
-		$('#affichageCa').remove();
-		$("#ligneARajouter").prepend("<th class=\"color_X fixe \" id=\"affichageCa\"><span>"+aAfficher+" €</span></th>");		
-	}}
+		switch (Math.ceil((nextRefresh - new Date()) / 1000))  // accueil.html modifier le prepend pour qu'il colle au template ! 
+		{
+			case 120:
+			var vraiCA = darty.wynn.priceToStr(ca2minutes);
+			cumul=0;
+			$('#CA_chiffre').remove();	
+			$("#CA_content").prepend("<div id=\"CA_chiffre\"><p>"+vraiCA+" €</p></div>");
+			
+			break;
+			
+			default :
+			var aleaNumb = getAleaNomb (minMax.min, minMax.max);
+			cumul += aleaNumb;
+			var aAfficher= darty.wynn.priceToStr(ca2minutes + cumul);
+			// console.log('aAfficher : '+ aAfficher)
+			 
+			$('#CA_chiffre').remove();
+			$("#CA_content").prepend("<div id=\"CA_chiffre\"><p>"+aAfficher+" €</p></div>");		
+		}
+	}
 	
 	function getUrl () {
 		var search = window.location.search;
@@ -203,16 +203,16 @@ darty.wynn.gui.accueil = (function () { // fab
 		}
 	}
 	
-   function makeDrillUrl() {	
+	function makeDrillUrl() {	
 	var param = window.location.search;
    		if (param == ""){
-   		return "http://" + window.location.host + "/details?agg=prd1";	
+			return "http://" + window.location.host + "/details?agg=prd1";	
    		}
    		else {
    			var agg= param.lastIndexOf("prd")
    			var url = param.split("?");
    			prd=parseInt( param.charAt(agg+3)) +1;
-   			return "http://" + window.location.host + "/details?agg=prd" +prd+"&"+ url[1];
+				return "http://" + window.location.host + "/details?agg=prd" +prd+"&"+ url[1];
    			}
     }
 	

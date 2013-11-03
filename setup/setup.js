@@ -40,7 +40,9 @@ var files = {
     ],
     misc: [
         'static/favicon.ico',
-        'static/default.css'
+        'static/default.css',
+		'static/reset.css',
+		'static/mediaqueries.css'
     ],
     setup: [
         'package.json',
@@ -50,8 +52,9 @@ var files = {
 var actions = {
     dev: [
         {type: 'importFiles', files: [files.jsBase, files.jsServer, files.jsClient, files.setup, files.templates, files.misc]},
-        {type: 'importDirectories', directories: ['static/images']},
-        {type: 'importDirectories', directories: ['static/styles']},
+        {type: 'importDirectories', directories: ['static/img']},
+        {type: 'importDirectories', directories: ['static/fonts']},
+		{type: 'importDirectories', directories: ['static/styles']},
         {type: 'replacePattern', pattern: /\\{\\{/g, value: '<%', files: ['static/doT.js']},
         {type: 'replacePattern', pattern: /\\}\\}/g, value: '%>', files: ['static/doT.js']},
         {type: 'replacePattern', pattern: /@@scripts@@/g, value: _build.generateScriptTags([files.jsClient]), files: files.templates},
@@ -60,7 +63,8 @@ var actions = {
     ],
     prd: [
         {type: 'importFiles', files: [files.jsBaseMin, files.jsServer, files.setup, files.templates, files.misc]},
-        {type: 'importDirectories', directories: ['static/images']},
+        {type: 'importDirectories', directories: ['static/img']},
+        {type: 'importDirectories', directories: ['static/fonts']},
         {type: 'importDirectories', directories: ['static/styles']},
         {type: 'minifyFiles', files: [files.jsClient], destination: 'static/darty.wynn.min.js'},
         {type: 'replacePattern', pattern: /\\{\\{/g, value: '<%', files: ['static/doT.min.js']},

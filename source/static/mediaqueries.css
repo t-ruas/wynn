@@ -1,0 +1,574 @@
+/***************************************************************
+************                                        ************
+************            Medias queries              ************
+************                                        ************
+***************************************************************/
+
+
+/************************************************************
+                          320< X >480 
+*************************************************************/
+
+@media only screen and (min-width: 320px) and (max-width: 480px) {
+    #blueContent{
+        display:none;
+        }
+    
+    td.content.first-column {
+    font-size:70%;
+    }
+    
+    .color_X {font-size:70%;}
+    
+    .color_ {font-size:70%;} 
+    
+    .color_underline_0 {border-bottom : 3px solid rgb(255,0,0); font-size:70%;} 
+    .color_underline_1 {border-bottom : 3px solid rgb(255,192,0);font-size:70%;}
+    .color_underline_2 {border-bottom : 3px solid rgb(146,208,80);font-size:70%;} 
+    .color_underline_3 {border-bottom : 3px solid rgb(0,176,80);font-size:70%;} 
+    .color_underline_gray {border-bottom : 3px solid rgb(187,187,187);font-size:70%;}
+    
+    }
+
+
+
+
+
+
+/************************************************************
+                          X >480
+************************************************************/
+
+@media only screen and (max-width: 480px) {
+    #blueContent{
+        display:none;}
+    
+    #mainContent{
+        background-image:url(./img/bg_1024.jpg);
+        right:0%;}
+    
+    
+/***************
+  Content_home
+****************/
+
+
+#CA_content {
+    width:98.6%;
+    height:100px;
+    float:none;
+    position:relative;
+    border:3px solid rgba(0,176,80,0.7);}
+
+#CA_chiffre {
+    font-size:2.5em;}
+
+#CA_chiffre p {
+   line-height:280%;}
+
+#CA_pourcent {
+    font-size:1.5em;}
+
+#CA_pourcent p {
+    line-height:450%;}
+
+/************
+SECOND LINE
+************/    
+    
+#second_line {
+    width:100%;
+    float:none;
+    margin-top:0%;
+    position:relative;}
+
+#block1 {
+    width:49.5%;
+    height:150px;
+    float:left;
+    margin-top:4%;
+    background-color:rgba(0,176,80,0.7);}
+    
+#block1_chiffre p{
+    margin-top:30%;
+    margin-left:15%;
+    font-size:1.5em;}
+
+#block2 {
+    width:49.5%;
+    height:150px;
+    float:left;
+    margin-left:1%;
+    margin-top:4%;
+    background-color:rgba(232,110,88,0.8);}
+    
+#block2_chiffre p{
+    margin-top:30%;
+    margin-left:10%;
+    font-size:1.5em;}
+
+#block3 {
+    width:49.5%;
+    height:150px;
+    float:left;
+    margin-left:0%;
+    margin-top:1%;
+    background-color:rgba(0,176,80,0.7);}
+    
+#block3_chiffre p{
+    margin-top:30%;
+    margin-left:10%;
+    font-size:1.5em;}
+
+#block4 {
+    width:49.5%;
+    height:150px;
+    float:left;
+    margin-left:1%;
+    margin-top:1%;
+    background-color:rgba(239,175,56,0.8);}
+    
+#block4_chiffre p{
+    margin-top:30%;
+    margin-left:10%;
+    font-size:1.5em;}
+    
+.block_title {
+    height:30%;
+    font-size:1.5em;}
+
+
+/************
+THIRED LINE
+************/
+    
+#thired_line {
+    width:100%;
+    height:20%;
+    float:left;
+    margin-top:4%;
+    position:relative;}
+    
+#block5 {
+    width:100%;
+    height:160px;
+    float:left;}
+
+#block5_chiffre {
+    font-size:2em;}
+    
+.chiffre_p {
+    margin-top:7%;}
+
+.title {
+    margin-top:5%;
+    font-size:1.8em;}
+
+.pourcent {
+    margin-top:5%;
+    font-size:1.8em;}
+
+#block6 {
+    width:100%;
+    height:160px;
+    margin-left:0%;
+    margin-top:4%;
+    float:left;}    
+    
+#block6_chiffre {
+    font-size:2em;}
+
+#block7 {
+    width:100%;
+    height:160px;
+    margin-left:0%;
+    margin-top:4%;
+    float:left;}
+    
+#block7_chiffre {
+    font-size:2em;}
+
+
+}
+
+
+
+
+
+
+/************************************************************
+                       480< X >768
+************************************************************/
+
+@media only screen and (min-width: 480px) and (max-width: 700px){
+    
+#mainContent {
+    background-image:url(./img/bg_sup1024bis.jpg);
+    right:0%;}
+    
+#blueContent{
+    display:none;}
+    
+/**************
+Content_home
+***************/
+
+
+#CA_content {
+    width:98.6%;
+    height:100px;
+    border:3px solid rgba(0,176,80,0.7);}
+
+#CA_chiffre {
+    font-size:2.4em;}
+
+#CA_chiffre p {
+    line-height:280%;}
+
+#CA_pourcent {
+    font-size:1.5em;}
+
+#CA_pourcent p {
+    line-height:420%;}
+
+/************
+SECOND LINE
+************/    
+    
+#second_line {
+    width:100%;
+    float:none;
+    margin-top:2%;
+    position:relative;}
+
+#block1 {
+    width:49.5%;
+    height:150px;
+    float:left;
+    margin-top:4%;
+    background-color:rgba(0,176,80,0.7);}
+    
+#block1_chiffre p{
+    margin-top:20%;
+    margin-left:15%;
+    font-size:1.5em;}
+    
+#block1_chiffre img{
+    margin-top:15%;}
+
+#block2 {
+    width:49.5%;
+    height:150px;
+    float:left;
+    margin-left:1%;
+    margin-top:4%;
+    background-color:rgba(232,110,88,0.8);}
+    
+#block2_chiffre p{
+    margin-top:20%;
+    margin-left:10%;
+    font-size:1.5em;}
+    
+#block2_chiffre img{
+    margin-top:15%;}
+
+#block3 {
+    width:49.5%;
+    height:150px;
+    float:left;
+    margin-left:0%;
+    margin-top:1%;
+    background-color:rgba(0,176,80,0.7);}
+    
+#block3_chiffre p{
+    margin-top:20%;
+    margin-left:10%;
+    font-size:1.5em;}
+
+#block3_chiffre img{
+    margin-top:15%;}
+
+#block4 {
+    width:49.5%;
+    height:150px;
+    float:left;
+    margin-left:1%;
+    margin-top:1%;
+    background-color:rgba(239,175,56,0.8);}
+    
+#block4_chiffre p{
+    margin-top:20%;
+    margin-left:10%;
+    font-size:1.5em;}
+    
+#block4_chiffre img{
+    margin-top:15%;}
+    
+.block_title {
+    height:20%;
+    font-size:1.5em;}
+    
+.block_title p{
+    margin-top:2%;}
+
+
+/************
+THIRED LINE
+************/
+    
+#thired_line {
+    width:100%;
+    height:20%;
+    float:left;
+    margin-top:2%;
+    position:relative;}
+
+#block5 {
+    width:100%;
+    height:120px;
+    float:left;}
+
+#block5_chiffre {
+    height:50%;
+    font-size:2em;}
+    
+.chiffre_p {
+    margin-top:4%;}
+
+.title {
+    margin-top:4%;
+    font-size:1.8em;}
+
+.pourcent {
+    margin-top:4%;
+    font-size:1.8em;}
+
+#block5 {
+    margin-top:2%;}    
+    
+#block6 {
+    width:100%;
+    height:120px;
+    margin-left:0%;
+    margin-top:2%;
+    float:left;}    
+    
+#block6_chiffre {
+    height:50%;
+    font-size:2em;}
+
+#block7 {
+    width:100%;
+    height:120px;
+    margin-left:0%;
+    margin-top:2%;
+    float:left;}
+    
+#block7_chiffre {
+    height:50%;
+    font-size:2em;}
+    
+}
+
+
+
+
+
+/************************************************************
+                        700< X >1024
+************************************************************/
+
+@media only screen and (min-width: 700px) and (max-width: 1024px){
+    
+#mainContent {
+    background-image:url(./img/bg_1024.jpg);}
+    
+/***************
+Content_home
+****************/
+
+
+#CA_content {
+    width:98.6%;
+    height:150px;
+    border:3px solid rgba(0,176,80,0.7);}
+
+#CA_chiffre {
+    font-size:3.5em;}
+
+#CA_chiffre p {
+    line-height:300%;}
+
+#CA_pourcent {
+    font-size:1.5em;}
+
+#CA_pourcent p {
+    line-height:650%;}
+
+/************
+SECOND LINE
+************/    
+    
+#second_line {
+    width:100%;
+    float:none;
+    margin-top:2%;
+    position:relative;}
+
+#block1 {
+    width:49.5%;
+    height:187px;
+    float:left;
+    margin-top:4%;
+    background-color:rgba(0,176,80,0.7);}
+    
+#block1_chiffre p{
+    margin-top:15%;
+    margin-left:15%;
+    font-size:1.5em;}
+    
+#block1_chiffre img{
+    margin-top:10%;}
+
+#block2 {
+    width:49.5%;
+    height:187px;
+    float:left;
+    margin-left:1%;
+    margin-top:4%;
+    background-color:rgba(232,110,88,0.8);}
+    
+#block2_chiffre p{
+    margin-top:15%;
+    margin-left:10%;
+    font-size:1.5em;}
+    
+#block2_chiffre img{
+    margin-top:10%;}
+
+#block3 {
+    width:49.5%;
+    height:187px;
+    float:left;
+    margin-left:0%;
+    margin-top:1%;
+    background-color:rgba(0,176,80,0.7);}
+    
+#block3_chiffre p{
+    margin-top:15%;
+    margin-left:10%;
+    font-size:1.5em;}
+
+#block3_chiffre img{
+    margin-top:10%;}
+
+#block4 {
+    width:49.5%;
+    height:187px;
+    float:left;
+    margin-left:1%;
+    margin-top:1%;
+    background-color:rgba(239,175,56,0.8);}
+    
+#block4_chiffre p{
+    margin-top:15%;
+    margin-left:10%;
+    font-size:1.5em;}
+    
+#block4_chiffre img{
+    margin-top:10%;}
+    
+.block_title {
+    font-size:1.5em;}
+
+
+/************
+THIRED LINE
+************/
+    
+#thired_line {
+    width:100%;
+    height:250px;
+    float:left;
+    margin-top:1%;
+    position:relative;
+    /*background-color:;*/
+	}
+
+.thired_line_link {
+    text-decoration:none;
+    color:rgb(50,65,73);}
+
+.chiffre_p {
+    line-height:200%;
+    text-align:center;
+    float:none;
+    margin-left:0%;
+    margin-top:0%;}
+
+.title {
+    float:none;
+    text-align:center;
+    margin-top:0%;
+    margin-left:4%;
+    font-size:1.8em;}
+
+.pourcent {
+    float:none;
+    text-align:center;
+    margin-top:8%;
+    margin-right:4%;
+    font-size:1.8em;}
+
+#block5 {
+    width:32.5%;
+    height:100%;
+    float:left;}
+
+#block5_chiffre {
+    width:100%;
+    height:45%;
+    font-size:2.5em;
+    background-color:rgba(255,255,255,0.8)}
+    
+#block6 {
+    width:33%;
+    height:100%;
+    float:left;
+    margin-left:1%;}
+
+#block6_chiffre {
+    width:100%;
+    height:45%;
+    font-size:2.5em;
+    background-color:rgba(255,255,255,0.8)}
+
+
+#block7 {
+    width:32.5%;
+    height:100%;
+    float:left;
+    margin-left:1%;}
+
+#block7_chiffre {
+    width:100%;
+    height:45%;
+    font-size:2.5em;
+    background-color:rgba(255,255,255,0.8)}
+    
+}
+
+
+
+
+/************************************************************
+                         1280< X
+************************************************************/
+
+@media only screen and (min-width: 1280px) {
+   
+#mainContent {
+    background-image:url(./img/bg_sup1024bis.jpg);}
+
+}
+

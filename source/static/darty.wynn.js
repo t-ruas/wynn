@@ -38,7 +38,7 @@ darty.wynn.formatPrice = function (n) {
 
 darty.wynn.formatEvo = function (n) {
 	//console.log(n);
-    return isNaN(n) ? '- %' : ((n < 0 ? '- ' : '+ ') + Math.abs(n).toFixed(1) + ' %');
+    return isNaN(n) ? '- %' : ((n < 0 ? '-' : '') + Math.abs(n).toFixed(1) + '%');
 };
 
 darty.wynn.formatPrct = function (n) {
@@ -134,27 +134,30 @@ darty.wynn.setFilters = function(type) {
 	text.intro1 = '<div id="ariane';
 	text.intro2 = '>'
 	text.endReq = '</div>'
+	text.org_close = '<a><span id="close_org" class="close"><</span></a>';
+	text.prd_close = '<a><span id="close_prod" class="close"><</span></a>';
 	var obj = darty.wynn.pageData;
 	for(var index in obj.filtres) { 
 		if (index.substring(0,3) == 'org')
-			text.org = '<span id="'+obj.filtres[index].lib+' class="org" "> '+obj.filtres[index].lib +' </span><span id="X.img"><img src="/img/details/croix.png" alt="org" /></span>'+'</div>'
+			text.org = '<span id="'+obj.filtres[index].lib+'" class="org"> '+obj.filtres[index].lib +' </span>'+'</div>'
 		else if (index.substring(0,3) == 'prd')
-			text.prd = '<span id="'+obj.filtres[index].lib+' class="prd" "> '+obj.filtres[index].lib +' </span><span id="X.img"><img src="/img/details/croix.png" alt="prd" /></span>'+'</div>';
+			text.prd = '<span id="'+obj.filtres[index].lib+'" class="prd"> '+obj.filtres[index].lib +' </span>'+'</div>';
 	}
 	// on enlève les 2 blocs à refaire ariane1 => Produits, ariane2 => Lieux
-	
-	$('#bouton-home').append("<img src='/img/details/img-home.png' width='3%' height='auto' alt='' id='home' /><div id='ariane'></div>").each(function(){
+							
+	$('#bouton-home').append("<a><span id='home'>Accueil</span></a><div id='ariane'></div>").each(function(){
 		if (text.org != '') // si pas de filtre org 
-			$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.org+text.endReq);
+			$("#ariane").append(text.intro1+'2" class="org">'+text.org_close+'<div id="ariane_org"><p'+text.intro2+text.org+'</p></div>'+text.endReq);
 		else   // si filtre org 
-			$("#ariane").append(text.intro1+'2" class="org"'+text.intro2+text.orgRep+text.endReq); 
+			$("#ariane").append(text.intro1+'2" class="org"><div id="ariane_org"><p'+text.intro2+text.orgRep+'</p></div>'+text.endReq); 
 		if (text.prd != '')  // si pas de filtre prd
-			$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prd+text.endReq); 
+			$("#ariane").append(text.intro1+'1" class="prd">'+text.prd_close+'<div id="ariane_prod"><p'+text.intro2+text.prd+'</p></div>'+text.endReq); 
 		else  // si filtre prd
-			$("#ariane").append(text.intro1+'1" class="prd"'+text.intro2+text.prdRep+text.endReq); 
+			$("#ariane").append(text.intro1+'1" class="prd"><div id="ariane_prod"><p'+text.intro2+text.prdRep+'</p></div>'+text.endReq); 
 		if (type == 'details') {
 			var agg = 'span#'+obj.filtres.agg.substring(0,3);
 			$(agg).removeClass().addClass('noActive');
+			
 		}
 	});
 };

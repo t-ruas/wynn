@@ -1,0 +1,362 @@
+/* Fil d'ariane :  V.Fabien*/ 
+
+div#bouton-home {
+	width: 96%;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+}
+div#bouton>span {
+	border: 1px solid black;
+	padding: 3px 10px;
+}
+.noActive {
+	background-color: green;
+	font-weight: bold;
+	color:black;}
+.active {
+	background-color: white;
+	font-weight: bold;
+	color: black;}
+#bouton {
+	position: relative;
+	display: inline-block;
+	top: 17px;	
+	float: right;}
+#bouton-home img {
+	margin: 0% 1% ;}
+div#ariane {
+	display:inline-block;
+	width: 25%;}
+div#ariane1, div#ariane2 {
+	display:block;}
+/* 
+
+
+*/
+
+/***********************
+	Table 
+***********************/
+/************
+Table Header 
+************/
+th.headerSortDown
+{
+background-image:url("img/details/fleche-bottom.png");
+background-repeat:no-repeat;
+background-position:right;
+}
+th.headerSortUp
+{
+background-image:url("img/details/fleche-top.png");
+background-repeat:no-repeat;
+background-position:right;
+}
+.tri {
+	min-width: 50px;
+}
+div.menuDeroul {
+	display:none;
+}
+thead>tr>th {
+	font-weight: lighter;
+}
+
+/*
+ 
+*/
+
+/************
+Table Content 
+************/
+td.content.first-column {
+	text-align: left;
+}
+td.content {
+	text-align: center;
+}
+
+.libelle {
+	font-size:100%;
+}
+#detailsTable th, #detailsTable td {
+    padding: 3px 6px;
+	/*border: 1px solid black;*/
+	line-height: 220%;
+	width: 12%;
+	max-width: 20%;
+}
+#detailsTable.reducted  th{ /* Laisser en dessous du detailsTable! */
+	width: 20%;
+}
+th#menu {
+	position : relative;
+	width: 28%;
+	min-width: 100px;
+	max-width: 60%;
+}
+#detailsTable.reducted th#menu { /* Laisser en dessous du th#menu! */
+	width: 60%;
+	min-width: 100px;
+	max-width: 60%;
+}
+#detailsTable {
+    margin: 0px auto;
+	width: 96%;
+	background-color: rgb(230, 251, 232);
+	border: 1.5px solid lightgray;
+}
+#detailsTable.reducted {
+	width: 50%; 
+}
+
+td a {
+text-decoration: none;
+color: black;
+}
+
+.color_X a {color:rgb(91,155,213)}
+.color_0 a{color:rgb(255,0,0);} 
+.color_1 a{color:rgb(255,192,0);}
+.color_2 a{color:rgb(146,208,80);} 
+.color_3 a{color:rgb(0,176,80);} 
+
+/*
+ 
+*/
+
+/************
+Table Footer 
+************/
+tfoot tr td {
+text-align : center;
+}
+
+
+div.zone {
+	position : absolute;
+}
+
+
+div#zone {
+	position: relative; /* or relative ! */
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 40%;
+	background: lightgray;
+	text-align: left;
+	color:white;
+	font-weight:bold;
+} 
+div#delete {
+	position: absolute;
+	text-align: right;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 60%;
+}
+div#zone span {
+	margin-left: 8px;
+}
+
+body {
+    margin: 0;
+    font-family: arial;
+	font-size:100%;
+	width: 100%;
+	height: 100%;
+}
+html {
+height : 100%;
+width : 100%;}
+
+#mainContent {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 30.00%;
+	height: 100%;
+}
+#mainContentTop {
+	border: 1px solid black;
+    position: absolute;
+    top: 0px;
+	left: 0px;
+	right: 0px;
+    height: 7%;
+    width: 100%;
+}
+
+#mainContentMiddle {
+	border: 1px solid black;
+    position: absolute;
+    top: 8%;
+    bottom: 6%;
+    width: 100%;
+	height:86%;
+    overflow: auto;
+}
+#mainContentBottom {
+	border: 1px solid black;
+    position: absolute;
+    bottom: 0px;
+	left: 0px;
+	right: 0px;
+    height: 6%;
+    width: 100%;
+}
+#blueContent {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 70.00%;
+	height: 100%;
+    background-color: rgb(90, 153, 211);
+}
+#blueContentTop {
+	background-color: rgb(29, 72, 81);
+	position: absolute;
+	top:0px;
+	right:0px;
+	left:0px;
+	height:10%;
+	width: 100%;
+}
+#blueContentMid {
+	background-color: rgb(115, 194, 251);
+	position: absolute;
+	right:0px;
+	left:0px;
+	height:32%;
+	width: 100%;
+	top: 10%;
+}
+#blueContentBot {
+	background-color: rgb(0, 127, 255);
+	position: absolute;
+	right:0px;
+	left:0px;
+	bottom: 0px;
+	height:58%;
+	width: 100%;
+}
+
+#probErreurEnt {
+	text-align: left;
+	font-size: 80%;
+    background-color: red; 
+	position: absolute;
+	left: 2%;
+	padding: 2px 2%;
+	bottom: 1px;
+}
+
+#refreshTimer  {
+    color: #7F7F7C;
+    cursor: pointer;
+    text-align: right;
+    font-size: 80%;
+    background-color: #D7D7F4; 
+	position: absolute;
+	right: 2%;
+	padding: 2px 2%;
+	bottom: 1px;
+}
+.CA {width:50%; 
+margin-left: auto;
+margin-right: auto;
+word-wrap: break-word;
+margin-top: 7%;
+text-align: right;
+}
+.CA table { 
+width : 100%}
+
+div.CA th.fixe {
+	width: 100%;
+	font-size: 400%;
+}
+div.CA th.fixe span{
+	text-align: right;
+}
+div.CA th.evolution {
+	width: 100%;
+	font-size: 175%;
+	text-align: right;
+	float:right;
+}
+.indicateurs {
+	width: 35%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top : 5%;
+}
+.indicateurs .label {
+	width: 45%;
+	text-align: left;
+	font-size: 160%;
+	font-weight: lighter;
+}
+.indicateurs .value {
+	width: 45%;
+	text-align: right;
+	font-size: 180%;
+	font-weight: lighter;
+}
+.bottom-line {
+	width: 60%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 3%;
+	text-align: center;
+}
+
+.liste {width:170px;text-align:right;}
+
+.OA,.REM,.PSE,.ACC,#OA,#REM,#PSE,#ACC {position:relative;display:none; width:50px; text-align:middle;}
+.concretisation,.ventes,.entrees {display:inline;}
+
+
+#content-right {
+width:400px; 
+background:rgb(90,153,211);
+float:right;
+margin-right:400px;
+padding-left:10px;
+height:500px;}
+#content {position: absolute;
+top: 0px;
+bottom: 0px;
+right: 0px;
+left: 56.25%;
+background-color: rgb(90, 153, 211);}
+.btnX {background-color:#E6E6E6; color:black; }
+.btnY {background-color:#FFFFFF; color:black; font: bold;}
+#content {
+position:absolute;
+left:250px;
+top:32px;
+margin-top:28px;
+border-width:1px;
+border-style:dotted;
+border-color:black;}
+#informations {display:none;}
+
+.color_X {color:rgb(91,155,213)}
+
+.color_0 {color:rgb(255,0,0);} 
+.color_1 {color:rgb(255,192,0);}
+.color_2 {color:rgb(146,208,80);} 
+.color_3 {color:rgb(0,176,80);} 
+.color_gray {color:rgb(187,187,187);}
+
+.color_underline_0 {border-bottom : 5px solid rgb(255,0,0);} 
+.color_underline_1 {border-bottom : 5px solid rgb(255,192,0);}
+.color_underline_2 {border-bottom : 5px solid rgb(146,208,80);} 
+.color_underline_3 {border-bottom : 5px solid rgb(0,176,80);} 
+.color_underline_gray {border-bottom : 5px solid rgb(187,187,187);}

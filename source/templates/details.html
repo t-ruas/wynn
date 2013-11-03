@@ -4,6 +4,9 @@
         <meta charset="utf-8" />
         <title>Darty Wynn</title>
         <link rel="stylesheet" type="text/css" href="default.css" />
+		<link rel="stylesheet" type="text/css" href="mediaqueries.css">
+        <link rel="stylesheet" type="text/css" href="reset.css">
+		
         @@base_scripts@@
         @@scripts@@
         <script type="text/javascript">
@@ -25,8 +28,10 @@
             <!-- <div id="menu"> -->
 				
 			<!-- </div> -->
+			
 			<table id="detailsTable">
-                <thead>
+			
+			<thead id="detailsTable1" >
                     <tr>
 					    <th id="menu">
 							<div id="zone">									
@@ -34,20 +39,32 @@
 							<div id="delete">
 							</div>
 						</th>
-                        <th id="1">CA</th>
-                        <th id="2">%</th>
-                        <th id="3">Acc.</th>
-                        <th id="4">Gar.</th>
-                        <th id="5">OA.</th>
-                        <th id="6">Rem.</th>
+                        <th id="1">CA
+							<img class="arrow" src="./img/arrow.png">
+						</th>
+                        <th id="2">%
+							<img class="arrow" src="./img/arrow.png">
+						</th>
+                        <th id="3">Acc.
+							<img class="arrow" src="./img/arrow.png">
+						</th>
+                        <th id="4">Gar.
+							<img class="arrow" src="./img/arrow.png">
+						</th>
+                        <th id="5">OA.
+							<img class="arrow" src="./img/arrow.png">
+						</th>
+                        <th id="6">Rem.
+							<img class="arrow" src="./img/arrow.png">
+						</th>
                     </tr>
-                </thead>
+                </thead>	
                 <tbody>
                     <%~it.list:line%>
                         <tr>
                             <td class="content first-column"> <div class="code"><a href="/details?<%=line.ddQuery%>"><%=line.cd%></a> </div>  <div class="libelle"><a href="/details?<%=line.ddQuery%>"><%=line.lib%><span style="visibility:hidden"> ,<%=line.order%></span></a></div> </td>
                             <td class="content color_X"><a href="/accueil?<%=line.dbQuery%>"><%=line.ca%></a></td>
-                            <td class="content color_<%=line.caEvo.cls%>"><span class="linkExpand"><%=line.caEvo.val%></span></td>
+                            <td class="content background_color_<%=line.caEvo.cls%>"><span class="linkExpand"><%=line.caEvo.val%></span></td>
                             <td class="content color_underline_<%=line.acc.cls%>"><%=line.acc.val%></td>
                             <td class="content color_underline_<%=line.serv.cls%>"><%=line.serv.val%></td>
                             <td class="content color_underline_<%=line.oa.cls%>"><%=line.oa.val%></td>
@@ -74,8 +91,9 @@
             <div id="mainContentTop">
                 <div id="breadcrumb">
 					<div id="bouton-home">
-						<div id="bouton">
+						<div id="bouton"><a>
 							<span id="prd" class="active">Produits</span><span id="org" class="active">Lieux</span>
+							</a>
 						</div>
 					</div>
 				</div>
