@@ -234,11 +234,6 @@ darty.wynn.gui.details = (function () {
 				// console.log('Menu deroulant !');
             });
 			
-			// $(document).on('mouseenter', 'th', function() {
-				// alert("Reste dans la fenêtre ! ")
-			// }), ('mouseleave', 'th', function(){
-				// alert("Ca c'est drôle ! ")
-			// });
 			
 			// Menu déroulant => Affiche les options d'aggregat 
 			$(document).on('click', 'div#delete img', function () {
@@ -272,7 +267,8 @@ darty.wynn.gui.details = (function () {
 				var elem = $("div#delete").remove();
 				$('div#zone').append('<a><img class="arrow" src="./img/arrow.png"></a>')
             });
-			$(document).on('click','th img', function() {
+			
+			/*$(document).on('click','th img', function() { 
 				//$(this).parent.remove();
 				console.log('error : ' + $(this).alt);
 				if($(this).attr('src').substring(11,12) === '.'){
@@ -283,13 +279,39 @@ darty.wynn.gui.details = (function () {
 					//$(this).removeAttr('src');
 					$(this).attr({src:'./img/arrow.png'});
 				}
-			});
+			});*/
 			
 			// bouton d'activation de test TEST !!! 
 			$(document).on('click', 'div#blueContent', function () {
-                getMenuAgg(function(){
-					$('.menuDeroul').css('display','hidden');
-				});
+                // getMenuAgg(function(){
+					// $('.menuDeroul').css('display','hidden');
+				// });
+				 $("table").tablesorter({ // configuration du tri de tableau ! 
+					headers: { 
+					0: {
+						sorter:'subclass'
+						},
+					1: { 
+						sorter:'currency' 
+						}, 
+					2: {
+						sorter:'percent'
+						},
+					3: {
+						sorter:'percent'
+						},
+					4: {
+						sorter:'percent'
+						},
+					5: {
+						sorter:'percent'
+						},
+					6: {
+						sorter:'percent'
+						}
+					} 
+				
+				}); 
             });
 			
 			

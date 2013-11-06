@@ -127,25 +127,24 @@ div#ariane {
     margin-left:10px;
 	display:inline-block;}
 
-/*#ariane1 {
-    background-color:rgb(50,65,73);
-    color:#ffffff;
-    margin-top:15px;
-    margin-left:5px;}
+#ariane1 {
+    position:relative;
+    margin-top:20px;
+    width:100%;
+    height:36px;}
 
 #ariane2 {
-    background-color:rgb(50,65,73);
-    color:#ffffff;
-    float:left;
-    margin-top:20px;
-    margin-left:5px;}
-*/
+    position:relative;
+    margin-top:8px;
+    width:100%;
+    height:36px;}
+
 
 #ariane_prod {
     font-family: "dartySans","arial","Serif";
     float:left;
     color:#ffffff;
-    margin-top:8px;
+    margin-top:0px;
     background-color:rgb(50,65,73);
     padding:10px;}
 
@@ -153,28 +152,34 @@ div#ariane {
     font-family: "dartySans","arial","Serif";
     float:left;
     color:#ffffff;
-    margin-top:20px;
+    margin-top:0px;
     background-color:rgb(50,65,73);
     padding:10px;}
 
 #close_org {
-    font-family: "dartySans","arial","Serif";
+    font-family: "dartyBold","arial","Serif";
     float:left;
     text-align:center;
-    margin-top:20px;
+    margin-top:0px;
     background-color:#ffffff;
     color:grey;
-    padding:10px;
+    padding-top:13px;
+    padding-right:10px;
+    padding-left:10px;
+    padding-bottom:7px;
     display:block;}
 
 #close_prod{
-    font-family: "dartySans","arial","Serif";
+    font-family: "dartyBold","arial","Serif";
     float:left;
     text-align:center;
-    margin-top:8px;
+    margin-top:0px;
     background-color:#ffffff;
     color:grey;
-    padding:10px;
+    padding-top:13px;
+    padding-right:10px;
+    padding-left:10px;
+    padding-bottom:7px;
     display:block;}
 
 
@@ -255,7 +260,7 @@ div#ariane {
     width:23.5%;
     height:100%;
     float:left;
-}
+    background-color:rgba(0,176,80,0.7);}
 
 #block1_chiffre {
     width:100%;
@@ -293,7 +298,7 @@ div#ariane {
     height:100%;
     float:left;
     margin-left:2%;
-}
+    background-color:rgba(232,110,88,0.8);}
 
 #block2_chiffre {
     width:100%;
@@ -318,7 +323,7 @@ div#ariane {
     height:100%;
     float:left;
     margin-left:2%;
-}
+    background-color:rgba(0,176,80,0.7);}
 
 #block3_chiffre {
     width:100%;
@@ -343,7 +348,7 @@ div#ariane {
     height:100%;
     float:left;
     margin-left:2%;
-}
+    background-color:rgba(239,175,56,0.8);}
 
 #block4_chiffre {
     width:100%;
@@ -399,7 +404,7 @@ div#ariane {
 #block5_underline {
     width:100%;
     height:10%;
-}
+    background-color:rgba(0,176,80,0.7);}
 
 .chiffre_p {
     float:left;
@@ -441,7 +446,7 @@ div#ariane {
 #block6_underline {
     width:100%;
     height:10%;
-}
+    background-color:rgba(232,110,88,0.8);}
 
 #block7 {
     width:32%;
@@ -464,7 +469,7 @@ div#ariane {
 #block7_underline {
     width:100%;
     height:10%;
-}
+    background-color:rgba(239,175,56,0.8);}
 
 
 
@@ -474,25 +479,18 @@ div#ariane {
 /***************************************************************
 	                         Content_tab
 ***************************************************************/
-/* #mainContentMiddle_top */
-#detailsTable {
-	border-spacing: 0px;
-}
-#detailsTable thead{
+
+#mainContentMiddle_top {
     position: relative;
     top: 120px;
     margin: 0 auto;
-    width: 97%;
-	margin: 0px auto;
-	width: 100%;
-	background-color: rgba(255, 255, 255, 0.9);
-}
+    width: 97%;}
 
 #mainContentMiddle {
-    top:121px;
     position: relative;
+    top:121px;
     width: 97%;
-	height:76%;
+	height:80%;
     margin: 0 auto;
     overflow: auto;}
 
@@ -500,36 +498,85 @@ div#ariane {
     position: relative;
     margin: 0 auto;
     top:122px;
+    height:10%;
     width: 97%;}
 
-#mainContentBottom {
+/*#mainContentBottom {
 	border: 1px solid black;
     position: absolute;
     bottom: 0px;
-	/*left: 0px;*/
+	left: 0px;
 	right: 0px;
     height: 6%;
-    width: 100%;}
+    width: 100%;}*/
 
 /************************************************
                   Table Header 
 ************************************************/
 
-th.headerSortDown {
-    /*background-image:url("images/details/fleche-bottom.png");
-    background-repeat:no-repeat;
-    background-position:right;*/}
+.headerSortDown {
+    width:15px;
+    height:15px;
+    float:right;
+    background-image:url(./img/arrow.png);}
 
-th.headerSortUp {
-    /*background-image:url("images/details/fleche-top.png");
+/*th.headerSortUp {
+    background-image:url("images/details/fleche-top.png");
     background-repeat:no-repeat;
-    background-position:right;*/}
+    background-position:right;}*/
 
 .tri {min-width: 50px;}
 
-div.menuDeroul {display:none;}
+div.menuDeroul {display:none;
+    position:absolute;
+    margin-top:10px;
+    width:200px;}
 
-thead>tr>th {font-weight: lighter;font-family: "dartySans","arial","Serif";}
+thead>tr>th {font-weight: lighter;font-family: "dartySans","arial","Serif";vertical-align:middle;}
+
+thead {}
+
+th#menu {
+	position : relative;
+    vertical-align:middle;
+	width: 12%;
+	min-width: 100px;
+	max-width: 60%;}
+
+div.zone {position : absolute;}
+
+
+div#zone {
+    font-family:"dartyBold","arial","Serif";
+	position: relative;
+    height:45px;
+    padding-top: 30px;
+    bottom: 0px;
+    left: 0px;
+    right: 40%;
+	background-color: rgb(240, 240, 240);
+	text-align: left;
+    color: rgb(50, 65, 73);
+	font-weight:bold;} 
+
+.arrow {
+    margin-right:15px;
+    float:right;
+    background-color:#ffffff;
+    margin-top:8px;}
+
+div#delete {
+	position: absolute;
+	text-align: ;
+    width:15px;
+    height:15px;
+    background-image:url(img/arrow.png);
+    top: 32px;
+    bottom: 0px;
+    right: 0%;
+    left: 80%;}
+
+div#zone span {margin-left: 8px;}
 
 #detailsTable1 {
     margin: 0px auto;
@@ -559,25 +606,20 @@ td.content {text-align: center;}
 #detailsTable th, #detailsTable td {
     padding: 3px 6px;
 	/*border: 1px solid black;*/
-	line-height: 220%;
+	vertical-align: middle;
 	width: 15%;
 	max-width: 20%;}
 
 #detailsTable.reducted  th{ /* Laisser en dessous du detailsTable! */
 	width: 20%;}
 
-th#menu {
-	position : relative;
-	width: 12%;
-	min-width: 100px;
-	max-width: 60%;}
 
 #detailsTable.reducted th#menu { /* Laisser en dessous du th#menu! */
 	width: 60%;
 	min-width: 100px;
 	max-width: 60%;}
 
-#detailsTable tfoot, #detailsTable tbody {
+#detailsTable {
     font-family:"dartySans","arial","Serif";
     margin: 0px auto;
 	width: 100%;
@@ -595,18 +637,6 @@ td a {
 .color_1 span{color:white;}
 .color_2 span{color:white;} 
 .color_3 span{color:white;} 
-
-.background_color_3 {background-color: rgba(0,176,80,0.7);}
-.background_color_2 {background-color: rgba(0,176,80,0.7);}
-.background_color_1 {background-color: rgba(239,175,56,0.8);}
-.background_color_0 {background-color: rgba(232,110,88,0.8);}
-.background_color_gray{background-color:rgba(187,187,187,0.8);}
-
-.underline_color_0{background-color:rgba(239,175,56,0.8);}
-.underline_color_1{background-color: rgba(232,110,88,0.8);}
-.underline_color_2{background-color: rgba(0,176,80,0.7);}
-.underline_color_3{background-color: rgba(0,176,80,0.7);}
-
 
 .color_0 {background-color:rgb(232,110,88);} 
 .color_1 {background-color:rgb(239,175,56);}
@@ -725,54 +755,24 @@ div.CA th.evolution {
     font-family: "dartySans","arial","Serif";
     margin: 0px auto;
 	width: 100%;
+    height:100%;
 	background-color: rgba(255, 255, 255, 0.9);}
 
-#detailsTable2 th, #detailsTable td {
-    padding: 3px 6px;
-	/*border: 1px solid black;*/
-	line-height: 220%;
-	width: 12%;
-	max-width: 20%;}
 
 #detailsTable2 th, #detailsTable2 td {
     padding: 3px 6px;
 	/*border: 1px solid black;*/
 	line-height: 220%;
+    height:30%;
 	width: 15%;
 	max-width: 20%;}
 
-tfoot tr td {text-align : center;}
+.scroll_space {
+    width:14px;}
 
-div.zone {position : absolute;}
+tr td {text-align : center;}
 
-
-div#zone {
-    font-family:"dartyBold","arial","Serif";
-	position: relative;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-    right: 40%;
-	background-color: rgb(249, 249, 249);
-	text-align: left;
-    color: rgb(50, 65, 73);
-	font-weight:bold;} 
-
-.arrow {
-    margin-right:15px;
-    float:right;
-    background-color:#ffffff;
-    margin-top:8px;}
-
-div#delete {
-	position: absolute;
-	text-align: right;
-    top: 3px;
-    bottom: 0px;
-    right: 5px;
-    left: 70%;}
-
-div#zone span {margin-left: 8px;}
+tfoot {text-align : center;}
 
 
 

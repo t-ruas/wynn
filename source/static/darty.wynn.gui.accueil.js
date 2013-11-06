@@ -96,8 +96,8 @@ darty.wynn.gui.accueil = (function () { // fab
             }
         });
         
-		$(document).on('click', 'div#ariane', function () { // TODO : Clic sur l'img ...
-			darty.wynn.removeFilters('accueil',$(this).parent().parent().attr('class') );
+		$(document).on('click', 'span.close', function () { // TODO : Clic sur l'img ...
+			darty.wynn.removeFilters('accueil',$(this).parent().parent().attr('class'));
 		});
 		
         $(document).on('click','div#CA_chiffre p', function () { // DONE : accueil.html => clic sur le p de CA
@@ -129,12 +129,12 @@ darty.wynn.gui.accueil = (function () { // fab
 		
     	if ( darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)   > 100 || darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)   < -100 || isNaN(darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)  ) ){
 			// console.log("blabla");
-			$("#probErreurEnt").append ("Evolution d'entrée incohérente.");    		
+			$("div#blueContentTop").append ("<p id='msg'>Evolution d'entrée incohérente.</p>");    		
     	}
     	
     	if  ( dernierChargEnt.getTime() < lastRefresh15m.getTime()    ){
     		// console.log("blabla2");
-    		$("#probErreurEnt").append (" Pas d'entrées depuis : " + darty.wynn.formatTime(dernierChargEnt));    
+    		$("div#blueContentTop").append ("<p id='msg'>Pas d'entrées depuis : " + darty.wynn.formatTime(dernierChargEnt) + "</p>");    
     	}
 
     }

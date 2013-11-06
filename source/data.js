@@ -12,10 +12,14 @@ var _errors = require('./errors');
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 function postSearch(type, data, callback) {
+	console.log('type')
+	console.log(type)
     sendRequest({method: 'POST', path: '/' + type + '/_search'}, data, callback);
 }
 
 function sendRequest(options, data, callback) {
+	console.log('data')
+	console.log(data)
 	// pour retrouver un libellé en particulier s'il manque
     options.hostname = _config.elasticSearch.host;
     options.port = _config.elasticSearch.port;
@@ -104,28 +108,18 @@ function getBudget(callback) {
 		fields: ['CA','ACCESSOIRES', 'OFFRESACTIVES', 'REMISE', 'SERVICES'],
 		filter: {term: f}
 	}
-	/*
-	{
-		"size" : 1,
-		"fields" : ["CA","ACCESSOIRES", "OFFRESACTIVES", "REMISE", "SERVICES"],
-		"filter" : {"term" :{"DATE" : "20131029"}}
-	}
-	*/
 	
 	postSearch('budget', data, function (error, result) {
-            if (error) {
-                callback(error);
-            } else {
-				if (result.hits.hits.length) {
-                    callback(null, result.hits.hits[0].fields);
-                } else {
-                    callback(new _errors.Error('NotFoundError'));
-                }
-            }
-        });	
-	
-	// postSearch method to call Budget Values ! 
-    // callback(null, {ca: 10, vtPartAcc: 15, vtPartServ: 15, vtPartOa: 15, vtPartRem: 15});
+		if (error) {
+			callback(error);
+		} else {
+			if (result.hits.hits.length) {
+				callback(null, result.hits.hits[0].fields);
+			} else {
+				callback(new _errors.Error('NotFoundError'));
+			}
+		}
+	});	
 }
 
 function prepareDateFilters(tempsComptSet) {
@@ -221,6 +215,25 @@ function getFilterText(options, callback) {
     }
 }
 
+function getES(context, callback) {
+	var data = {
+		from: 0,
+		size: 1,
+		query: {query_string: {query:1}}
+	};
+	
+	postSearch('lv', data, function (error, result) {
+		if (error) {
+			callback(error);
+		} else {
+			if (result.hits.hits.length) {
+				callback(null, true);
+			} else {
+				callback(new _errors.Error('NotFoundError'));
+			}
+		}
+	});
+}
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 var libCache = {};
@@ -237,9 +250,7 @@ function getLib(field, code, callback) {
     } else {
         var f = {};
         f[field.cd] = code;
-		// console.log('INTERREST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-		// console.log(f);
-        var data = {
+		var data = {
             size: 1,
             fields: [field.cd, field.lib],
             filter: {term: f}
@@ -252,8 +263,6 @@ function getLib(field, code, callback) {
             if (error) {
                 callback(error);
             } else {
-            	
-            	
                 if (result.hits.hits.length) {
                     libCache[field.cd][code] = result.hits.hits[0].fields[field.lib];
                     callback(null, libCache[field.cd][code]);
@@ -340,7 +349,7 @@ function getIndicators(options, callback) {
 		}
     };
 
- _logger.info('indicateurs: ' + _util.inspect(data, {depth: null}));
+	_logger.info('indicateurs: ' + _util.inspect(data, {depth: null}));
 
     postSearch('lv', data, function (error, result) {
         if (error) {
@@ -452,10 +461,10 @@ function getIndicatorsEnt(options, callback) {
     _logger.info('AFFICHAGE: ' + _util.inspect(data, {depth: null}));
     _logger.info('AFFICHAGE: ' + _util.inspect(data.facets.ent_2m.facet_filter.and[0].range.DATE.lte, {depth: null}));
 // a enlever, car en dur
-data.facets.ent_2m.facet_filter.and[0].range.DATE.lte= 201308120945;
-data.facets.ent_2m.facet_filter.and[0].range.DATE.gte= 201308120000;
-data.facets.ent_dat.facet_filter.and[0].range.DATE.lte= 201308120945;
-data.facets.ent_dat.facet_filter.and[0].range.DATE.gte= 201308120000;
+	data.facets.ent_2m.facet_filter.and[0].range.DATE.lte= 201308120945;
+	data.facets.ent_2m.facet_filter.and[0].range.DATE.gte= 201308120000;
+	data.facets.ent_dat.facet_filter.and[0].range.DATE.lte= 201308120945;
+	data.facets.ent_dat.facet_filter.and[0].range.DATE.gte= 201308120000;
 
 
     postSearch('entrees', data, function (error, result) {
@@ -794,5 +803,6 @@ exports.getIndicatorsEnt = getIndicatorsEnt;
 exports.getDetails = getDetails;
 exports.getFilterText = getFilterText;
 exports.getBudget = getBudget;
+exports.getES = getES;
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\

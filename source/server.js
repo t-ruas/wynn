@@ -84,6 +84,11 @@ function authorizeOrFail(context, callback) {
 var routes = {
     'GET': [
         {
+            pattern: /^\/status$/i, // pour vérifier si ES et node sont bien actifs ! 
+            handler: function (context, callback) {
+				getPingEs(context, callback);
+            }
+        },{
             pattern: /^\/?$/i,
             handler: function (context, callback) {
                 if (authorize(context)) {
@@ -110,8 +115,8 @@ var routes = {
             pattern: /^\/accueil$/i,
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
-					console.log('CONTEXT : ');
-					console.log(context);
+					// console.log('CONTEXT : ');
+					// console.log(context);
                     getRefData(context, function (error, result) {
                         if (error) {
                             callback(error);
@@ -209,8 +214,7 @@ var routes = {
 
 // Récupération des données de référentiels déposées sur les pages: 
 // filtres, budget, ordre.
-function getRefData(context, callback) {
-	  	
+function getRefData(context, callback) {  	
     var data = {};
     _data.getFilterText(context.path.query, function (error, result) {
     	
@@ -234,6 +238,9 @@ function getRefData(context, callback) {
         }
     });
 }
+function getPingEs(context, callback){ 
+	_data.getES(context, callback)
+};
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 

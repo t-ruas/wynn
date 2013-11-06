@@ -29,7 +29,7 @@
 				
 			<!-- </div> -->
 			
-			<table id="detailsTable">
+			<div><table id="detailsTable">
 			
 			<thead id="detailsTable1" >
                     <tr>
@@ -58,7 +58,8 @@
 							<img class="arrow" src="./img/arrow.png">
 						</th>
                     </tr>
-                </thead>	
+                </thead></div>	
+				<div><table id="detailsTable">
                 <tbody>
                     <%~it.list:line%>
                         <tr>
@@ -71,7 +72,8 @@
                             <td class="content color_underline_<%=line.rem.cls%>"><%=line.rem.val%></td>
 						</tr>
                     <%~%>
-                </tbody>
+                </tbody></div>
+				<div><table id="detailsTable">
                 <tfoot>
                     <tr>
 						<td></td>
@@ -82,7 +84,7 @@
                         <td class="color_underline_<%=it.totals.oa.cls%>"><%=it.totals.oa.val%></td>
                         <td class="color_underline_<%=it.totals.rem.cls%>"><%=it.totals.rem.val%></td>
                     </tr>
-                </tfoot>
+                </tfoot></div>
             </table>
         </script>
     </head>
