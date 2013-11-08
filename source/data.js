@@ -28,7 +28,7 @@ function sendRequest(options, data, callback) {
     var req = _http.request(options, function (response) {
         var content = '';
         response.on('data', function (chunk) {
-		_logger.info('1453 .CHUNK : ' + chunk);
+		//_logger.info('CHUNK : ' + chunk);
 		content += chunk;
         });
         response.on('end', function () {
@@ -98,9 +98,10 @@ function makeDateFilterLib(date) {
 
 // permet de retourner le budget pour chaque catégories
 function getBudget(callback) {
+	callback(null, {ca: 10, vtPartAcc: 15, vtPartServ: 15, vtPartOa: 15, vtPartRem: 15});
 	// TODO : var value_of_date = getdate();
 	// get date du jour et la mettre dans value_of_date
-	var value_of_date = '20131030'
+	/*var value_of_date = '20131030'
 	//var f = '{"DATE":'+value_of_date+'}';
 	var f = {"DATE":value_of_date};
 	var data = {
@@ -119,7 +120,7 @@ function getBudget(callback) {
 				callback(new _errors.Error('NotFoundError'));
 			}
 		}
-	});	
+	});	*/
 }
 
 function prepareDateFilters(tempsComptSet) {
@@ -189,11 +190,11 @@ function getFilterText(options, callback) {
         (function (n) {
             if (n in filterFields) {
                 i++;
-                _logger.info('2 Réponse test : ' + _util.inspect(filterFields[n], {depth: null}));
+                // _logger.info('2 Réponse test : ' + _util.inspect(filterFields[n], {depth: null}));
                 getLib(filterFields[n], options[n], function (error, result) {
                     // En cas d'erreur sur un des codes, on sort en erreur et ignore tous les autres retours.
                     if (error) {
-                    	_logger.info('2 Réponse ERROR : ' + _util.inspect(error, {depth: null}));
+                    	// _logger.info('2 Réponse ERROR : ' + _util.inspect(error, {depth: null}));
                         callback(error);
                         cancel = true;
                     }
@@ -257,7 +258,7 @@ function getLib(field, code, callback) {
         };
 		
 		
-		_logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(data, {depth: null}));
+		// _logger.info('Réponse ElasticSearch : ' + _util.inspect(data, {depth: null}));
 		// pour retrouver un libellé en particulier s'il manque
         postSearch('lv', data, function (error, result) {
             if (error) {
@@ -349,7 +350,7 @@ function getIndicators(options, callback) {
 		}
     };
 
-	_logger.info('indicateurs: ' + _util.inspect(data, {depth: null}));
+	// _logger.info('indicateurs: ' + _util.inspect(data, {depth: null}));
 
     postSearch('lv', data, function (error, result) {
         if (error) {
@@ -371,7 +372,6 @@ function getIndicators(options, callback) {
 					console.log(name +' isNan accueil');
 					return false;}
 				else {
-					//console.log('Value : ' + name + ' passed all tests (accueil)');
 					return true;
 				}
             }
@@ -387,10 +387,7 @@ function getIndicators(options, callback) {
             var getVtFacet = function (name) {
                 return result.facets[name].terms.length;
             }
-			// console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-			// console.log("xXXXXXXXXXXXXXXXXXXXXXXXXXXx " + getCaFacet('ca'));
-			// fonction de retour des valeurs
-            callback(null, {
+			callback(null, {
                 ca: getCaFacet('ca'),
                 ca2m: getCaFacet('ca_2m'),
                 ca1y: getCaFacet('ca_1y'),
@@ -458,8 +455,8 @@ function getIndicatorsEnt(options, callback) {
 
         }
     };
-    _logger.info('AFFICHAGE: ' + _util.inspect(data, {depth: null}));
-    _logger.info('AFFICHAGE: ' + _util.inspect(data.facets.ent_2m.facet_filter.and[0].range.DATE.lte, {depth: null}));
+    // _logger.info('AFFICHAGE: ' + _util.inspect(data, {depth: null}));
+    // _logger.info('AFFICHAGE: ' + _util.inspect(data.facets.ent_2m.facet_filter.and[0].range.DATE.lte, {depth: null}));
 // a enlever, car en dur
 	data.facets.ent_2m.facet_filter.and[0].range.DATE.lte= 201308120945;
 	data.facets.ent_2m.facet_filter.and[0].range.DATE.gte= 201308120000;
@@ -473,7 +470,7 @@ function getIndicatorsEnt(options, callback) {
         } else {
 			
 			
-			_logger.info('AFFICHAGE: ' + _util.inspect(result, {depth: null}));
+			// _logger.info('AFFICHAGE: ' + _util.inspect(result, {depth: null}));
             var getEntFacet = function (name) {
                 return result.facets[name].total;
             }
@@ -625,16 +622,11 @@ function getDetails(options, callback) {
 			var addOrdo = function (p, terms) { // a garder ! 
 				for (var i = 0, imax = terms.length; i < imax; i++) {
 					var part = terms[i].term.split(';');
-					// term[0] <= #ordre
-					// term[1] <= code
 					part[1] = part[1].toLowerCase();
-					// console.log(part[0] + ' : <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<' + part[1]);
-					// console.log(o[part[1][p]])
 					if (o[part[1]]) {
 						if (typeof o[part[1]][p] !== 'number')
 							o[part[1]][p] = 0;
 						o[part[1]][p] = part[0];
-						// console.log('toutou : '+o[part[1]][p]);
 					}
 				}
 			}
@@ -712,16 +704,14 @@ function getDetails(options, callback) {
                     lib: parts[1]
                 };
 				console.log(o[parts[0]]);                               
-				// _logger.info('2 Réponse ElasticSearch TERM: ' + _util.inspect(o, {depth: null})); 
-                // On en profite pour remplir le cache des libellés.
-                 
+				// On en profite pour remplir le cache des libellés. 
                 if (!libCache[aggField.cd][parts[0]]) {
                     libCache[aggField.cd][parts[0]] = parts[1];
                 }
                 
             }
 
-            addOrdo('ordre', result.facets['ordre'].terms); // ordonnancement 1er level
+            addOrdo('ordre', result.facets['ordre'].terms); // ordonnancement 
 			
 			calcReference('reference', result.facets['ca_2m'].terms);				// a dégager
             mergeCaList('ca', result.facets['ca'].terms);

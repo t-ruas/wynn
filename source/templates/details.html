@@ -29,7 +29,7 @@
 				
 			<!-- </div> -->
 			
-			<div><table id="detailsTable">
+		<table id="detailsTable">
 			
 			<thead id="detailsTable1" >
                     <tr>
@@ -59,8 +59,7 @@
 						</th>
                     </tr>
                 </thead></div>	
-				<div><table id="detailsTable">
-                <tbody>
+				<tbody>
                     <%~it.list:line%>
                         <tr>
                             <td class="content first-column"> <div class="code"><a href="/details?<%=line.ddQuery%>"><%=line.cd%></a> </div>  <div class="libelle"><a href="/details?<%=line.ddQuery%>"><%=line.lib%><span style="visibility:hidden"> ,<%=line.order%></span></a></div> </td>
@@ -72,9 +71,8 @@
                             <td class="content color_underline_<%=line.rem.cls%>"><%=line.rem.val%></td>
 						</tr>
                     <%~%>
-                </tbody></div>
-				<div><table id="detailsTable">
-                <tfoot>
+                </tbody>
+				<tfoot>
                     <tr>
 						<td></td>
                         <td class="color_X"><%=it.totals.ca%></td>

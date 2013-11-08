@@ -138,7 +138,7 @@ var routes = {
                         if (error) {
                             callback(error);
                         } else {
-							_logger.info('2 Réponse dans RefData : ' + _util.inspect(result, {depth: null}));
+							//_logger.info('2 Réponse dans RefData : ' + _util.inspect(result, {depth: null}));
                             callback(error, {file: 'details.html', fileData: result});
                         }
                     });

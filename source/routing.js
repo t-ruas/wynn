@@ -74,11 +74,11 @@ function handleRequest(request, response) {
                             } else {
                                 if (result.data) { // si ok, code 200 + data
                                     context.response.statusCode = result.status || 200;
-                                    context.response.contentType = 'application/json';
+                                    context.response.setHeader('content-type', 'application/json');
                                     context.response.end(JSON.stringify(result.data));
                                 } else if (result.file) { // si ok mais file (?)
                                     context.response.statusCode = result.status || 200;
-                                    context.response.contentType = 'text/html';
+                                    context.response.setHeader('content-type', 'text/html');
                                     var s = _fs.createReadStream(_path.resolve('templates', result.file));
                                     var txt = '';
                                     s.on('data', function (data) {

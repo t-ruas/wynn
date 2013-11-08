@@ -147,13 +147,13 @@ darty.wynn.setFilters = function(type) {
 							
 	$('#bouton-home').append("<a><span id='home'>Accueil</span></a><div id='ariane'></div>").each(function(){
 		if (text.org != '') // si pas de filtre org 
-			$("#ariane").append(text.intro1+'2" class="org">'+text.org_close+'<div id="ariane_org"><p'+text.intro2+text.org+'</p></div>'+text.endReq);
+			$("#ariane").append(text.intro1+'2" class="org">'+text.org_close+'<div id="ariane_org"'+text.intro2+text.org+'</div>'+text.endReq);
 		else   // si filtre org 
-			$("#ariane").append(text.intro1+'2" class="org"><div id="ariane_org"><p'+text.intro2+text.orgRep+'</p></div>'+text.endReq); 
+			$("#ariane").append(text.intro1+'2" class="org"><div id="ariane_org"'+text.intro2+text.orgRep+'</div>'+text.endReq); 
 		if (text.prd != '')  // si pas de filtre prd
-			$("#ariane").append(text.intro1+'1" class="prd">'+text.prd_close+'<div id="ariane_prod"><p'+text.intro2+text.prd+'</p></div>'+text.endReq); 
+			$("#ariane").append(text.intro1+'1" class="prd">'+text.prd_close+'<div id="ariane_prod"'+text.intro2+text.prd+'</div>'+text.endReq); 
 		else  // si filtre prd
-			$("#ariane").append(text.intro1+'1" class="prd"><div id="ariane_prod"><p'+text.intro2+text.prdRep+'</p></div>'+text.endReq); 
+			$("#ariane").append(text.intro1+'1" class="prd"><div id="ariane_prod"'+text.intro2+text.prdRep+'</div>'+text.endReq); 
 		if (type == 'details') {
 			var agg = 'span#'+obj.filtres.agg.substring(0,3);
 			$(agg).removeClass().addClass('noActive');
