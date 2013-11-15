@@ -31,6 +31,26 @@ darty.wynn.gui.details = (function () {
 				{
 					$(".code").remove();
 				}
+				$("table").tablesorter({ // configuration du tri de tableau ! 
+					headers: { 
+					0: {sorter:'subclass'},
+					1: {sorter:'currency'}, 
+					2: {sorter:'percent'},
+					3: {sorter:'percent'},
+					4: {sorter:'percent'},
+					5: {sorter:'percent'},
+					6: {sorter:'percent'}
+					} 
+				});
+				// console.log('tableSorter ! ')
+				
+				$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
+				if($('#detailsTable').attr('class'))
+					$('#detailsTable').removeClass();
+				else
+					$('#detailsTable').addClass('reducted');
+				
+				// remove delete ! 
 			}
         });
     }
@@ -163,13 +183,6 @@ darty.wynn.gui.details = (function () {
 				return false;
             });
 			
-			
-			// Boutons de tri du tableau TODO remove ! 
-            $(document).on('click', 'tr th.table-header', function () {
-				if ($(this).attr('id'))
-					tablesorterControler($(this).attr('id'));
-            });
-			
 			// Bouton Refresh Timer 
             $('#refreshTimer').on('click', function () {
                 if (refreshTimer) {
@@ -180,23 +193,52 @@ darty.wynn.gui.details = (function () {
             
 			// Bouton radio de choix de dimension
 			$(document).on('click', 'div#bouton span.active', function () {
+				// trouver le max de chaque dimension, et en fonction de celle ou l'on va, appliquer le max ! 
 				var split = window.location.search.split("&");
-				var agg = '';
-				if (split[0].substring(5,8) == 'org') 
-					agg = 'prd'; 
-				else
-					agg = 'org';
+				
+				console.log('changement de dimension => go to ('+agg+')');
+				console.log('split : ');
+				console.log(split);
 				var url = '';
+				var maxPrd = 0;
+				var maxOrg = 0;
 				for (var n in split) {
-					if (n == 0) {
-							if (split[0].substring(8,9) < 5)
-								url += split[0].substring(0,5) + agg + split[0].substring(8,9);
-							else
-								url += split[0].substring(0,5) + agg + '4';
+					if (n != 0) {
+						console.log('split['+n+'] : ' + split[n].substring(0,3));
+						console.log(split[n])
+						if (split[n].substring(0,3) == 'prd') {
+							if (split[n].substring(3,4) > maxPrd) {
+								maxPrd = parseInt(split[n].substring(3,4));
+							}
+						}
+						else if (split[n].substring(0,3) == 'org') {
+							if (split[n].substring(3,4) > maxOrg) {
+								maxOrg = parseInt(split[n].substring(3,4));
+							}
+						}
+						else {
+							console.log('Bug changement de dimension ! ')
+						}
 					}
-					else
-						url += '&'+split[n];
 				}
+				var agg = '';
+				maxPrd += 1;
+				maxOrg += 1;
+				if (split[0].substring(5,8) == 'org') // &agg=org3
+					agg = 'prd'+(maxPrd); 
+				else
+					agg = 'org'+(maxOrg);
+				
+				for(var i = 0; i < split.length; i++) {
+					if (i != 0) {
+						url += '&'+split[i];
+					}
+					else {
+						url += '?agg='+agg;
+					}
+				}
+					
+				// console.log();
 				window.location.assign("http://" + window.location.host + "/details" + url);
 			});
 			
@@ -227,61 +269,36 @@ darty.wynn.gui.details = (function () {
 			
 			// Menu déroulant => Affiche les options d'aggregat 
 			$(document).on('click', 'div#zone', function () {
-                if($('div.menuDeroul').is(":hidden"))
-					$('div.menuDeroul').show("fast", function(){}); 
-				else
-					$('div.menuDeroul').hide("fast", function(){});
+				console.log('click sur div#zone');
+                if($('div.menuDeroul').is(":hidden")) {console.log('hidden to show');
+					$('div.menuDeroul').show("fast", function(){}); }
+				else {console.log('show to hide');
+					$('div.menuDeroul').hide("fast", function(){}); }
 				// console.log('Menu deroulant !');
             });
 			
 			
 			// Menu déroulant => Affiche les options d'aggregat 
-			$(document).on('click', 'div#delete img', function () {
+			$(document).on('click', 'div.delete', function () {
                 $("table").tablesorter({ // configuration du tri de tableau ! 
 					headers: { 
-					0: {
-						sorter:'subclass'
-						},
-					1: { 
-						sorter:'currency' 
-						}, 
-					2: {
-						sorter:'percent'
-						},
-					3: {
-						sorter:'percent'
-						},
-					4: {
-						sorter:'percent'
-						},
-					5: {
-						sorter:'percent'
-						},
-					6: {
-						sorter:'percent'
-						}
+					0: {sorter:'subclass'},
+					1: {sorter:'currency'}, 
+					2: {sorter:'percent'},
+					3: {sorter:'percent'},
+					4: {sorter:'percent'},
+					5: {sorter:'percent'},
+					6: {sorter:'percent'}
 					} 
 				
 				}); 
-				$('div#zone').parent().addClass('headerSortDown');
-				var elem = $("div#delete").remove();
-				$('div#zone').append('<a><img class="arrow" src="./img/arrow.png"></a>')
+				//$('div#zone').parent().addClass('headerSortDown');
+				var elem = $("div.delete").remove();
+				//$('div#zone').append('');
+				//$('div#zone').append('<a><img class="arrow" src="./img/arrow.png"></a>')
             });
 			
-			/*$(document).on('click','th img', function() { 
-				//$(this).parent.remove();
-				console.log('error : ' + $(this).alt);
-				if($(this).attr('src').substring(11,12) === '.'){
-					// var edouard = $(this).removeAttr('src');
-					$(this).attr({src:'./img/arrowDown.png'});
-				}
-				else {
-					//$(this).removeAttr('src');
-					$(this).attr({src:'./img/arrow.png'});
-				}
-			});*/
-			
-			// bouton d'activation de test TEST !!! 
+			// bouton d'activation de test TEST !!! TODO : remove
 			$(document).on('click', 'div#blueContent', function () {
                 // getMenuAgg(function(){
 					// $('.menuDeroul').css('display','hidden');
@@ -314,27 +331,37 @@ darty.wynn.gui.details = (function () {
 				}); 
             });
 			
-			
-            window.setInterval(function () {
+			/*function func_getTime() TODO : IE8 under ! 
+			{
 				var tex = {};
 				tex.un = 'date des données ';
 				tex.deux = ' prochaine récupération dans ';
-                if (refreshTimer) {
-                    $('#refreshTimer').text(_w.formatTime(lastRefresh) + ' ( ' + Math.ceil((nextRefresh - new Date()) / 1000) + ' s)');
-                } else {
-                    $('#refreshTimer').text('');
-                }
-            }, 1000);
+				if (refreshTimer) {
+					$('#refreshTimer').text(_w.formatTime(lastRefresh) + ' ( ' + Math.ceil((nextRefresh - new Date()) / 1000) + ' s)');
+				} else {
+					$('#refreshTimer').text('');
+				}
+			}*/
+			
+            window.setInterval(function(){ // TODO arranger IE 8 ! 
+				var tex = {};
+				tex.un = 'date des données ';
+				tex.deux = ' prochaine récupération dans ';
+				if (refreshTimer) {
+					$('#refreshTimer').text(_w.formatTime(lastRefresh) + ' ( ' + Math.ceil((nextRefresh - new Date()) / 1000) + ' s)');
+				} else {
+					$('#refreshTimer').text('');
+				}
+			}, 1000);
+            // window.setTimeOut(func_getTime, 1000);
+            // window.setTimeOut(function()func_getTime(), 1000);
+			
 			darty.wynn.setFilters('details');
 			refreshPage();
 			$("table").tablesorter({ }); 
-			$('div#delete').remove();
+			$('div.delete').remove();
         });
     }
-	
-	function tablesorterControler(choix) { // fonction de tri du tableau (reçoit l'id du bloc html en arg)
-		$("table#detailsTable").tablesorter( {sortList: [[choix,0]]} );
-	}
 	
 	// function de set du menu Déroulant !
 	function getMenuAgg(callback) {
@@ -344,6 +371,8 @@ darty.wynn.gui.details = (function () {
 		o.agg.dim = obj.filtres.agg.substring(0,3);
 		o.agg.niv = obj.filtres.agg.substring(3,4);
 		o.render = {};
+		
+		$('th#menu').append('<div style="clear: both;"></div>');
 		
 		o.render.fin = '<div class="menuDeroul">';
 		for (var n in obj) {
@@ -375,7 +404,8 @@ darty.wynn.gui.details = (function () {
 		if (o.render.fin != '') { 
 			o.render.dbt = '<div id="zone">';
 			o.render.end = '</div>'
-			o.render.imgTri = '<img class="arrow" src="./img/arrow.png">';
+			//o.render.imgTri = '<img class="arrow" src="./img/arrow.png">';
+			o.render.imgTri = '';
 			if (o.render.name != '') { // si jamais il y a un nom, on le rajoute
 				var tmp = '';
 				tmp = o.render.fin;
@@ -383,7 +413,7 @@ darty.wynn.gui.details = (function () {
 			}
 			//$('#zone').remove();
 			$('#zone').append(o.render.fin);
-			$('#delete').append(o.render.imgTri);
+			//$('.delete').append(o.render.imgTri);
 		}
 		callback();
 	}	

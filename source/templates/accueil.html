@@ -16,21 +16,26 @@
 			console.log(darty.wynn.pageData.budget.ACCESSOIRES);
             darty.wynn.gui.accueil.start();
         </script>
+		<script type="text/x-dot-template">
+			var x = 1115;
+		</script>
+		<script type="text/javascript">
+			var y = 1115;
+		</script>
         <script id="indicateurs" type="text/x-dot-template">
 		
 			<a id="CA">
                 <div id="CA_content">
-                    <div id="CA_chiffre"><p> €</p></div>
-                    <div id="CA_pourcent" class="background_color_<%=darty.wynn.data.computeScore(it.ca, it.ca1y, it.caGlobal2m, darty.wynn.pageData.budget.CA)%>"><p><%=darty.wynn.formatEvo(it.ca)%></p></div>
+                    <div id="CA_chiffre" class="color_border_<%=darty.wynn.data.computeScore(it.ca, it.ca1y, it.caGlobal2m, darty.wynn.pageData.budget.CA)%>"><p> €</p></div>
+                    <div id="CA_pourcent" class="color_background_<%=darty.wynn.data.computeScore(it.ca, it.ca1y, it.caGlobal2m, darty.wynn.pageData.budget.CA)%>"><p><%=darty.wynn.formatEvo(it.ca)%></p></div>
                 </div>
 			</a>
-		
 		<div id="second_line">
                     
                     <a id="">
-                    <div id="block1" class="background_color_<%=darty.wynn.data.computeScore(it.evolAcc, it.vtAcc1y, it.vtAccGlobal2m, darty.wynn.pageData.budget.ACCESSOIRES)%>">
+                    <div id="block1" class="color_background_<%=darty.wynn.data.computeScore(it.evolAcc, it.vtAcc1y, it.vtAccGlobal2m, darty.wynn.pageData.budget.ACCESSOIRES)%>">
                         <div id="block1_chiffre">
-                            <img src="img/picto_accessoires.svg" onerror="this.onerror=null; this.src='img/picto_accessoires.png'">
+                            <img src="./img/picto_accessoires2.png">
                             <p><%=darty.wynn.formatEvo(it.evolAcc)%></p>
                         </div>
                         <div class="block_title">
@@ -40,9 +45,9 @@
                     </a>
                     
                     <a id="">
-                    <div id="block2" class="background_color_<%=darty.wynn.data.computeScore(it.evolServ, it.vtServ1y, it.vtServGlobal2m, darty.wynn.pageData.budget.SERVICES)%>">
+                    <div id="block2" class="color_background_<%=darty.wynn.data.computeScore(it.evolServ, it.vtServ1y, it.vtServGlobal2m, darty.wynn.pageData.budget.SERVICES)%>">
                         <div id="block2_chiffre">
-                            <img src="img/picto_services.svg" onerror="this.onerror=null; this.src='img/picto_services.png'">
+                            <img src="./img/picto_services2.png">
                             <p><%=darty.wynn.formatEvo(it.evolServ)%></p>
                         </div>
                         <div class="block_title">
@@ -52,9 +57,9 @@
                     </a>
                     
                     <a id="">    
-                    <div id="block3" class="background_color_<%=darty.wynn.data.computeScore(it.evolOA, it.vtOA1y, it.vtOAGlobal2m, darty.wynn.pageData.budget.OFFRESACTIVES)%>">
+                    <div id="block3" class="color_background_<%=darty.wynn.data.computeScore(it.evolOA, it.vtOA1y, it.vtOAGlobal2m, darty.wynn.pageData.budget.OFFRESACTIVES)%>">
                         <div id="block3_chiffre">
-                            <img src="img/picto_OA.svg" onerror="this.onerror=null; this.src='img/picto_OA.png'">
+                            <img src="./img/picto_remise2.png">
                             <p><%=darty.wynn.formatEvo(it.evolOa)%></p>
                         </div>
                         <div class="block_title">
@@ -64,9 +69,9 @@
                     </a>
                     
                     <a id="">    
-                    <div id="block4" class="background_color_<%=darty.wynn.data.computeScore(it.evolRem, it.vtRem1y, it.vtRemGlobal2m, darty.wynn.pageData.budget.REMISES)%>">
+                    <div id="block4" class="color_background_<%=darty.wynn.data.computeScore(it.evolRem, it.vtRem1y, it.vtRemGlobal2m, darty.wynn.pageData.budget.REMISES)%>">
                         <div id="block4_chiffre">
-                            <img src="img/picto_remise.svg" onerror="this.onerror=null; this.src='img/picto_remise.png'">
+                            <img src="./img/picto_services.png">
                             <p><%=darty.wynn.formatEvo(it.evolRem)%></p>
                         </div>
                         <div class="block_title">
@@ -75,53 +80,58 @@
                     </div>
                     </a>
                 
-                </div>
+		</div>
 				
-				<div id="thired_line">
-                    
-                    <a class="thired_line_link">
-                    <div id="block5">
-                        <div id="block5_chiffre">
-                            <p class="chiffre_p"><%=it.ent2m %></p>
-                        </div>
-                        <div id="block5_title">
-                            <p class="title">Entrées</p>
-                            <p class="pourcent"><%=darty.wynn.formatEvo(darty.wynn.gui.accueil.calcEvol(it.ent2m, it.ent1y))%></p>
-                        </div>
-                        <div id="block5_underline" class="underline_color_<%=darty.wynn.data.computeScore(it.ent2m, it.ent1y, null, null)%>">
-                        </div>
-                    </div>
-                    </a>
-                    
-                    <a class="thired_line_link">
-                    <div id="block6">
-                        <div id="block6_chiffre">
-                            <p class="chiffre_p"><%=it.vt2m %></p>
-                        </div>
-                        <div id="block6_title">
-                            <p class="title">Ventes</p>
-                            <p class="pourcent"><%=darty.wynn.formatEvo(darty.wynn.gui.accueil.calcEvol(it.vt2m, it.vt1y))%></p>
-                        </div>
-                        <div id="block6_underline" class="underline_color_<%=darty.wynn.data.computeScore(it.vt2m, it.vt1y, null, null)%>">
-                        </div>
-                    </div>
-                    </a>
-                    
-                    <a class="thired_line_link">
-                    <div id="block7">
-                        <div id="block7_chiffre">
-                            <p class="chiffre_p"><%=darty.wynn.formatEvo(it.concret)%></p>
-                        </div>
-                        <div id="block7_title">
-                            <p class="title">Concretisation</p>
-                        </div>
-                        <div id="block7_underline" class="underline_color_<%=darty.wynn.data.computeScore(it.ent2m/it.vt2m, it.ent1y/it.vt1y, null, it.concret)%>">
-                        </div>
-                    </div>
-                    </a>
-                    
-                </div>
-					<div > <span id="probErreurEnt">il y a une erreur avec les entrées</span> </div>
+		<div id="thired_line">
+			
+			<a class="thired_line_link">
+			<div id="block5">
+				<div id="block5_chiffre">
+					<p class="chiffre_p"><%=it.ent2m %></p>
+				</div>
+				<div id="block5_title">
+					<p class="title">Entrées</p>
+					<p class="pourcent"><%=darty.wynn.formatEvo(darty.wynn.gui.accueil.calcEvol(it.ent2m, it.ent1y))%></p>
+				</div>
+				<div id="block5_underline" class="color_background_<%=darty.wynn.data.computeScore(it.ent2m, it.ent1y, null, null)%>">
+				</div>
+			</div>
+			</a>
+			
+			<a class="thired_line_link">
+			<div id="block6">
+				<div id="block6_chiffre">
+					<p class="chiffre_p"><%=it.vt2m %></p>
+				</div>
+				<div id="block6_title">
+					<p class="title">Ventes</p>
+					<p class="pourcent"><%=darty.wynn.formatEvo(darty.wynn.gui.accueil.calcEvol(it.vt2m, it.vt1y))%></p>
+				</div>
+				<div id="block6_underline" class="color_background_<%=darty.wynn.data.computeScore(it.vt2m, it.vt1y, null, null)%>">
+				</div>
+			</div>
+			</a>
+			
+			<a class="thired_line_link">
+			<div id="block7">
+				<div id="block7_chiffre">
+					<p class="chiffre_p"><%=darty.wynn.formatEvo(it.concret)%></p>
+				</div>
+				<div id="block7_title">
+					<p class="title">Concretisation</p>
+				</div>
+				<div id="block7_underline" class="color_background_<%=darty.wynn.data.computeScore(it.ent2m/it.vt2m, it.ent1y/it.vt1y, null, it.concret)%>">
+				</div>
+			</div>
+			</a>
+			
+		</div>
+			
+		<div > 
+			<span id="probErreurEnt">
+				<p>il y a une erreur avec les entrées</p> 
+			</span> 
+		</div>
              
         </script>
 		

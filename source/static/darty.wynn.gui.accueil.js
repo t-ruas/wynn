@@ -35,13 +35,19 @@ darty.wynn.gui.accueil = (function () { // fab
 	            	result.caEvol=darty.wynn.formatEvo(100 * (result.ca2m - result.ca1y) / result.ca1y);
             		
             		result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
-	            	pagefn = doT.template($('#indicateurs').text());
-	                $('#mainContentMiddle_home').html(pagefn(result));
+	            	var pagefn = doT.template($('#indicateurs').text());
+					try {
+						$('#mainContentMiddle_home').html(pagefn(result));
+						console.log('Aucune erreur de chargement');
+					} catch(err) {
+						alert('error');
+						alert(err.message);
+					}
 	                testEnt(resultEnt);
-	                // console.log('partie gauche chargee');
+	                console.log('partie gauche chargee');
         		}});
             	
-                var pagefn = doT.template($('#navigation-bar').text());
+                /*var pagefn = doT.template($('#navigation-bar').text());
                 $('#content-header').html(pagefn(result));
                 // console.log('Menu de navigation chargee');
 
@@ -51,7 +57,7 @@ darty.wynn.gui.accueil = (function () { // fab
 				
 				// console.log('result :');
                 // console.log(result);
-
+				*/
                 refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
                 refreshTimerCa = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
                 lastRefresh = new Date();
@@ -70,7 +76,7 @@ darty.wynn.gui.accueil = (function () { // fab
   		var m = (((ndate.getMinutes() )/15 | 0) * 15) % 60;
 		var h = (((ndate.getMinutes()/105 + .5) | 0) + ndate.getHours()) % 24;
 
-        window.setInterval(function () {
+        /*window.setInterval(function () { // TODO : A REPARE 
 			var tex = {};
 			tex.un = 'date des données ';
 			tex.deux = ' prochaine récupération dans ';
@@ -79,15 +85,16 @@ darty.wynn.gui.accueil = (function () { // fab
 			else 
                 $('#refreshTimer').text('');
             refreshTimerDisplay = Math.ceil((nextRefresh - new Date()) / 1000);
-        }, darty.wynn.config.refreshInfo);
-        
+        }, darty.wynn.config.refreshInfo);*/
+		
+        console.log('chargé ! ');
         window.setInterval(function () {
             if (refreshTimerCa) {
             	modificationCA();	
             } else {
             }
         }, darty.wynn.config.refreshCa);
-        
+        console.log('chargé bis ! ');
         $(document).on('click','#refreshTimer', function () {
             if (refreshTimer) {
                 window.clearTimeout(refreshTimer);
@@ -110,6 +117,7 @@ darty.wynn.gui.accueil = (function () { // fab
         
 		darty.wynn.setFilters('accueil');
         });
+		console.log('end of start');
     }
     	
     function modificationCA (){
@@ -118,6 +126,7 @@ darty.wynn.gui.accueil = (function () { // fab
     	diffCaParDecoupage = Math.floor (diffCaDebut / decoupage);
     	minMax = returnMinMax (diffCaParDecoupage);
     	recalculCaDecoupage (minMax);
+		console.log('end of modifCA');
     }
     
     function testEnt (StatEntrees){
@@ -136,7 +145,7 @@ darty.wynn.gui.accueil = (function () { // fab
     		// console.log("blabla2");
     		$("div#blueContentTop").append ("<p id='msg'>Pas d'entrées depuis : " + darty.wynn.formatTime(dernierChargEnt) + "</p>");    
     	}
-
+		console.log('end of modifCA');
     }
     	
 	function getAleaNomb (min, max) {
@@ -172,8 +181,7 @@ darty.wynn.gui.accueil = (function () { // fab
 	
 	function getUrl () {
 		var search = window.location.search;
-		search.lastIndexOf ("prd")
-		
+		search.lastIndexOf ("prd");
 	}
 	
 	function returnMinMax (num) {
@@ -209,7 +217,7 @@ darty.wynn.gui.accueil = (function () { // fab
 			return "http://" + window.location.host + "/details?agg=prd1";	
    		}
    		else {
-   			var agg= param.lastIndexOf("prd")
+   			var agg= param.lastIndexOf("prd");
    			var url = param.split("?");
    			prd=parseInt( param.charAt(agg+3)) +1;
 				return "http://" + window.location.host + "/details?agg=prd" +prd+"&"+ url[1];

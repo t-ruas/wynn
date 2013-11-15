@@ -12,14 +12,14 @@ var _errors = require('./errors');
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 function postSearch(type, data, callback) {
-	console.log('type')
-	console.log(type)
+	/*console.log('type')
+	console.log(type)*/
     sendRequest({method: 'POST', path: '/' + type + '/_search'}, data, callback);
 }
 
 function sendRequest(options, data, callback) {
-	console.log('data')
-	console.log(data)
+	/*console.log('data')
+	console.log(data)*/
 	// pour retrouver un libellé en particulier s'il manque
     options.hostname = _config.elasticSearch.host;
     options.port = _config.elasticSearch.port;
@@ -110,7 +110,7 @@ function getBudget(callback) {
 		filter: {term: f}
 	}
 	
-	postSearch('budget', data, function (error, result) {
+	postSearch(_config.elasticSearch.typeBud, data, function (error, result) {
 		if (error) {
 			callback(error);
 		} else {
@@ -223,7 +223,7 @@ function getES(context, callback) {
 		query: {query_string: {query:1}}
 	};
 	
-	postSearch('lv', data, function (error, result) {
+	postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
 		if (error) {
 			callback(error);
 		} else {
@@ -260,7 +260,7 @@ function getLib(field, code, callback) {
 		
 		// _logger.info('Réponse ElasticSearch : ' + _util.inspect(data, {depth: null}));
 		// pour retrouver un libellé en particulier s'il manque
-        postSearch('lv', data, function (error, result) {
+        postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
             if (error) {
                 callback(error);
             } else {
@@ -352,7 +352,7 @@ function getIndicators(options, callback) {
 
 	// _logger.info('indicateurs: ' + _util.inspect(data, {depth: null}));
 
-    postSearch('lv', data, function (error, result) {
+    postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
         if (error) {
             callback(error);
         } else {
@@ -464,7 +464,7 @@ function getIndicatorsEnt(options, callback) {
 	data.facets.ent_dat.facet_filter.and[0].range.DATE.gte= 201308120000;
 
 
-    postSearch('entrees', data, function (error, result) {
+    postSearch(_config.elasticSearch.typeEnt, data, function (error, result) {
         if (error) {
             callback(error);
         } else {
@@ -613,7 +613,7 @@ function getDetails(options, callback) {
 	// _logger.info('2 Réponse ElasticSearch OOO: ' + _util.inspect(data, {depth: null}));
 	// _logger.info('Test des dates : ' + _util.inspect(fDates, {depth: null}));
 	
-    postSearch('lv', data, function (error, result) {
+    postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
         if (error) {
             callback(error);
         } else {

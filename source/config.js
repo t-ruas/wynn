@@ -13,9 +13,11 @@ module.exports = {
     authCookieName: 'darty_wynn_auth',
     keys: _keygrip(['azertyuiop', 'qsdfghjklm', 'wxcvbn'], 'sha256', 'hex'),
     elasticSearch: {
-        host: 'localhost',
+        host: 'localhost',													// adresse de la machine sur laquelle est stockée le LB ES
         port: 9200,
-        index: 'wynn',
-        indexEnt: 'entrees_mag'
+        index: 'wynn', 														// nom de l'index 
+        typeEnt: 'entrees', 												// nom du type pour les entrées
+		typeBud: 'budget', 													// nom du type pour les budgets
+		typeLv: 'lv' 														// nom du type pour les lignes de vente
     },
 };
