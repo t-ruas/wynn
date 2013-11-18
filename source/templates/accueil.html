@@ -13,7 +13,7 @@
             // les informations de filtres sont envoyées en json dans un objet.
             // On met l'objet dans une variable, pour l'utiliser facilement
             darty.wynn.pageData = {{=JSON.stringify(it)}};
-			console.log(darty.wynn.pageData.budget.ACCESSOIRES);
+			//console.log(darty.wynn.pageData.budget.ACCESSOIRES);
             darty.wynn.gui.accueil.start();
         </script>
 		<script type="text/x-dot-template">
@@ -25,18 +25,18 @@
         <script id="indicateurs" type="text/x-dot-template">
 		
 			<a id="CA">
-                <div id="CA_content">
-                    <div id="CA_chiffre" class="color_border_<%=darty.wynn.data.computeScore(it.ca, it.ca1y, it.caGlobal2m, darty.wynn.pageData.budget.CA)%>"><p> €</p></div>
-                    <div id="CA_pourcent" class="color_background_<%=darty.wynn.data.computeScore(it.ca, it.ca1y, it.caGlobal2m, darty.wynn.pageData.budget.CA)%>"><p><%=darty.wynn.formatEvo(it.ca)%></p></div>
+                <div id="CA_content" class="color_border_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.ca, it.ca1y), it.ca1y, it.caGlobal2m, darty.wynn.pageData.budget.CA)%>">
+                    <div id="CA_chiffre"><p> €</p></div>
+                    <div id="CA_pourcent" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.ca, it.ca1y), it.ca1y, it.caGlobal2m, darty.wynn.pageData.budget.CA)%>"><p><%=darty.wynn.formatEvo(darty.wynn.getEvol(it.ca2m, it.ca1y))%></p></div>
                 </div>
 			</a>
 		<div id="second_line">
                     
                     <a id="">
-                    <div id="block1" class="color_background_<%=darty.wynn.data.computeScore(it.evolAcc, it.vtAcc1y, it.vtAccGlobal2m, darty.wynn.pageData.budget.ACCESSOIRES)%>">
+                    <div id="block1" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.caPoidsAcc2m, it.caPoidsAcc1y), it.caPoidsAcc1y, it.caPoidsAccGlobal2m, darty.wynn.pageData.budget.ACCESSOIRES)%>">
                         <div id="block1_chiffre">
                             <img src="./img/picto_accessoires2.png">
-                            <p><%=darty.wynn.formatEvo(it.evolAcc)%></p>
+                            <p><%=darty.wynn.formatEvo(darty.wynn.getEvol(it.caPoidsAcc2m, it.caPoidsAcc1y))%></p>
                         </div>
                         <div class="block_title">
                             <p>Accessoires</p>
@@ -45,10 +45,10 @@
                     </a>
                     
                     <a id="">
-                    <div id="block2" class="color_background_<%=darty.wynn.data.computeScore(it.evolServ, it.vtServ1y, it.vtServGlobal2m, darty.wynn.pageData.budget.SERVICES)%>">
+                    <div id="block2" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.caPoidsServ2m, it.caPoidsServ1y), it.caPoidsServ1y, it.caPoidsServGlobal2m, darty.wynn.pageData.budget.SERVICES)%>">
                         <div id="block2_chiffre">
                             <img src="./img/picto_services2.png">
-                            <p><%=darty.wynn.formatEvo(it.evolServ)%></p>
+                            <p><%=darty.wynn.formatEvo(darty.wynn.getEvol(it.caPoidsServ2m, it.caPoidsServ1y))%></p>
                         </div>
                         <div class="block_title">
                             <p>Services</p>
@@ -57,10 +57,10 @@
                     </a>
                     
                     <a id="">    
-                    <div id="block3" class="color_background_<%=darty.wynn.data.computeScore(it.evolOA, it.vtOA1y, it.vtOAGlobal2m, darty.wynn.pageData.budget.OFFRESACTIVES)%>">
+                    <div id="block3" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.caPoidsOa2m, it.caPoidsOa1y), it.caPoidsOa1y, it.caPoidsOaGlobal2m, darty.wynn.pageData.budget.OFFRESACTIVES)%>">
                         <div id="block3_chiffre">
                             <img src="./img/picto_remise2.png">
-                            <p><%=darty.wynn.formatEvo(it.evolOa)%></p>
+                            <p><%=darty.wynn.formatEvo(darty.wynn.getEvol(it.caPoidsOa2m, it.caPoidsOa1y))%></p>
                         </div>
                         <div class="block_title">
                             <p>Offres active</p>
@@ -69,10 +69,10 @@
                     </a>
                     
                     <a id="">    
-                    <div id="block4" class="color_background_<%=darty.wynn.data.computeScore(it.evolRem, it.vtRem1y, it.vtRemGlobal2m, darty.wynn.pageData.budget.REMISES)%>">
+                    <div id="block4" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.caPoidsRem2m, it.caPoidsRem1y), it.caPoidsRem1y, it.caPoidsRemGlobal2m, darty.wynn.pageData.budget.REMISES)%>">
                         <div id="block4_chiffre">
                             <img src="./img/picto_services.png">
-                            <p><%=darty.wynn.formatEvo(it.evolRem)%></p>
+                            <p><%=darty.wynn.formatEvo(darty.wynn.getEvol(it.caPoidsRem2m, it.caPoidsRem1y))%></p>
                         </div>
                         <div class="block_title">
                             <p>Remise</p>

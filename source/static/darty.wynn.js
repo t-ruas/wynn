@@ -7,21 +7,19 @@ var darty = {
             reqTimeout: 30 * 1000,
             refreshInfo: 1 * 1000,
             refreshCa: 0.5 * 1000,
+			linePerPage : 100,
+			requestAccueil : 'indicateurs',
+			requestDetails : 'details',
+			requestEntrees : 'indicateursEnt'
         },
     }
 };
 
 darty.wynn.priceToStr = function (n) {
-	//var b = 
-    var a = Math.abs(n).toFixed(0).toString().split('.');
-	
-	// console.log(a);
-    a[0] = a[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-	// console.log('a de 0 vaut : ' + a[0]);
+	var a = Math.abs(n).toFixed(0).toString().split('.');
+	a[0] = a[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 	a.join(','); 
-	//a=parseInt(a)
-	// console.log( 'voici a  : ' + a + ' b : ' );
-    return a;
+	return a;
 };
 
 darty.wynn.getPrct = function (a, b) {
@@ -37,13 +35,11 @@ darty.wynn.formatPrice = function (n) {
 };
 
 darty.wynn.formatEvo = function (n) {
-	//console.log(n);
     return isNaN(n) ? '- %' : ((n < 0 ? '-' : '') + Math.abs(n).toFixed(1) + '%');
 };
 
 darty.wynn.formatPrct = function (n) {
-	// console.log('Valeur n : ' + n );
-    return isNaN(n) ? ' 0 %' : (Math.abs(n).toFixed(1) + ' %');
+	return isNaN(n) ? ' 0 %' : (Math.abs(n).toFixed(1) + ' %');
 };
 
 darty.wynn.formatConcret = function (n) {
@@ -80,6 +76,16 @@ darty.wynn.makeSimpleFiltersClone = function () {
         o[n] = typeof f[n] === 'string' ? f[n] : f[n].cd;
     }
     return o;
+}
+
+darty.wynn.checkBrowser = function () { // fonctionne ! 
+	var browser = navigator.appName;
+	var search_code = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+	var version = parseFloat(RegExp.$1);
+	if (browser == 'Microsoft Internet Explorer' || browser == 'Internet Explorer')
+		return false;
+	else 
+		return true;
 }
 
 darty.wynn.makeQuery = function (o) {

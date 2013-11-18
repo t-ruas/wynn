@@ -45,7 +45,7 @@ function handleRequest(request, response) {
         }
     );
     request.addListener('end', function () {
-			console.log('routing.js return on End ;)')
+			// console.log('routing.js return on End ;)')
             if (context.body.length) {
                 context.content = (function (ct) {
                     if (!ct.indexOf('application/json')) {

@@ -19,53 +19,96 @@ darty.wynn.gui.accueil = (function () { // fab
 	var minMax;
 	
     function refreshPage() { // controler de la page 
+		var counter = 0;
+		var data = {};
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
-            } else {
-            	
-            	darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
-            	if (error) {
-            	} else {
-					// console.log('resultEnt :');
-					// console.log(resultEnt);
-            		result.ent2m = resultEnt.ent2m;
-            		result.ent1y = resultEnt.ent1y;
-            		ca2minutes =result.ca2m;
-            		dernierCa =result.ca;
-	            	result.caEvol=darty.wynn.formatEvo(100 * (result.ca2m - result.ca1y) / result.ca1y);
-            		
-            		result.concret= darty.wynn.formatConcret(result.vt2m / result.ent2m * 100 );
-	            	var pagefn = doT.template($('#indicateurs').text());
-					try {
-						$('#mainContentMiddle_home').html(pagefn(result));
-						console.log('Aucune erreur de chargement');
-					} catch(err) {
-						alert('error');
-						alert(err.message);
-					}
-	                testEnt(resultEnt);
-	                console.log('partie gauche chargee');
-        		}});
-            	
-                /*var pagefn = doT.template($('#navigation-bar').text());
-                $('#content-header').html(pagefn(result));
-                // console.log('Menu de navigation chargee');
+				console.log('Erreur lors du chargement des valeurs : page accueil ');
+				counter += 1;
+				if (counter > 1) {
+					data.entrees = {};
+					doWork(data);
+				}
+            } else { // SUCCESS
+				counter += 1; // TODO :  sécurisé ?! 
+				data.indicateurs = result;
+				// console.log(data);
+				// console.log(parseInt(data.indicateurs.length));
+				if (counter > 1) {
+					console.log('lancer la fonction d\'affichage ! ');
+					doWork(data);
+				}
+			}
+		});
+		
+		console.log('RefreshPage() --- entre indicateurs et indicateurs ENT ! ')
+		
+		darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
+			if (error) { 
+				console.log('Erreur lors du chargement des valeurs : page accueil - entrées');
+				counter += 1;
+				if (counter > 1) {
+					data.entrees = {};
+					doWork(data); // cas non normal mais il faut continuer le traitement
+				}
+			} else { // SUCCESS
+				counter += 1; // TODO :  sécurisé ?! 
+				// console.log(resultEnt);
+				data.entrees = resultEnt;
+				// console.log(data);
+				if (counter > 1) {
+					console.log('lancer la fonction d\'affichage ! ');
+					doWork(data);
+				}
+			}
+		});
+		
+							/*var pagefn = doT.template($('#navigation-bar').text());
+							$('#content-header').html(pagefn(result));
+							// console.log('Menu de navigation chargee');
 
-                pagefn = doT.template($('#top-blue-part').text());
-                $('#blueContentTop').html(pagefn(result));
-                // console.log('partie droite chargee');
+							pagefn = doT.template($('#top-blue-part').text());
+							$('#blueContentTop').html(pagefn(result));
+							// console.log('partie droite chargee');
+							
+							// console.log('result :');
+							// console.log(result);*/
 				
-				// console.log('result :');
-                // console.log(result);
-				*/
-                refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
-                refreshTimerCa = window.setTimeout(refreshPage, darty.wynn.config.reqInterval);
-                lastRefresh = new Date();
-                nextRefresh = new Date(lastRefresh.getTime() + darty.wynn.config.reqInterval);
-            }
-        });
-    }
-
+	}
+	
+	function doWork(data) {
+		var result = {};
+		if(typeof data.entrees !== 'undefined') {
+			result.ent2m = data.entrees.ent2m;
+			result.ent1y = data.entrees.ent1y;
+			result.entDat = data.entrees.entDat;
+		}
+		if(typeof data.indicateurs !== 'undefined') {
+			ca2minutes = data.indicateurs.ca2m;
+			dernierCa = data.indicateurs.ca;
+			result.indicateurs = data.indicateurs;
+			result.caEvol=darty.wynn.formatEvo(100 * (data.indicateurs.ca2m - data.indicateurs.ca1y) / data.indicateurs.ca1y);
+			result.concret= darty.wynn.formatConcret(data.indicateurs.vt2m / result.ent2m * 100 );
+		}
+		
+		refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval); // TODO : VERIFIER pas de récursivité ! 
+		refreshTimerCa = refreshTimer;
+		//refreshTimerCa = window.setTimeout(refreshPage, darty.wynn.config.reqInterval); // TODO : VERIFIER pas de récursivité ! 
+		lastRefresh = new Date();
+		nextRefresh = new Date(lastRefresh.getTime() + darty.wynn.config.reqInterval);
+		
+		testEnt(result);
+		
+		if (!darty.wynn.checkBrowser()) {// false = IE8 ! 
+			var pagefn = doT.template($('#indicateurs').html());
+		}
+		else {
+			var pagefn = doT.template($('#indicateurs').text());
+		}
+			
+		$('#mainContentMiddle_home').html(pagefn(result));
+	}
+	
     function start() {
 
         $(document).ready(function () {
@@ -76,16 +119,13 @@ darty.wynn.gui.accueil = (function () { // fab
   		var m = (((ndate.getMinutes() )/15 | 0) * 15) % 60;
 		var h = (((ndate.getMinutes()/105 + .5) | 0) + ndate.getHours()) % 24;
 
-        /*window.setInterval(function () { // TODO : A REPARE 
-			var tex = {};
-			tex.un = 'date des données ';
-			tex.deux = ' prochaine récupération dans ';
-            if (refreshTimer) 
+        window.setInterval(function () { // TODO : A REPARE 
+			if (refreshTimer) 
                 $('#refreshTimer').text(darty.wynn.formatTime(lastRefresh) + ' ( ' + Math.ceil((nextRefresh - new Date()) / 1000) + ' s)');
 			else 
                 $('#refreshTimer').text('');
             refreshTimerDisplay = Math.ceil((nextRefresh - new Date()) / 1000);
-        }, darty.wynn.config.refreshInfo);*/
+        }, darty.wynn.config.refreshInfo);
 		
         console.log('chargé ! ');
         window.setInterval(function () {
@@ -95,7 +135,8 @@ darty.wynn.gui.accueil = (function () { // fab
             }
         }, darty.wynn.config.refreshCa);
         console.log('chargé bis ! ');
-        $(document).on('click','#refreshTimer', function () {
+        
+		$(document).on('click','#refreshTimer', function () {
             if (refreshTimer) {
                 window.clearTimeout(refreshTimer);
                 refreshTimer = null;
@@ -103,11 +144,11 @@ darty.wynn.gui.accueil = (function () { // fab
             }
         });
         
-		$(document).on('click', 'span.close', function () { // TODO : Clic sur l'img ...
+		$(document).on('click', 'span.close', function () { 
 			darty.wynn.removeFilters('accueil',$(this).parent().parent().attr('class'));
 		});
 		
-        $(document).on('click','div#CA_chiffre p', function () { // DONE : accueil.html => clic sur le p de CA
+        $(document).on('click','div#CA_chiffre p', function () {
             window.location.assign(makeDrillUrl() );
         });
         
@@ -116,9 +157,9 @@ darty.wynn.gui.accueil = (function () { // fab
 		});
         
 		darty.wynn.setFilters('accueil');
-        });
-		console.log('end of start');
-    }
+	});
+	console.log('end of start');
+}
     	
     function modificationCA (){
     	diffCaDebut= calcDiffCa();
@@ -126,26 +167,25 @@ darty.wynn.gui.accueil = (function () { // fab
     	diffCaParDecoupage = Math.floor (diffCaDebut / decoupage);
     	minMax = returnMinMax (diffCaParDecoupage);
     	recalculCaDecoupage (minMax);
-		console.log('end of modifCA');
+		// console.log('end of modifCA');
     }
     
-    function testEnt (StatEntrees){
+    function testEnt(StatEntrees){
+		if(typeof StatEntrees.entDat === 'undefined')
+			return false;
     	var entrees = StatEntrees.entDat.toString();
     	var lastRefresh15m = lastRefresh;
 		lastRefresh15m.setTime(lastRefresh15m.getTime() - 15 * 60 * 1000);
     	var dernierChargEnt = new Date (entrees.slice (0,4), entrees.slice (4,6) -1, entrees.slice (6,8), entrees.slice (6,8), entrees.slice (8,10), 0);
-		$("#probErreurEnt").html ("");
+		$("#probErreurEnt").html("");
 		
     	if ( darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)   > 100 || darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)   < -100 || isNaN(darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)  ) ){
-			// console.log("blabla");
 			$("div#blueContentTop").append ("<p id='msg'>Evolution d'entrée incohérente.</p>");    		
     	}
     	
     	if  ( dernierChargEnt.getTime() < lastRefresh15m.getTime()    ){
-    		// console.log("blabla2");
     		$("div#blueContentTop").append ("<p id='msg'>Pas d'entrées depuis : " + darty.wynn.formatTime(dernierChargEnt) + "</p>");    
     	}
-		console.log('end of modifCA');
     }
     	
 	function getAleaNomb (min, max) {
@@ -164,8 +204,7 @@ darty.wynn.gui.accueil = (function () { // fab
 			var vraiCA = darty.wynn.priceToStr(ca2minutes);
 			cumul=0;
 			$('#CA_chiffre').remove();	
-			$("#CA_content").prepend("<div id=\"CA_chiffre\"><p>"+vraiCA+" €</p></div>");
-			
+			$("#CA_content").prepend('<div id="CA_chiffre"><p>'+vraiCA+' €</p></div>');
 			break;
 			
 			default :
@@ -175,7 +214,7 @@ darty.wynn.gui.accueil = (function () { // fab
 			// console.log('aAfficher : '+ aAfficher)
 			 
 			$('#CA_chiffre').remove();
-			$("#CA_content").prepend("<div id=\"CA_chiffre\"><p>"+aAfficher+" €</p></div>");		
+			$("#CA_content").prepend('<div id="CA_chiffre"><p>'+aAfficher+" €</p></div>");		
 		}
 	}
 	

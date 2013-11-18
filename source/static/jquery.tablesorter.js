@@ -927,17 +927,31 @@
         id: "currency",
         is: function (s) {
             return /^[£$€?.]/.test(s);
-        }, format: function (s) {
+        }, 
+		format: function (s) {
 			var n = s.length;
-			var y = s.substring(0, n-2)
-			//console.log('n = length : ' + n);
+			var y = s.substring(0, n-2);
 			var u = y.split(' ');
 			var result = '';
-			for (var i = 0; i < u.length; i++)
-			{
-				result+=parseInt(u[i]);
-			} 
-			return parseInt(result);
+			if(u.length == 5) {
+				return parseInt(u[0]*1000000000000+u[1]*1000000000+u[2]*1000000+u[3]*1000+u[4])
+			}
+			else if(u.length == 4) {
+				return parseInt(u[0]*1000000000+u[1]*1000000+u[2]*1000+u[3])
+			}
+			else if(u.length == 3) {
+				return parseInt(u[0]*1000000+u[1]*1000+u[2])
+			}
+			else if(u.length == 2) {
+				return parseInt(u[0]*1000+u[1])
+			}
+			else if(u.length == 1) {
+				return parseInt(u[0])
+			}
+			else {
+				return false;
+			}
+			//return parseInt(result);
             // return $.tablesorter.formatFloat(s.replace(new RegExp(/[£$€] /g), ""));
         }, type: "numeric"
     });

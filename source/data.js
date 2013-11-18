@@ -36,9 +36,8 @@ function sendRequest(options, data, callback) {
             if (result.error) {
                 callback(new _errors.Error('2 ElasticSearchError', result.error));
             } else {
-               // _logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(result, {depth: null}));
-
-                callback(null, result);
+				// _logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(result, {depth: null}));
+				callback(null, result);
             }
         });
     }).on('error', function (error) {
@@ -98,12 +97,12 @@ function makeDateFilterLib(date) {
 
 // permet de retourner le budget pour chaque catégories
 function getBudget(callback) {
-	callback(null, {ca: 10, vtPartAcc: 15, vtPartServ: 15, vtPartOa: 15, vtPartRem: 15});
-	// TODO : var value_of_date = getdate();
+	// callback(null, {CA: 10, ACCESSOIRES: 15, SERVICES: 15, OFFRESACTIVES: 15, REMISE: 15});
 	// get date du jour et la mettre dans value_of_date
-	/*var value_of_date = '20131030'
-	//var f = '{"DATE":'+value_of_date+'}';
-	var f = {"DATE":value_of_date};
+	var value_of_date = new Date();
+	var ddate = '20' + parseInt(value_of_date.getYear()%100) + '' +(parseInt(value_of_date.getMonth())+ 1) +''+ value_of_date.getDate() + '';
+				
+	var f = {"DATE": ddate};
 	var data = {
 		size: 1,
 		fields: ['CA','ACCESSOIRES', 'OFFRESACTIVES', 'REMISE', 'SERVICES'],
@@ -120,12 +119,12 @@ function getBudget(callback) {
 				callback(new _errors.Error('NotFoundError'));
 			}
 		}
-	});	*/
+	});
 }
 
 function prepareDateFilters(tempsComptSet) {
     var dates = new Array(5);
-	dates[0] = new Date(2013, 7, 27, 18, 57, 56);
+	dates[0] = new Date(2013, 7, 29, 18, 57, 56); // TODO : date du jour ! 
     dates[0].setMinutes(dates[0].getMinutes() -  _config.tempsChargReel); // 2min
     dates[1] = new Date(dates[0]);
     dates[1].setMinutes(dates[1].getMinutes() -  _config.tempsChargTalend); // 4min
@@ -281,21 +280,21 @@ function getLib(field, code, callback) {
 function getIndicators(options, callback) {
 
     var fDates = prepareDateFilters();
-    var fAcc = {term: {'FLAGPM': 'acc'}};		// useless
+    /*var fAcc = {term: {'FLAGPM': 'acc'}};		// useless
     var fServ = {term: {'FLAGTYPART': 'p'}};    // useless
     var fOa = {term: {'FLAGOA': 'oa'}};         // useless
     var fRem = {term: {'FLAGREM': 'rem'}};      // useless
-
+	*/
     var fVt = {field: 'NVENTE'};
     var fCa = {field: 'PVTOTAL'};
 	
-	/*
-	var fRem = { field: ''}; // Nom_du_field_ou_se_trouve_le_ca_remisé
-	var fAcc = { field: ''}; // Nom_du_field_ou_se_trouve_le_ca_des_accessoires
-	var fOa = { field: ''};  // Nom_du_field_ou_se_trouve_le_ca_des_offres_actives
-	var fServ = { field: ''};// Nom_du_field_ou_se_trouve_le_ca_des_services
-	*/
-    var fPrd = makeNavFilters(options, 'prd');
+	
+	var fRem = { field: 'POIDSREMISE'}; 		// Nom_du_field_ou_se_trouve_le_ca_remisé
+	var fAcc = { field: 'POIDSACC'}; 			// Nom_du_field_ou_se_trouve_le_ca_des_accessoires
+	var fOa = { field: 'POIDSOA'};  			// Nom_du_field_ou_se_trouve_le_ca_des_offres_actives
+	var fServ = { field: 'POIDSSERVICE'};		// Nom_du_field_ou_se_trouve_le_ca_des_services
+	
+	var fPrd = makeNavFilters(options, 'prd');
     var fOrg = makeNavFilters(options, 'org');
 	
     var data = {
@@ -306,7 +305,7 @@ function getIndicators(options, callback) {
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fCa},
             'ca_global_1y': {facet_filter: {and: [fDates[3]].concat(fPrd)}, statistical: fCa},
             'ca_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fCa},
-            'vt_acc_1y': {facet_filter: {and: [fDates[3], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},		// delete
+            /*'vt_acc_1y': {facet_filter: {and: [fDates[3], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},		// delete
             'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},        // delete
             'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd)}, terms: fVt},              // delete
             'vt_serv_1y': {facet_filter: {and: [fDates[3], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},      // delete
@@ -318,12 +317,13 @@ function getIndicators(options, callback) {
             'ca_rem_1y': {facet_filter: {and: [fDates[3], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},        // delete
             'ca_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},        // delete
             'ca_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms: fCa},              // delete
-            'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
+            */
+			'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_global_1y': {facet_filter: {and: [fDates[3]].concat(fPrd)}, terms: fVt},
-            'vt_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fVt}
+            'vt_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fVt},
 			
-			/*
+			
 			'ca_poids_acc_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fAcc},
 			'ca_poids_acc_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fAcc},
             'ca_poids_acc_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fAcc},			
@@ -339,19 +339,9 @@ function getIndicators(options, callback) {
 			'ca_poids_oa_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fOa},
 			'ca_poids_oa_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fOa},
             'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fOa},
-			
-			+ 
-			- evolPoidsOa				<= CA
-			- evolPoidsRem				<= CA
-			- evolPoidsServ             <= CA
-			- evolPoidsAcc				<= CA
-			*/
-			
 		}
     };
-
-	// _logger.info('indicateurs: ' + _util.inspect(data, {depth: null}));
-
+	
     postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
         if (error) {
             callback(error);
@@ -378,7 +368,7 @@ function getIndicators(options, callback) {
 			var getCountFacet = function (name) { // comptabilise le nombre d'élements selectionné dans la requête ES pour un nom de facet donné
 				return isValid(result.facets[name].total) ? result.facets[name].total : 0;
 			}
-			var computeRatio = function (name, ensemble) { // retourne le ratio pour la facet donnée (name)
+			var computeRatio = function(name, ensemble) { // retourne le ratio pour la facet donnée (name)
 				//console.log('ComputeRatio : '+ name + ' divise : ' + result.facets[name].total + ' / ( ' + result.facets[ensemble].count + ' + ' + result.facets[ensemble].missing + ') + object name : ');
 				//console.log(result.facets[ensemble]);
 				return (result.facets[name].total) / (result.facets[ensemble].count) * 100;
@@ -397,24 +387,7 @@ function getIndicators(options, callback) {
                 vt1y: getVtFacet('vt_1y'),
                 vtGlobal1y: getVtFacet('vt_global_1y'),
                 vtGlobal2m: getVtFacet('vt_global_2m'),
-				evolAcc: getCountFacet('vt_acc_2m') != 0 ? computeRatio('vt_acc_2m', 'ca_2m'): 0, // ratio count(acc)/count(total_lines) DELETE
-                vtAcc1y: getVtFacet('vt_acc_1y'),					// delete
-                vtAcc2m: getVtFacet('vt_acc_2m'),					// delete
-                vtAccGlobal2m: getVtFacet('vt_acc_global_2m'),		// delete
-                evolServ: getCountFacet('vt_serv_2m') != 0 ? computeRatio('vt_serv_2m','ca_2m'):0, // ratio count(serv)/count(total_lines) DELETE
-                vtServ1y: getVtFacet('vt_serv_1y'),					// delete
-                vtServ2m: getVtFacet('vt_serv_2m'),					// delete
-                vtServGlobal2m: getVtFacet('vt_serv_global_2m'),	// delete
-                evolOa: getCountFacet('vt_oa_2m') != 0 ? computeRatio('vt_oa_2m','ca_2m'): 0, // ratio count(oa)/count(total_lines) DELETE
-                vtOa1y: getVtFacet('vt_oa_1y'),						// delete
-                vtOa2m: getVtFacet('vt_oa_2m'),						// delete
-                vtOaGlobal2m: getVtFacet('vt_oa_global_2m'),		// delete
-                evolRem: getCountFacet('ca_rem_2m') != 0 ? computeRatio('ca_rem_2m','ca_2m') : 0, // ratio count(rem)/count(total_lines) DELETE
-                caRem1y: getCaFacet('ca_rem_1y'),					// delete
-                caRem2m: getCaFacet('ca_rem_2m'),					// delete
-                caRemGlobal2m: getCaFacet('ca_rem_global_2m'),		// delete
 				
-				/*
 				caPoidsAcc2m: getCaFacet('ca_poids_acc_2m'),
                 caPoidsAcc1y: getCaFacet('ca_poids_acc_1y'),
                 caPoidsAccGlobal2m: getCaFacet('ca_poids_acc_global_2m'),
@@ -430,7 +403,7 @@ function getIndicators(options, callback) {
 				caPoidsOa2m: getCaFacet('ca_poids_oa_2m'),
                 caPoidsOa1y: getCaFacet('ca_poids_oa_1y'),
                 caPoidsOaGlobal2m: getCaFacet('ca_poids_oa_global_2m'),
-				*/
+				
 
             });
         }
@@ -438,51 +411,43 @@ function getIndicators(options, callback) {
 }
 
 function getIndicatorsEnt(options, callback) {
-
     var fDates = prepareDateFilters(_config.derniereEntrees);
     var fEnt = {field: 'QENTRE'};
 	var fDat = {field: 'DATE'};
     var fOrg = makeNavFilters(options, 'org');
 
-
     var data = {
-
         size: 0,
         facets: {
             'ent_2m': {facet_filter: {and: [fDates[1]].concat(fOrg)}, statistical: fEnt},
             'ent_1y': {facet_filter: {and: [fDates[3]].concat(fOrg)}, statistical: fEnt},
             'ent_dat': {facet_filter: {and: [fDates[2]].concat(fOrg)}, statistical: fDat}
-
         }
     };
     // _logger.info('AFFICHAGE: ' + _util.inspect(data, {depth: null}));
     // _logger.info('AFFICHAGE: ' + _util.inspect(data.facets.ent_2m.facet_filter.and[0].range.DATE.lte, {depth: null}));
-// a enlever, car en dur
-	data.facets.ent_2m.facet_filter.and[0].range.DATE.lte= 201308120945;
-	data.facets.ent_2m.facet_filter.and[0].range.DATE.gte= 201308120000;
-	data.facets.ent_dat.facet_filter.and[0].range.DATE.lte= 201308120945;
-	data.facets.ent_dat.facet_filter.and[0].range.DATE.gte= 201308120000;
-
-
+	// TODO : a enlever, car en dur
+	data.facets.ent_2m.facet_filter.and[0].range.DATE.lte= 201308292000;
+	data.facets.ent_2m.facet_filter.and[0].range.DATE.gte= 201308290000;
+	data.facets.ent_dat.facet_filter.and[0].range.DATE.lte= 201308292000;
+	data.facets.ent_dat.facet_filter.and[0].range.DATE.gte= 201308290000;
+	
+	// callback(null,null);
+	
     postSearch(_config.elasticSearch.typeEnt, data, function (error, result) {
         if (error) {
             callback(error);
         } else {
-			
-			
-			// _logger.info('AFFICHAGE: ' + _util.inspect(result, {depth: null}));
-            var getEntFacet = function (name) {
+			var getEntFacet = function (name) {
                 return result.facets[name].total;
             }
             var getMaxDate = function (name) {
                 return result.facets[name].max;
             }
-
             callback(null, {
                 ent2m: getEntFacet('ent_2m') ,
                 ent1y: getEntFacet('ent_1y'),
 				entDat: getMaxDate('ent_dat'),
-				
             });
         }
     });
@@ -494,63 +459,51 @@ function getDetails(options, callback) {
 
     var aggField = filterFields[options.agg];
     var fDates = prepareDateFilters();
-    var fAcc = {term: {'FLAGPM': 'acc'}};		// useless
-    var fServ = {term: {'FLAGTYPART': 'p'}};    // useless
-    var fOa = {term: {'FLAGOA': 'oa'}};         // useless
-    var fRem = {term: {'FLAGREM': 'rem'}};      // useless
-
-    var fLib = {
-		size: 999,
+	var fLib = {
+		size: _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
         field: aggField.cd,
         script: 'term + ";" + _source.' + aggField.lib
     };
-	console.log(aggField.cd + ' - ' + aggField.lib + ' = ' + aggField.cd.substring(5,6))
-	
+	// console.log(aggField.cd + ' - ' + aggField.lib + ' = ' + aggField.cd.substring(5,6))
 	var fOrd = {
-		size: 999,
+		size: _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
         //field: aggField.cd,
         field: ('ORDRECAT' + aggField.cd.substring(5,6)),
 		script: 'term + ";" + _source.' + aggField.cd
     };
-	
     // on concatène le numéro de vente avec l'axe d'aggrégation pour avoir un count de ventes et non de lignes.
     var fVt = {
-		size: 999,
+		size: _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
         field: aggField.cd,
         script: 'term + ";" + _source.NVENTE'
     };
-
-    var fCa = {
-		size: 999,
+	var fCa = {
+		size: _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
         key_field: aggField.cd,
         value_field: 'PVTOTAL'
     };
-	
-	/*
 	var fRem = {
-		size : 999,
+		size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
 		key_field: aggField.cd,
-		value_field: '' 	// Nom_du_field_ou_se_trouve_le_ca_remisé
+		value_field: 'POIDSREMISE' 	// Nom_du_field_ou_se_trouve_le_ca_remisé
 	};
 	var fAcc = {
-		size : 999,
+		size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
 		key_field: aggField.cd,
-		value_field: '' 	// Nom_du_field_ou_se_trouve_le_ca_des_accessoires
+		value_field: 'POIDSACC' 	// Nom_du_field_ou_se_trouve_le_ca_des_accessoires
 	};
 	var fOa = {
-		size : 999,
+		size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
 		key_field: aggField.cd,
-		value_field: ''		// Nom_du_field_ou_se_trouve_le_ca_des_offres_actives
+		value_field: 'POIDSOA'		// Nom_du_field_ou_se_trouve_le_ca_des_offres_actives
 	};
 	var fServ = {
-		size : 999,
+		size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
 		key_field: aggField.cd,
-		value_field: ''		// Nom_du_field_ou_se_trouve_le_ca_des_services
+		value_field: 'POIDSSERVICE'		// Nom_du_field_ou_se_trouve_le_ca_des_services
 	};
 	
-	*/
-	
-    var fPrd = makeNavFilters(options, 'prd');
+	var fPrd = makeNavFilters(options, 'prd');
     var fOrg = makeNavFilters(options, 'org');
 
     var data = {
@@ -563,28 +516,7 @@ function getDetails(options, callback) {
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
 			'ca_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fCa},
 			'ca_global_1y': {facet_filter: {and: [fDates[3]].concat(fPrd)}, terms_stats: fCa},
-            'vt_acc_1y': {facet_filter: {and: [fDates[3], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},		// delete
-            'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},        // delete
-            'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd)}, terms: fVt},              // delete
-            'vt_serv_1y': {facet_filter: {and: [fDates[3], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},      // delete
-            'vt_serv_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},      // delete
-            'vt_serv_global_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd)}, terms: fVt},            // delete
-            'vt_oa_1y': {facet_filter: {and: [fDates[3], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},          // delete
-            'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},          // delete
-            'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},                // delete
-            'ca_rem_1y': {facet_filter: {and: [fDates[3], fRem].concat(fPrd).concat(fOrg)}, terms_stats: fCa},  // delete
-            'ca_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms_stats: fCa},  // delete
-            'ca_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms_stats: fCa},        // delete
-            'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
-            'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
-			
-			/*
-			A récupérer : 
-			- PoidsAcc2m 				- PoidsAcc1y 				- PoidsAccGlobal2m
-			- PoidsServ2m				- PoidsServ1y				- PoidsServGlobal2m
-			- PoidsRem2m				- PoidsRem1y				- PoidsRemGlobal2m
-			- PoidsOa2m					- PoidsOa1y 				- PoidsOaGlobal2m
-			           
+            
 			'ca_poids_acc_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fAcc},
 			'ca_poids_acc_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fAcc},
             'ca_poids_acc_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fAcc},			
@@ -599,19 +531,14 @@ function getDetails(options, callback) {
 			
 			'ca_poids_oa_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fOa},
 			'ca_poids_oa_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fOa},
-            'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fOa},			
+            'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fOa},	
 			
-			+ 
-			- evolPoidsOa				<= CA
-			- evolPoidsRem				<= CA
-			- evolPoidsServ             <= CA
-			- evolPoidsAcc				<= CA
-			*/
+			'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
+			
+			
         }
     };
-	
-	// _logger.info('2 Réponse ElasticSearch OOO: ' + _util.inspect(data, {depth: null}));
-	// _logger.info('Test des dates : ' + _util.inspect(fDates, {depth: null}));
 	
     postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
         if (error) {
@@ -639,7 +566,7 @@ function getDetails(options, callback) {
                         o[term.term][p] = 0; 
                     o[term.term][p]+= term.total; //  << ici 
                 }
-				/*console.log(o);*/
+				// console.log(o);
             }
 
             var mergeVtList = function (p, terms) { // récupère les VALEURS des terms 'pem', 'div', 'gem'
@@ -650,52 +577,11 @@ function getDetails(options, callback) {
                         o[term][p] = 0; 
 				    o[term][p]+= terms[i].count;
                 }
-            } // TODO : 517 -> 557 inutile (garder valid ? )
-
-			var calcReference = function (p , terms) {
-				for (var i = 0, imax = terms.length; i < imax; i++) {
-					var term = terms[i].term;
-					if (typeof o[term][p] !== 'number') {  
-                        o[term][p] = 0; // cast en type number si non number
-					}
-					o[term][p] = terms[i].count; // addition des counts ! 
-					
-				}
-			}
-			var mergeEvolValues = function (p, terms) { // retourne le nombre d'occurence GAR, OA, REM, ACC pour comparer
-				for (var i = 0, imax = terms.length; i < imax; i++) {
-					var term = terms[i].term.split(';')[0];
-					if (typeof o[term][p] !== 'number') {  
-                        o[term][p] = 0; // cast en type number si non number
-					}
-					o[term][p] += terms[i].count / o[term].reference * 100; // addition des % des counts ! 
-				}
-			}	
-			var isValid = function (name) {
-				//console.log('isValid(value)Détails => value = ' + name); //contrôle ! 
-				if (typeof name === 'undefined') {
-					console.log('fail ! undef');
-					return false;}
-				if (name == 'null') {
-					console.log('fail null');
-					return false;}
-				if (!isNaN(name)){
-					console.log('fail isnan');
-					return false;}
-				else 
-					return true;
-			}
-			var getCountFacet = function (name) {
-					return isValid(result.facets[name].total) ? result.facets[name].total : 0;
-			}
-			var computeRatio = function (name, ensemble) {
-				return (result.facets[name].total) / (result.facets[ensemble].total + result.facets[ensemble].missing);
-			}
+            }
 			
             if (!libCache[aggField.cd]) {
                 libCache[aggField.cd] = {};
             }
-
             // On commence par les libellés pour créer les objets.
             for (var i = 0, imax = result.facets['lib'].terms.length; i < imax; i++) {
                 var parts = result.facets['lib'].terms[i].term.split(';');
@@ -703,7 +589,7 @@ function getDetails(options, callback) {
                     cd: parts[0],
                     lib: parts[1]
                 };
-				console.log(o[parts[0]]);                               
+				// console.log(o[parts[0]]);                               
 				// On en profite pour remplir le cache des libellés. 
                 if (!libCache[aggField.cd][parts[0]]) {
                     libCache[aggField.cd][parts[0]] = parts[1];
@@ -713,43 +599,18 @@ function getDetails(options, callback) {
 
             addOrdo('ordre', result.facets['ordre'].terms); // ordonnancement 
 			
-			calcReference('reference', result.facets['ca_2m'].terms);				// a dégager
-            mergeCaList('ca', result.facets['ca'].terms);
+			mergeCaList('ca', result.facets['ca'].terms);
             mergeCaList('ca2m', result.facets['ca_2m'].terms);
             mergeCaList('ca1y', result.facets['ca_1y'].terms);
             mergeCaList('caGlobal1y', result.facets['ca_global_1y'].terms);
             mergeCaList('caGlobal2m', result.facets['ca_global_2m'].terms);
             mergeVtList('vt2m', result.facets['vt_2m'].terms);
             mergeVtList('vt1y', result.facets['vt_1y'].terms);
-            mergeVtList('vtAcc1y', result.facets['vt_acc_1y'].terms);
-            mergeVtList('vtAcc2m', result.facets['vt_acc_2m'].terms);
-            // console.log(result.facets['vt_acc_2m'].terms);
-			mergeEvolValues('evolAcc', result.facets['vt_acc_2m'].terms); // A voir si on garde ... peut etre pas ... 
-			mergeVtList('vtAccGlobal2m', result.facets['vt_acc_global_2m'].terms);
-            mergeVtList('vtServ1y', result.facets['vt_serv_1y'].terms);
-            mergeVtList('vtServ2m', result.facets['vt_serv_2m'].terms);
-            mergeEvolValues('evolServ', result.facets['vt_serv_2m'].terms);			// a dégager
-			mergeVtList('vtServGlobal2m', result.facets['vt_serv_global_2m'].terms);
-            mergeVtList('vtOa1y', result.facets['vt_oa_1y'].terms);
-            mergeVtList('vtOa2m', result.facets['vt_oa_2m'].terms);
-            mergeEvolValues('evolOa', result.facets['vt_oa_2m'].terms);				// a dégager
-            mergeVtList('vtOaGlobal2m', result.facets['vt_oa_global_2m'].terms);
-            mergeCaList('caRem1y', result.facets['ca_rem_1y'].terms);
-            mergeCaList('caRem2m', result.facets['ca_rem_2m'].terms);
-            mergeCaList('caRemGlobal2m', result.facets['ca_rem_global_2m'].terms);
-            // console.log('Evol REM : ');	
-			mergeEvolValues('evolRem', result.facets['ca_rem_2m'].terms);			// a dégager
-			
-
-			
-			console.log('Objet O : ');
-			console.log(o);
-			/*
-			A faire : 
-			mergeCaList('evolPoidsOa', result.facets['ca_poids_oa_2m'].terms);	
-			mergeCaList('evolPoidsRem', result.facets['ca_poids_rem_2m'].terms);	
-			mergeCaList('evolPoidsAcc', result.facets['ca_poids_acc_2m'].terms);	
-			mergeCaList('evolPoidsServ', result.facets['ca_poids_serv_2m'].terms);	
+            
+			mergeCaList('evolPoidsOa', result.facets['ca_poids_oa_2m'].terms);		// non divisé par le ca global ! 
+			mergeCaList('evolPoidsRem', result.facets['ca_poids_rem_2m'].terms);	// non divisé par le ca global !
+			mergeCaList('evolPoidsAcc', result.facets['ca_poids_acc_2m'].terms);	// non divisé par le ca global !
+			mergeCaList('evolPoidsServ', result.facets['ca_poids_serv_2m'].terms);	// non divisé par le ca global ! 
 			
 			mergeCaList('caPoidsOaGlobal2m', result.facets['ca_poids_oa_global_2m'].terms);	
 			mergeCaList('caPoidsRemGlobal2m', result.facets['ca_poids_rem_global_2m'].terms);	
@@ -766,11 +627,9 @@ function getDetails(options, callback) {
 			mergeCaList('caPoidsAcc2m', result.facets['ca_poids_acc_2m'].terms);	
 			mergeCaList('caPoidsServ2m', result.facets['ca_poids_serv_2m'].terms);
 			
-			*/
+			// console.log('Objet -O- : ');
+			// console.log(o);
 			
-			/*console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-			console.log('XXXXXXXXXXXXXXX avant de faire les merge CA/vt List XXXXXXXXXXXXXXXXX');
-			console.log(o);*/
 			var totalLines = 0;
 			
             var u = [];
@@ -778,9 +637,9 @@ function getDetails(options, callback) {
             for (var n in o) {
                 u.push(o[n]);
             }
-            // console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-			// console.log('XXXXXXXXXXXXXXX après de faire les merge CA/vt List XXXXXXXXXXXXXXXXX');
-			//console.log(u);
+			// console.log('u');
+			// console.log(u);
+            
             callback(null, u);
         }
     });

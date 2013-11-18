@@ -230,8 +230,8 @@ function getRefData(context, callback) {
                 } else {
 					// ajout des budget
                     data.budget = result;
-					console.log('DATA_BUDGET LOADING ! >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-					console.log(result);
+					// console.log('DATA_BUDGET LOADING ! >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+					// console.log(result);
                     callback(error, data);
                 }
             });
