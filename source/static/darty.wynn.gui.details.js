@@ -7,7 +7,7 @@ darty.wynn.gui.details = (function () {
     var nextRefresh = null;
 
 	var oneTime = false;
-    function refreshPage() { // controler de la page
+    function refreshPage() { // controller de la page
         refreshTimer = null;
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {

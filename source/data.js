@@ -97,7 +97,7 @@ function makeDateFilterLib(date) {
 
 // permet de retourner le budget pour chaque catégories
 function getBudget(callback) {
-	// callback(null, {CA: 10, ACCESSOIRES: 15, SERVICES: 15, OFFRESACTIVES: 15, REMISE: 15});
+	// callback(null, {CA: -5, ACCESSOIRES: -5, SERVICES: -5, OFFRESACTIVES: -5, REMISE: -5});
 	// get date du jour et la mettre dans value_of_date
 	var value_of_date = new Date();
 	var ddate = '20' + parseInt(value_of_date.getYear()%100) + '' +(parseInt(value_of_date.getMonth())+ 1) +''+ value_of_date.getDate() + '';
@@ -281,12 +281,8 @@ function getLib(field, code, callback) {
 function getIndicators(options, callback) {
 
     var fDates = prepareDateFilters();
-    /*var fAcc = {term: {'FLAGPM': 'acc'}};		// useless
-    var fServ = {term: {'FLAGTYPART': 'p'}};    // useless
-    var fOa = {term: {'FLAGOA': 'oa'}};         // useless
-    var fRem = {term: {'FLAGREM': 'rem'}};      // useless
-	*/
-    var fVt = {field: 'NVENTE'};
+    
+	var fVt = {field: 'NVENTE'};
     var fCa = {field: 'PVTOTAL'};
 	
 	
@@ -306,20 +302,7 @@ function getIndicators(options, callback) {
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fCa},
             'ca_global_1y': {facet_filter: {and: [fDates[3]].concat(fPrd)}, statistical: fCa},
             'ca_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fCa},
-            /*'vt_acc_1y': {facet_filter: {and: [fDates[3], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},		// delete
-            'vt_acc_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd).concat(fOrg)}, terms: fVt},        // delete
-            'vt_acc_global_2m': {facet_filter: {and: [fDates[1], fAcc].concat(fPrd)}, terms: fVt},              // delete
-            'vt_serv_1y': {facet_filter: {and: [fDates[3], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},      // delete
-            'vt_serv_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd).concat(fOrg)}, terms: fVt},      // delete
-            'vt_serv_global_2m': {facet_filter: {and: [fDates[1], fServ].concat(fPrd)}, terms: fVt},            // delete
-            'vt_oa_1y': {facet_filter: {and: [fDates[3], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},          // delete
-            'vt_oa_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd).concat(fOrg)}, terms: fVt},          // delete
-            'vt_oa_global_2m': {facet_filter: {and: [fDates[1], fOa].concat(fPrd)}, terms: fVt},                // delete
-            'ca_rem_1y': {facet_filter: {and: [fDates[3], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},        // delete
-            'ca_rem_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd).concat(fOrg)}, terms: fCa},        // delete
-            'ca_rem_global_2m': {facet_filter: {and: [fDates[1], fRem].concat(fPrd)}, terms: fCa},              // delete
-            */
-			'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
+            'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_global_1y': {facet_filter: {and: [fDates[3]].concat(fPrd)}, terms: fVt},
             'vt_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fVt},
@@ -425,16 +408,7 @@ function getIndicatorsEnt(options, callback) {
             'ent_dat': {facet_filter: {and: [fDates[2]].concat(fOrg)}, statistical: fDat}
         }
     };
-    // _logger.info('AFFICHAGE: ' + _util.inspect(data, {depth: null}));
-    // _logger.info('AFFICHAGE: ' + _util.inspect(data.facets.ent_2m.facet_filter.and[0].range.DATE.lte, {depth: null}));
-	// TODO : a enlever, car en dur
-	// data.facets.ent_2m.facet_filter.and[0].range.DATE.lte= 201308292000;
-	// data.facets.ent_2m.facet_filter.and[0].range.DATE.gte= 201308290000;
-	// data.facets.ent_dat.facet_filter.and[0].range.DATE.lte= 201308292000;
-	// data.facets.ent_dat.facet_filter.and[0].range.DATE.gte= 201308290000;
-	
-	// callback(null,null);
-	
+    
     postSearch(_config.elasticSearch.typeEnt, data, function (error, result) {
         if (error) {
             callback(error);

@@ -4,10 +4,12 @@ var darty = {
         gui: {},
         config: {
             reqInterval: 2 * 60 * 1000,
-            reqTimeout: 30 * 1000,
+			reqTimeout: 30 * 1000,
             refreshInfo: 1 * 1000,
             refreshCa: 0.5 * 1000,
 			quartdheure: 15 * 60 * 1000,
+            // timeDiff : 0,
+            timeDiff : 60*60*1000,
 			linePerPage : 100,
 			requestAccueil : 'indicateurs',
 			requestDetails : 'details',
@@ -15,6 +17,16 @@ var darty = {
         },
     }
 };
+
+darty.wynn.clone = function(x) {
+	try {
+		var copy = JSON.parse(JSON.stringify(x));
+	} catch (e) {
+		console.log('Error : ');
+		console.log(e);
+	}
+	return copy;
+}
 
 darty.wynn.priceToStr = function (n) {
 	var a = Math.abs(n).toFixed(0).toString().split('.');

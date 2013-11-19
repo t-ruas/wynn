@@ -5,9 +5,9 @@ var _keygrip = require('keygrip');
 module.exports = {
     port: 8090,
     staticRoot: './static',
-    tempsChargReel:2,
+    tempsChargReel:60,
     tempsChargTalend:2,
-    tempsComptSet:15,
+    tempsComptSet:5,
     jourCalcMoyeEnt:7,
     jour1an:364,
     authCookieName: 'darty_wynn_auth',

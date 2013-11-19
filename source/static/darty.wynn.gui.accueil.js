@@ -115,16 +115,16 @@ darty.wynn.gui.accueil = (function () { // fab
         refreshPage();  
 		
 		//makeDrillUrl();
-		var ndate= new Date();
+		/*var ndate= new Date();
   		var m = (((ndate.getMinutes() )/15 | 0) * 15) % 60;
-		var h = (((ndate.getMinutes()/105 + .5) | 0) + ndate.getHours()) % 24;
+		var h = (((ndate.getMinutes()/105 + .5) | 0) + ndate.getHours()) % 24;*/
 
-        window.setInterval(function () { // TODO : A REPARE 
+        window.setInterval(function () { 
 			var jour = new Date();
 			var text = parseInt(jour.getDate()) + '/'+parseInt(jour.getMonth()) + '/'+parseInt(jour.getYear()%100)
 			if (refreshTimer) {
 				$('#lastUpdate').remove();
-                $('#blueContentTop').prepend('<p id="lastUpdate">Dernière Mise à jour le : '+text+' à '+darty.wynn.formatTimeSecondLess(lastRefresh) + ' <br />Prochaine mise à jour dans: ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's</p>');
+                $('#blueContentTop').prepend('<p id="lastUpdate">Dernière Mise à jour le : '+text+' à '+darty.wynn.formatTimeSecondLess(new Date(lastRefresh.getTime() - darty.wynn.config.timeDiff)) + ' <br />Prochaine mise à jour dans: ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's</p>');
 			}
 			else {
 				$('#lastUpdate').remove();
@@ -180,9 +180,10 @@ darty.wynn.gui.accueil = (function () { // fab
 		if(typeof statEntrees.entDat === 'undefined')
 			return false;
     	var entrees = statEntrees.entDat.toString();
-    	var lastRefresh15m = lastRefresh;
+		var lastRefresh15m = new Date();
+		lastRefresh15m.setTime(lastRefresh);
 		lastRefresh15m.setTime(lastRefresh15m.getTime() - darty.wynn.config.quartdheure);
-    	var dernierChargEnt = new Date (entrees.slice (0,4), entrees.slice (4,6) -1, entrees.slice (6,8), entrees.slice (6,8), entrees.slice (8,10), 0);
+		var dernierChargEnt = new Date (entrees.slice (0,4), entrees.slice (4,6) -1, entrees.slice (6,8), entrees.slice (6,8), entrees.slice (8,10), 0);
 		//$("#probErreurEnt").html("");
 		
     	if (darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)   > 100 
@@ -190,7 +191,6 @@ darty.wynn.gui.accueil = (function () { // fab
 			|| isNaN(darty.wynn.getEvol(entrees.ent2m, entrees.ent1y)) ){
 			$("div#blueContentTop").append ("<p id='msg'>Evolution d'entrée incohérente.</p>");    		
     	}
-    	
     	if  (dernierChargEnt.getTime() < lastRefresh15m.getTime()){
     		$("div#blueContentTop").append ("<p id='msg'>Pas d'entrées depuis : " + darty.wynn.formatTime(dernierChargEnt) + "</p>");    
     	}

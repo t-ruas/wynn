@@ -33,10 +33,10 @@
 		<div id="second_line">
                     
                     <a id="">
-                    <div id="block1" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.caPoidsAcc2m, it.caPoidsAcc1y), it.caPoidsAcc1y, it.caPoidsAccGlobal2m, darty.wynn.pageData.budget.ACCESSOIRES)%>">
+                    <div id="block1" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsAcc2m,it.ca2m)), it.caPoidsAcc1y, it.caPoidsAccGlobal2m, darty.wynn.pageData.budget.ACCESSOIRES)%>">
                         <div id="block1_chiffre">
                             <img src="./img/picto_accessoires2.png">
-                            <p><%=darty.wynn.formatEvo(darty.wynn.getEvol(it.caPoidsAcc2m, it.caPoidsAcc1y))%></p>
+                            <p><%=darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsAcc2m,it.ca2m))%></p>
                         </div>
                         <div class="block_title">
                             <p>Accessoires</p>
@@ -45,10 +45,10 @@
                     </a>
                     
                     <a id="">
-                    <div id="block2" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.caPoidsServ2m, it.caPoidsServ1y), it.caPoidsServ1y, it.caPoidsServGlobal2m, darty.wynn.pageData.budget.SERVICES)%>">
+                    <div id="block2" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsServ2m,it.ca2m)), it.caPoidsServ1y, it.caPoidsServGlobal2m, darty.wynn.pageData.budget.SERVICES)%>">
                         <div id="block2_chiffre">
                             <img src="./img/picto_services2.png">
-                            <p><%=darty.wynn.formatEvo(darty.wynn.getEvol(it.caPoidsServ2m, it.caPoidsServ1y))%></p>
+                            <p><%=darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsServ2m,it.ca2m))%></p>
                         </div>
                         <div class="block_title">
                             <p>Services</p>
@@ -57,10 +57,10 @@
                     </a>
                     
                     <a id="">    
-                    <div id="block3" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.caPoidsOa2m, it.caPoidsOa1y), it.caPoidsOa1y, it.caPoidsOaGlobal2m, darty.wynn.pageData.budget.OFFRESACTIVES)%>">
+                    <div id="block3" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsOa2m,it.ca2m)), it.caPoidsOa1y, it.caPoidsOaGlobal2m, darty.wynn.pageData.budget.OFFRESACTIVES)%>">
                         <div id="block3_chiffre">
                             <img src="./img/picto_remise2.png">
-                            <p><%=darty.wynn.formatEvo(darty.wynn.getEvol(it.caPoidsOa2m, it.caPoidsOa1y))%></p>
+                            <p><%=darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsOa2m,it.ca2m))%></p>
                         </div>
                         <div class="block_title">
                             <p>Offres active</p>
@@ -69,10 +69,10 @@
                     </a>
                     
                     <a id="">    
-                    <div id="block4" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.caPoidsRem2m, it.caPoidsRem1y), it.caPoidsRem1y, it.caPoidsRemGlobal2m, darty.wynn.pageData.budget.REMISES)%>">
+                    <div id="block4" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsRem2m,it.ca2m)), it.caPoidsRem1y, it.caPoidsRemGlobal2m, darty.wynn.pageData.budget.REMISES)%>">
                         <div id="block4_chiffre">
                             <img src="./img/picto_services.png">
-                            <p><%=darty.wynn.formatEvo(darty.wynn.getEvol(it.caPoidsRem2m, it.caPoidsRem1y))%></p>
+							<p><%=darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsRem2m,it.ca2m))%></p>
                         </div>
                         <div class="block_title">
                             <p>Remise</p>

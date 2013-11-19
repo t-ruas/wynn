@@ -63,25 +63,26 @@ darty.wynn.data = (function () {
     }
 	
 	function computeScore(val, histo, moyenne, budget) {
-		// console.log('evol : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget);
+		console.log('computeScore : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget);
 		if (!isFinite(val))
 			return 0;
 		var score = 0;
         (val > histo) && score++;
         (val > moyenne) && score++;
         budget && (val > histo + (histo * budget) / 100) && score++;
-        // console.log(score);
+        console.log('score : '+ score);
         return score;
     }
 
     function computeScoreEvol(val, histo, moyenne, budget) {
-        // console.log('evol : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget);
+        console.log('computeScoreEvol : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget);
 		if (!isFinite(val))
 			return 0;
 		var score = 0;
 		(val > histo) && score++;
         (val > histo + (histo * moyenne) / 100) && score++;
         budget && (val > histo + (histo * budget) / 100) && score++;
+        console.log('score : ' + score);
         return score;
     }
 
