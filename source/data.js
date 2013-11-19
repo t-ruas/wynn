@@ -124,7 +124,8 @@ function getBudget(callback) {
 
 function prepareDateFilters(tempsComptSet) {
     var dates = new Array(5);
-	dates[0] = new Date(2013, 7, 29, 18, 57, 56); // TODO : date du jour ! 
+	dates[0] = new Date(); // TODO : date du jour ! 
+	// console.log('XXXXXXXXXXXXXXXXXXXXXXX dates[0] : ' + dates[0]);
     dates[0].setMinutes(dates[0].getMinutes() -  _config.tempsChargReel); // 2min
     dates[1] = new Date(dates[0]);
     dates[1].setMinutes(dates[1].getMinutes() -  _config.tempsChargTalend); // 4min
@@ -427,10 +428,10 @@ function getIndicatorsEnt(options, callback) {
     // _logger.info('AFFICHAGE: ' + _util.inspect(data, {depth: null}));
     // _logger.info('AFFICHAGE: ' + _util.inspect(data.facets.ent_2m.facet_filter.and[0].range.DATE.lte, {depth: null}));
 	// TODO : a enlever, car en dur
-	data.facets.ent_2m.facet_filter.and[0].range.DATE.lte= 201308292000;
-	data.facets.ent_2m.facet_filter.and[0].range.DATE.gte= 201308290000;
-	data.facets.ent_dat.facet_filter.and[0].range.DATE.lte= 201308292000;
-	data.facets.ent_dat.facet_filter.and[0].range.DATE.gte= 201308290000;
+	// data.facets.ent_2m.facet_filter.and[0].range.DATE.lte= 201308292000;
+	// data.facets.ent_2m.facet_filter.and[0].range.DATE.gte= 201308290000;
+	// data.facets.ent_dat.facet_filter.and[0].range.DATE.lte= 201308292000;
+	// data.facets.ent_dat.facet_filter.and[0].range.DATE.gte= 201308290000;
 	
 	// callback(null,null);
 	

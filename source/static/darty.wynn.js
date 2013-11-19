@@ -7,6 +7,7 @@ var darty = {
             reqTimeout: 30 * 1000,
             refreshInfo: 1 * 1000,
             refreshCa: 0.5 * 1000,
+			quartdheure: 15 * 60 * 1000,
 			linePerPage : 100,
 			requestAccueil : 'indicateurs',
 			requestDetails : 'details',
@@ -48,6 +49,10 @@ darty.wynn.formatConcret = function (n) {
 
 darty.wynn.formatTime = function (d) {
     return darty.wynn.pad(d.getHours(), 2) + ':' + darty.wynn.pad(d.getMinutes(), 2) + ':' + darty.wynn.pad(d.getSeconds(), 2);
+};
+
+darty.wynn.formatTimeSecondLess = function (d) {
+    return darty.wynn.pad(d.getHours(), 2) + ':' + darty.wynn.pad(d.getMinutes(), 2);
 };
 
 darty.wynn.pad = function (str, n, c) {

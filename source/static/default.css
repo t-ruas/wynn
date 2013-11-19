@@ -8,6 +8,11 @@
 	margin: 0 auto;
 	background-color : aqua;
 }
+
+#lastUpdate {
+	/*Font, font-size, position, */
+	color: white;
+}
 .pageNumber{
 	margin: 0 2%;
 }

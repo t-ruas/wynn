@@ -186,7 +186,7 @@ darty.wynn.gui.details = (function () {
             });
 			
 			// Bouton Refresh Timer 
-            $('#refreshTimer').on('click', function () {
+            $('#blueContentTop').on('click', function () {
                 if (refreshTimer) {
                     window.clearTimeout(refreshTimer);
                     refreshPage();
@@ -308,31 +308,20 @@ darty.wynn.gui.details = (function () {
 				return false;
             });
 			
-			/*function func_getTime() TODO : IE8 under ! 
-			{
-				var tex = {};
-				tex.un = 'date des données ';
-				tex.deux = ' prochaine récupération dans ';
+            window.setInterval(function(){ 
+				var jour = new Date();
+				var text = parseInt(jour.getDate()) + '/'+parseInt(jour.getMonth()) + '/'+parseInt(jour.getYear()%100)
 				if (refreshTimer) {
-					$('#refreshTimer').text(_w.formatTime(lastRefresh) + ' ( ' + Math.ceil((nextRefresh - new Date()) / 1000) + ' s)');
-				} else {
-					$('#refreshTimer').text('');
+					$('#lastUpdate').remove();
+					$('#blueContentTop').prepend('<p id="lastUpdate">Dernière Mise à jour le : '+text+' à '+darty.wynn.formatTimeSecondLess(lastRefresh) + ' <br />Prochaine mise à jour dans: ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's</p>');
 				}
-			}*/
-			
-            window.setInterval(function(){ // TODO arranger IE 8 ! 
-				var tex = {};
-				tex.un = 'date des données ';
-				tex.deux = ' prochaine récupération dans ';
-				if (refreshTimer) {
-					$('#refreshTimer').text(_w.formatTime(lastRefresh) + ' ( ' + Math.ceil((nextRefresh - new Date()) / 1000) + ' s)');
-				} else {
-					$('#refreshTimer').text('');
+				else {
+					$('#lastUpdate').remove();
+					$('#blueContentTop').prepend('<p id="lastUpdate"></p>');
 				}
-			}, 1000);
-            // window.setTimeOut(func_getTime, 1000);
-            // window.setTimeOut(function()func_getTime(), 1000);
-			
+				refreshTimerDisplay = Math.ceil((nextRefresh - new Date()) / 1000);
+			}, darty.wynn.config.refreshInfo);
+            
 			darty.wynn.setFilters('details');
 			refreshPage();
 			$("table").tablesorter({ }); 
