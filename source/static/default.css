@@ -3,10 +3,12 @@
 ***************************************************************/
 
 #pageNumberLoader {
-	width: 80%;
+	width: 100%;
 	height: 6%;
 	margin: 0 auto;
-	background-color : aqua;
+	background-color: white;
+	opacity: 0.8;
+	border: 1px dotted black;
 }
 
 #lastUpdate {
@@ -14,7 +16,7 @@
 	color: white;
 }
 .pageNumber{
-	margin: 0 2%;
+	margin: 0 5px;
 }
 
 @font-face
@@ -951,7 +953,9 @@ refresh timer
 	position: absolute;
 	right: 2%;
 	padding: 2px 2%;
-	bottom: 1px;}
+	bottom: 1px;
+	display: none;
+}
 
 
 

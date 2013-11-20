@@ -313,7 +313,7 @@ darty.wynn.gui.details = (function () {
 				var text = parseInt(jour.getDate()) + '/'+parseInt(jour.getMonth()) + '/'+parseInt(jour.getYear()%100)
 				if (refreshTimer) {
 					$('#lastUpdate').remove();
-					$('#blueContentTop').prepend('<p id="lastUpdate">Dernière Mise à jour le : '+text+' à '+darty.wynn.formatTimeSecondLess(lastRefresh) + ' <br />Prochaine mise à jour dans: ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's</p>');
+					$('#blueContentTop').prepend('<p id="lastUpdate">Dernière Mise à jour le : '+text+' à '+darty.wynn.formatTimeSecondLess(new Date(lastRefresh.getTime() - darty.wynn.config.timeDiff)) + ' <br />Prochaine mise à jour dans: ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's</p>');
 				}
 				else {
 					$('#lastUpdate').remove();

@@ -10,14 +10,15 @@ module.exports = {
     tempsComptSet:5,
     jourCalcMoyeEnt:7,
     jour1an:364,
+	jour1week: 7,
     authCookieName: 'darty_wynn_auth',
     keys: _keygrip(['azertyuiop', 'qsdfghjklm', 'wxcvbn'], 'sha256', 'hex'),
     elasticSearch: {
-        host: 'localhost',													// adresse de la machine sur laquelle est stockée le LB ES
+        host: 'localhost',														// adresse de la machine sur laquelle est stockée le LB ES
         port: 9200,
-        index: 'wynn', 														// nom de l'index 
+        index: 'wynn_idx', 														// nom de l'index 
         typeEnt: 'entrees', 													// nom du type pour les entrées
-		typeBud: 'budget', 													// nom du type pour les budgets
+		typeBud: 'budget', 														// nom du type pour les budgets
 		typeLv: 'lv',
 		chunk_size : {
 			DETAILS_CHUNK_SIZE : 10000,

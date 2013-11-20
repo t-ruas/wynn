@@ -82,9 +82,10 @@ function makeDateFilter(date) {
 }
 
 function makeDateFilterLib(date) {
-	var tempDate = new Date (date);
+	var tempDate = new Date(date);
 	tempDate.setDate(tempDate.getDate() - _config.jour1an);
 	tempDate.setHours(0,0,0,0);
+	console.log('Lib range : '+ tempDate +' -> '+date);
     return {
         range: {
             'DATE': {
@@ -116,7 +117,7 @@ function getBudget(callback) {
 			if (result.hits.hits.length) {
 				callback(null, result.hits.hits[0].fields);
 			} else {
-				callback(new _errors.Error('NotFoundError'));
+				callback(new _errors.Error('Budget Not Found : Error'));
 			}
 		}
 	});
@@ -191,6 +192,7 @@ function getFilterText(options, callback) {
             if (n in filterFields) {
                 i++;
                 // _logger.info('2 Réponse test : ' + _util.inspect(filterFields[n], {depth: null}));
+				console.log(' getLib -> filterFields[n] : ' + filterFields[n] + ' -> options[n] : ' + options[n]);
                 getLib(filterFields[n], options[n], function (error, result) {
                     // En cas d'erreur sur un des codes, on sort en erreur et ignore tous les autres retours.
                     if (error) {
@@ -210,7 +212,6 @@ function getFilterText(options, callback) {
             }
         })(m);
     }
-    
     if (!i) {
         callback(null, o);
     }
@@ -230,7 +231,7 @@ function getES(context, callback) {
 			if (result.hits.hits.length) {
 				callback(null, true);
 			} else {
-				callback(new _errors.Error('NotFoundError'));
+				callback(new _errors.Error('ElasticSearch Not Found : Error'));
 			}
 		}
 	});
@@ -268,11 +269,10 @@ function getLib(field, code, callback) {
                     libCache[field.cd][code] = result.hits.hits[0].fields[field.lib];
                     callback(null, libCache[field.cd][code]);
                 } else {
-                    callback(new _errors.Error('NotFoundError'));
+                    callback(new _errors.Error('Libellés Not Found : Error'));
                 }
             }
         });
-
     }
 }
 
@@ -480,12 +480,14 @@ function getDetails(options, callback) {
 	
 	var fPrd = makeNavFilters(options, 'prd');
     var fOrg = makeNavFilters(options, 'org');
-
+	
     var data = {
         size: 0,
         facets: {
-            'ordre': {facet_filter: {and: [fDates[4]]}, terms: fOrd},
-            'lib': {facet_filter: {and: [fDates[4]].concat(fPrd).concat(fOrg)}, terms: fLib},
+            // 'ordre': {facet_filter: {and: [fDates[0], fDates[3]]}, terms: fOrd},
+            // 'lib': {facet_filter: {and: [fDates[0], fDates[3]].concat(fPrd).concat(fOrg)}, terms: fLib},
+            'ordre': {facet_filter: {and: [fDates[4]]}, terms: fOrd}, 											// TODO : Mettre les bonnes dates 
+            'lib': {facet_filter: {and: [fDates[4]].concat(fPrd).concat(fOrg)}, terms: fLib},					// TODO : Mettre les bonnes dates 
             'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},

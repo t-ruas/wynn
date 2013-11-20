@@ -10,8 +10,8 @@
 *************************************************************/
 
 @media only screen and (max-width: 320px) {
-    #blueContent{
-        display:none;}
+#blueContent{
+	display:none;}
     
 #mainContentMiddle {
     overflow:visible;}
@@ -174,7 +174,7 @@ SECOND LINE
     height:150px;
     float:left;
     margin-top:3%;
-    background-color:rgba(0,176,80,0.7);}
+    background-color:;}
     
 #block1_chiffre p{
     margin-top:25%;
@@ -190,7 +190,7 @@ SECOND LINE
     float:left;
     margin-left:1%;
     margin-top:3%;
-    background-color:rgba(232,110,88,0.8);}
+    background-color:;}
     
 #block2_chiffre p{
     margin-top:25%;
@@ -206,7 +206,7 @@ SECOND LINE
     float:left;
     margin-left:0%;
     margin-top:1%;
-    background-color:rgba(0,176,80,0.7);}
+    background-color:;}
     
 #block3_chiffre p{
     margin-top:25%;
@@ -222,7 +222,7 @@ SECOND LINE
     float:left;
     margin-left:1%;
     margin-top:1%;
-    background-color:rgba(239,175,56,0.8);}
+    background-color:;}
     
 #block4_chiffre p{
     margin-top:25%;
@@ -418,7 +418,7 @@ SECOND LINE
     height:150px;
     float:left;
     margin-top:1%;
-    background-color:rgba(0,176,80,0.7);}
+    background-color:;}
     
 #block1_chiffre p{
     margin-top:20%;
@@ -435,7 +435,7 @@ SECOND LINE
     float:left;
     margin-left:1%;
     margin-top:1%;
-    background-color:rgba(232,110,88,0.8);}
+    background-color:;}
     
 #block2_chiffre p{
     margin-top:20%;
@@ -452,7 +452,7 @@ SECOND LINE
     float:left;
     margin-left:0%;
     margin-top:1%;
-    background-color:rgba(0,176,80,0.7);}
+    background-color:;}
     
 #block3_chiffre p{
     margin-top:20%;
@@ -468,7 +468,7 @@ SECOND LINE
     float:left;
     margin-left:1%;
     margin-top:1%;
-    background-color:rgba(239,175,56,0.8);}
+    background-color:;}
     
 #block4_chiffre p{
     margin-top:20%;
