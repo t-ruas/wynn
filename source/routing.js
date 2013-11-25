@@ -21,17 +21,28 @@ _dot.templateSettings.strip = false;
 
 var fileServer;
 var routes;
+var request_count;
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 function start(r) { // lancement du serveur Node ! 
     routes = r;
+	request_count = 0;
     fileServer = new _static.Server(_config.staticRoot, {cache: false});
     _http.createServer(handleRequest).listen(_config.port);
 }
 
 function handleRequest(request, response) {
-    var context = {
+	request_count++;
+	setInterval(function() {
+    fs.writeFile('/etc/munin/plugins/nodejs_requests', request_count, function (error) {
+		if (error) {
+            throw error;
+		}
+	});
+	}, 5000);
+    /* /\ /\ Code Munin /\ /\ */
+	var context = {
         id: _uuid.v4(),
         request: request,
         response: response,

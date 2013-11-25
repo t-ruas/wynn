@@ -23,45 +23,34 @@ darty.wynn.gui.accueil = (function () { // fab
 		var data = {};
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
-				console.log('Erreur lors du chargement des valeurs : page accueil ');
+				// console.log('Erreur lors du chargement des valeurs : page accueil ');
 				counter += 1;
-				if (counter > 1) {
-					data.entrees = {};
-					doWork(data);
-				}
-            } else { // SUCCESS
+            } else { 
+				console.log('result : ');
+				console.log(result.ca1y);// SUCCESS
 				counter += 1; // TODO :  sécurisé ?! 
 				data.indicateurs = result;
-				// console.log(data);
-				// console.log(parseInt(data.indicateurs.length));
-				if (counter > 1) {
-					console.log('lancer la fonction d\'affichage ! ');
-					doWork(data);
-				}
+			}
+			if (counter > 1) {
+				data.entrees = {};
+				doWork(data);
 			}
 		});
-		
 		console.log('RefreshPage() --- entre indicateurs et indicateurs ENT ! ')
-		
 		darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
 			if (error) { 
 				console.log('Erreur lors du chargement des valeurs : page accueil - entrées');
 				counter += 1;
-				if (counter > 1) {
-					data.entrees = {};
-					doWork(data); // cas non normal mais il faut continuer le traitement
-				}
 			} else { // SUCCESS
 				counter += 1; // TODO :  sécurisé ?! 
-				// console.log(resultEnt);
 				data.entrees = resultEnt;
-				// console.log(data);
-				if (counter > 1) {
-					console.log('lancer la fonction d\'affichage ! ');
-					doWork(data);
-				}
+			}
+			if (counter > 1) {
+				data.entrees = {};
+				doWork(data); // cas non normal mais il faut continuer le traitement
 			}
 		});
+		
 		
 							/*var pagefn = doT.template($('#navigation-bar').text());
 							$('#content-header').html(pagefn(result));
@@ -86,11 +75,14 @@ darty.wynn.gui.accueil = (function () { // fab
 		if(typeof data.indicateurs !== 'undefined') {
 			ca2minutes = data.indicateurs.ca2m;
 			dernierCa = data.indicateurs.ca;
-			result.indicateurs = data.indicateurs;
+			result = data.indicateurs;
 			result.caEvol=darty.wynn.formatEvo(100 * (data.indicateurs.ca2m - data.indicateurs.ca1y) / data.indicateurs.ca1y);
 			result.concret= darty.wynn.formatConcret(data.indicateurs.vt2m / result.ent2m * 100 );
 		}
-		
+		console.log('Dowork : data :');
+		console.log(data);
+		console.log('Dowork : result : ');
+		console.log(result);
 		refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval); // TODO : VERIFIER pas de récursivité ! 
 		refreshTimerCa = refreshTimer;
 		//refreshTimerCa = window.setTimeout(refreshPage, darty.wynn.config.reqInterval); // TODO : VERIFIER pas de récursivité ! 

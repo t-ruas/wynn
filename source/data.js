@@ -269,7 +269,8 @@ function getLib(field, code, callback) {
                     libCache[field.cd][code] = result.hits.hits[0].fields[field.lib];
                     callback(null, libCache[field.cd][code]);
                 } else {
-                    callback(new _errors.Error('Libellés Not Found : Error'));
+                    // callback(new _errors.Error('Libellés Not Found : Error'));
+					callback(null,null);
                 }
             }
         });
@@ -333,29 +334,6 @@ function getIndicators(options, callback) {
 			// fonction d'aggreg sur facet
             var getCaFacet = function (name) {
                 return result.facets[name].total;
-			} // TODO : 309 -> 340 inutile 
-			var isValid = function (name) { // confirme la validité d'une valeur (null, nan, undefined)
-				//console.log('isValid(value)Accueil => value = ' + name); //contrôle ! 
-				if (typeof name === 'undefined') {
-					console.log(name +' undef accueil');
-					return false;}
-				if (name == 'null') {
-					console.log(name +' null accueil');
-					return false;}
-				if (isNaN(name)) {
-					console.log(name +' isNan accueil');
-					return false;}
-				else {
-					return true;
-				}
-            }
-			var getCountFacet = function (name) { // comptabilise le nombre d'élements selectionné dans la requête ES pour un nom de facet donné
-				return isValid(result.facets[name].total) ? result.facets[name].total : 0;
-			}
-			var computeRatio = function(name, ensemble) { // retourne le ratio pour la facet donnée (name)
-				//console.log('ComputeRatio : '+ name + ' divise : ' + result.facets[name].total + ' / ( ' + result.facets[ensemble].count + ' + ' + result.facets[ensemble].missing + ') + object name : ');
-				//console.log(result.facets[ensemble]);
-				return (result.facets[name].total) / (result.facets[ensemble].count) * 100;
 			}
 			// fonction d'aggreg sur facet, permet
             var getVtFacet = function (name) {

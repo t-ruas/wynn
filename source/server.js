@@ -194,6 +194,8 @@ var routes = {
             handler: function (context, callback) {
                 if (authorizeOrFail(context, callback)) {
                     _data.getIndicators(context.content, function (error, result) {
+						console.log('result : ');
+						console.log(result);
                         callback(error, {data: result});
                     });
                 }

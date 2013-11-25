@@ -12,6 +12,8 @@ darty.wynn.gui.details = (function () {
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
+				console.log('result : ');
+				console.log(result);
 				var pageActive = parseInt($('.actif').html()); 																// ok ! 
 				var pageNumber = result.length%darty.wynn.config.linePerPage > 0 ? parseInt(result.length/darty.wynn.config.linePerPage) + 1 : parseInt(result.length/darty.wynn.config.linePerPage);
 				var text = '';

@@ -24,8 +24,8 @@ darty.wynn.data = (function () {
             data: JSON.stringify(options),
             timeout: darty.wynn.config.reqTimeout,
             success: function (data){
-				// console.log('data après le success du postSearch : ');
-				// console.log(data);
+				console.log('data après le success du postSearch : ');
+				console.log(data);
                 callback(null, data);
             },
             error : function (xhr) {
@@ -66,16 +66,15 @@ darty.wynn.data = (function () {
 	function computeScore(val, histo, moyenne, budget) {
 		console.log('computeScore : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget);
 		if (!isFinite(val))
-			// return 0; 
-			return Math.floor((Math.random()*3)+0); // TODO : REMOVE THAT SHIT ! 
+			return 0; 
+			// return Math.floor((Math.random()*3)+0); // TODO : REMOVE THAT SHIT ! 
 		var score = 0;
         (val > histo) && score++;
         (val > moyenne) && score++;
         budget && (val > histo + (histo * budget) / 100) && score++;		
-		score = Math.floor((Math.random()*3)+0);// TODO : REMOVE THAT SHIT !
+		// score = Math.floor((Math.random()*3)+0);// TODO : REMOVE THAT SHIT !
         console.log('score : '+ score);
-		
-        return score;
+		return score;
     }
 
     function computeScoreEvol(val, histo, moyenne, budget) {

@@ -36,6 +36,8 @@ darty.wynn.priceToStr = function (n) {
 };
 
 darty.wynn.getPrct = function (a, b) {
+	// console.log(typeof a +''+typeof b);
+	// console.log('getPrct : a : ' + a + ' - b : '+b)
     return 100 * a / b;
 }
 
