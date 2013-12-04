@@ -12,14 +12,10 @@ var _errors = require('./errors');
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 function postSearch(type, data, callback) {
-	/*console.log('type')
-	console.log(type)*/
-    sendRequest({method: 'POST', path: '/' + type + '/_search'}, data, callback);
+	sendRequest({method: 'POST', path: '/' + type + '/_search'}, data, callback);
 }
 
 function sendRequest(options, data, callback) {
-	/*console.log('data')
-	console.log(data)*/
 	// pour retrouver un libellé en particulier s'il manque
     options.hostname = _config.elasticSearch.host;
     options.port = _config.elasticSearch.port;
@@ -102,8 +98,30 @@ function getBudget(callback) {
 	// callback(null, {CA: -5, ACCESSOIRES: -5, SERVICES: -5, OFFRESACTIVES: -5, REMISE: -5});
 	// get date du jour et la mettre dans value_of_date
 	var value_of_date = new Date();
-	var ddate = '20' + parseInt(value_of_date.getYear()%100) + '' +(parseInt(value_of_date.getMonth())+ 1) +''+ value_of_date.getDate() + '';
-				
+	var ddate = '';
+	
+	if(_config.DED_year == 0 && _config.DED_month == 0 && _config.DED_day == 0) {
+		ddate = '20' + parseInt(value_of_date.getYear()%100) + '' +(parseInt(value_of_date.getMonth())+ 1) +'';
+		ddate += parseInt(value_of_date.getDate()) > 9 ? value_of_date.getDate() : '0' + value_of_date.getDate()+ '';
+	}
+	else {
+		ddate = '20'+_config.DED_year+'';
+		
+		var tmp = '' + _config.DED_month + '';
+		tmp++;
+		tmp = tmp > 9 ? tmp : '0'+tmp;
+		console.log('DED_month : ' + _config.DED_month + 'Month : ' + tmp + ' - ' + typeof tmp);
+		
+		ddate += tmp;
+		tmp = '' + _config.DED_day + '';
+		tmp = tmp > 9 ? tmp : '0'+tmp;
+		ddate += tmp;
+		console.log('Day : ' + tmp + ' - ' + typeof tmp);
+		console.log(ddate + '' + typeof ddate);
+		
+	}
+	
+	console.log(ddate, typeof ddate);
 	var f = {"DATE": ddate};
 	var data = {
 		size: 1,
@@ -126,9 +144,29 @@ function getBudget(callback) {
 
 function prepareDateFilters(tempsComptSet) {
     var dates = new Array(5);
-	dates[0] = new Date(); // TODO : date du jour ! 
+	// dates[0] = new Date(2013, 10, 30); // a commenter ! 
+	
+	if(_config.DED_year == 0 && _config.DED_month == 0 && _config.DED_day == 0) {
+		dates[0] = new Date();
+	}
+	else {
+		var a = 2000 + _config.DED_year;
+		var b = _config.DED_month;
+		var c = _config.DED_day;
+		dates[0] = new Date(a, b, c);
+		console.log(typeof a, typeof b, typeof c, dates[0]);
+		
+		// '20' + parseInt(value_of_date.getYear()%100) + '' +(parseInt(value_of_date.getMonth())+ 1) +'';
+		// ddate += parseInt(value_of_date.getDate()) > 9 ? value_of_date.getDate() : '0' + value_of_date.getDate()+ '';
+	}
+	
+	// dates[0] = new Date(); 
+	var dateRef = new Date();
 	// console.log('XXXXXXXXXXXXXXXXXXXXXXX dates[0] : ' + dates[0]);
-    dates[0].setMinutes(dates[0].getMinutes() -  _config.tempsChargReel); // 2min
+    // dates[0].setMinutes(dates[0].getMinutes() -  _config.tempsChargReel); // 2min
+	dates[0].setHours(dateRef.getHours()); // config pour 01/12/2013
+    dates[0].setMinutes(dateRef.getMinutes() -  _config.tempsChargReel); // 2min
+	console.log(dates[0])
     dates[1] = new Date(dates[0]);
     dates[1].setMinutes(dates[1].getMinutes() -  _config.tempsChargTalend); // 4min
     if (tempsComptSet != null){
