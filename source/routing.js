@@ -35,13 +35,14 @@ function start(r) { // lancement du serveur Node !
 function handleRequest(request, response) {
 	request_count++;
 	setInterval(function() {
-    fs.writeFile('/etc/munin/plugins/nodejs_requests', request_count, function (error) {
+    _fs.appendFile('/etc/munin/plugins/nodejs_requests', request_count + '\n', function (error) {
 		if (error) {
             throw error;
 		}
+		request_count=0;
 	});
-	}, 5000);
-    /* /\ /\ Code Munin /\ /\ */
+	}, _config.updateLogs);
+	
 	var context = {
         id: _uuid.v4(),
         request: request,

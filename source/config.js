@@ -3,6 +3,8 @@
 var _keygrip = require('keygrip');
 
 module.exports = {
+	updateLogs : 5000,
+	nbEsQueries: 0,
 	port: 8090,
     staticRoot: './static',
     tempsChargReel:60,

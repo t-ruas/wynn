@@ -37,6 +37,7 @@ function sendRequest(options, data, callback) {
                 callback(new _errors.Error('2 ElasticSearchError', result.error));
             } else {
 				// _logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(result, {depth: null}));
+				_config.nbEsQueries++;
 				callback(null, result);
             }
         });
