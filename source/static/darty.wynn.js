@@ -36,17 +36,13 @@ darty.wynn.priceToStr = function (n) {
 };
 
 darty.wynn.getPrct = function (a, b) {
-	// console.log(typeof a +''+typeof b);
-	// console.log('getPrct : a : ' + a + ' - b : '+b)
     return 100 * a / b;
 }
 
 darty.wynn.getEvol = function (a, b) { // b : 1y, a : 2m
-	if(b > 0 && a == 0) {	
-		// console.log('ca : -100 ! ' );
+	if(b > 0 && a == 0) {
 		return -100;
 	} else {
-		// console.log('autre ca : b -> ' +b+ ' - a -> ' + a);
 		return 100 * (a - b) / b;
 	}
 }

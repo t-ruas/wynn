@@ -145,7 +145,7 @@ darty.wynn.gui.accueil = (function () { // fab
 			darty.wynn.removeFilters('accueil',$(this).parent().parent().attr('class'));
 		});
 		
-        $(document).on('click','div#CA_chiffre p', function () {
+        $(document).on('click','div#CA_chiffre', function () {
             window.location.assign(makeDrillUrl() );
 			// makeDrillUrl();
         });

@@ -36,6 +36,7 @@ process.addListener('exit', function () {
 function login(context, callback) {
     _ldap.validate(context.content.username, context.content.password, function (error, result) {
         if (error) {
+			_logger.info(error);
             callback(error);
         } else {
             context.authCookie = result;

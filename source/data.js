@@ -503,8 +503,8 @@ function getDetails(options, callback) {
         facets: {
             // 'ordre': {facet_filter: {and: [fDates[0], fDates[3]]}, terms: fOrd},
             // 'lib': {facet_filter: {and: [fDates[0], fDates[3]].concat(fPrd).concat(fOrg)}, terms: fLib},
-            'ordre': {facet_filter: {and: [fDates[4]]}, terms: fOrd}, 											// TODO : Mettre les bonnes dates 
-            'lib': {facet_filter: {and: [fDates[4]].concat(fPrd).concat(fOrg)}, terms: fLib},					// TODO : Mettre les bonnes dates 
+            'ordre': {facet_filter: {and: [fDates[3]]}, terms: fOrd}, 											// TODO : Mettre les bonnes dates 
+            'lib': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fLib},					// TODO : Mettre les bonnes dates 
             'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
