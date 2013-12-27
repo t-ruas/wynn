@@ -5,10 +5,10 @@ var _keygrip = require('keygrip');
 module.exports = {
 	updateLogs : 5000,
 	nbEsQueries: 0,
-	DED_year: 0,
+	DED_year: 11,
 	// à partir de l'an 2000, donc pour 2013 : 13
-	DED_month: 0, // de 0 à 11
-	DED_day: 0,	
+	DED_month: 1, // de 0 à 11
+	DED_day: 7,	
 	port: 8090,
     staticRoot: './static',
     tempsChargReel:60,

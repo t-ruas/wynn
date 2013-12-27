@@ -6,7 +6,7 @@ var darty = {
             reqInterval: 2 * 60 * 1000,
 			reqTimeout: 30 * 1000,
             refreshInfo: 1 * 1000,
-            refreshCa: 0.5 * 1000,
+            refreshCa: 5 * 1000,
 			quartdheure: 15 * 60 * 1000,
             // timeDiff : 0,
             timeDiff : 60*60*1000,

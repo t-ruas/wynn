@@ -41,7 +41,7 @@ darty.wynn.data = (function () {
 
     // Calcul de valeurs supplémentaires sur une ligne aggrégée.
     function computeLineValues(data) { // from : createLineModel => from : prepareModel -> Utilisé par getDetails ! 
-		console.log(data);
+		// console.log(data);
 		data.caEvo2m = _w.getEvol(data.ca2m, data.ca1y); // ok
         
         data.caEvoGlobal2m = _w.getEvol(data.caGlobal2m, data.caGlobal1y);
@@ -64,7 +64,7 @@ darty.wynn.data = (function () {
     }
 	
 	function computeScore(val, histo, moyenne, budget) {
-		console.log('computeScore : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget);
+		// console.log('computeScore : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget);
 		if (!isFinite(val))
 			return 0; 
 			// return Math.floor((Math.random()*3)+0); // TODO : REMOVE THAT SHIT ! 
@@ -73,19 +73,19 @@ darty.wynn.data = (function () {
         (val > moyenne) && score++;
         budget && (val > histo + (histo * budget) / 100) && score++;		
 		// score = Math.floor((Math.random()*3)+0);// TODO : REMOVE THAT SHIT !
-        console.log('score : '+ score);
+        // console.log('score : '+ score);
 		return score;
     }
 
     function computeScoreEvol(val, histo, moyenne, budget) {
-        console.log('computeScoreEvol : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget);
+        // console.log('computeScoreEvol : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget);
 		if (!isFinite(val))
 			return 0;
 		var score = 0;
 		(val > histo) && score++;
         (val > histo + (histo * moyenne) / 100) && score++;
         budget && (val > histo + (histo * budget) / 100) && score++;
-        console.log('score : ' + score);
+        // console.log('score : ' + score);
         return score;
     }
 

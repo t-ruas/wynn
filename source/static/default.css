@@ -292,8 +292,8 @@ div#ariane {
     height:100%;
     float:left;}
 
-#block1:hover {
-    opacity:1;}
+/*#block1:hover {
+    opacity:1;}*/
 
 #block1_chiffre {
     width:100%;
@@ -335,9 +335,9 @@ div#ariane {
     margin-left:2%;
 }
 
-#block2:hover {
+/*#block2:hover {
     opacity:1;	
-}
+}*/
 
 #block2_chiffre {
     width:100%;
@@ -363,9 +363,9 @@ div#ariane {
     float:left;
     margin-left:2%;
 }
-#block3:hover {
+/*#block3:hover {
     opacity:1;	
-}
+}*/
 
 #block3_chiffre {
     width:100%;
@@ -392,9 +392,9 @@ div#ariane {
     margin-left:2%;
 }
 
-#block4:hover {
+/*#block4:hover {
 	opacity:1;
-}
+}*/
 
 #block4_chiffre {
     width:100%;
@@ -420,7 +420,7 @@ div#ariane {
 
 #thired_line {
     width:100%;
-    height:150px;
+    height:100px;
     float:left;
     margin-top:2%;
     position:relative;
@@ -433,26 +433,25 @@ div#ariane {
 #block5 {
     width:32%;
     height:100%;
-    float:left;}
-
-#block5:hover {
-	opacity:1;
+    float:left;
 }
+
+/*#block5:hover {
+	opacity:1;
+}*/
 
 #block5_chiffre {
     width:100%;
-    height:45%;
+    height:40%;
     font-family: "dartyBold","arial","Serif";
-    font-size:2.5em;
-	opacity:0.8;
-    background-color:rgb(255,255,255)
+    font-size:1.8em;
+    background-color:#C1BFB1
 }
 
 #block5_title {
     width:100%;
-    height:45%;
-	opacity:0.8;
-    background-color:rgb(255,255,255)
+    height:25%;
+    background-color:#C1BFB1
 }
 
 #block5_underline {
@@ -463,20 +462,20 @@ div#ariane {
 .chiffre_p {
     float:left;
     margin-left:4%;
-    margin-top:8%;
+    margin-top:2%;
 	font-size:0.8em,}
 
 .title {
     float:left;
     font-family: "dartySans","arial","Serif";
-    margin-top:7%;
+    /*margin-top:7%;*/
     margin-left:4%;
     font-size:1.5em;}
 
 .pourcent {
     float:right;
     font-family: "dartyLight","arial","Serif";
-    margin-top:8%;
+    /*margin-top:8%;*/
     margin-right:4%;
     font-size:1.4em;}
 
@@ -486,23 +485,21 @@ div#ariane {
     float:left;
     margin-left:2%;}
 
-#block6:hover {
+/*#block6:hover {
 	opacity:1;
-}
+}*/
 
 #block6_chiffre {
     width:100%;
-    height:45%;
+    height:40%;
     font-family: "dartyBold","arial","Serif";
-    font-size:2.5em;
-	opacity:0.8;
-    background-color:rgb(255,255,255)}
+    font-size:1.8em;
+    background-color:#C1BFB1}
 
 #block6_title {
     width:100%;
-    height:45%;
-	opacity:0.8;
-    background-color:rgb(255,255,255)}
+    height:25%;
+    background-color:#C1BFB1}
 
 #block6_underline {
     width:100%;
@@ -515,23 +512,21 @@ div#ariane {
     float:left;
     margin-left:2%;}
 
-#block7:hover {
+/*#block7:hover {
 	opacity:1;
-}
+}*/
 
 #block7_chiffre {
     width:100%;
-    height:45%;
+    height:40%;
     font-family: "dartyBold","arial","Serif";
-    font-size:2.5em;
-	opacity:0.8;
-    background-color:rgb(255,255,255)}
+    font-size:1.8em;
+    background-color:#C1BFB1}
 
 #block7_title {
     width:100%;
-    height:45%;
-	opacity:0.8;
-    background-color:rgb(255,255,255)}
+    height:25%;
+    background-color:#C1BFB1}
 
 #block7_underline {
     width:100%;
@@ -635,7 +630,8 @@ div.menuDeroul {
     display:none;
     position:absolute;
     margin-top:10px;
-    width:200px;}
+    width:200px;
+	border: 1px solid #848484}
 
 thead>tr>th {
     font-weight: lighter;
@@ -864,9 +860,13 @@ div.CA th.evolution {
 .color_border_3 {border : 2px solid rgb(59,150,78);} 
 .color_border_gray {border : 2px solid rgb(187,187,187);}
 
-border: 2px solid rgb(0,176,80);
 
-.btnX {background-color:#E6E6E6; color:black; }
+.btnX {
+	background-color:#848484; 
+	color:black; 
+	opacity: 1;
+}
+
 .btnY {background-color:#FFFFFF; color:black; font: bold;}
 
 
@@ -947,7 +947,7 @@ refresh timer
 
 #refreshTimer  {
     color: #7F7F7C;
-    cursor: pointer;
+    
     text-align: right;
     font-size: 80%;
     background-color: #D7D7F4; 
@@ -956,6 +956,10 @@ refresh timer
 	padding: 2px 2%;
 	bottom: 1px;
 	display: none;
+}
+
+div#CA_chiffre, div#blueContentTop, span#home, td.linkExpand, span.active, span.close, div.btnY, span.noActif, th.header {
+	cursor: pointer;
 }
 
 

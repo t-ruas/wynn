@@ -26,8 +26,8 @@ darty.wynn.gui.accueil = (function () { // fab
 				// console.log('Erreur lors du chargement des valeurs : page accueil ');
 				counter += 1;
             } else { 
-				console.log('result : ');
-				console.log(result.ca1y);// SUCCESS
+				// console.log('result : ');
+				// console.log(result.ca1y);// SUCCESS
 				counter += 1; // TODO :  sécurisé ?! 
 				data.indicateurs = result;
 			}
@@ -36,7 +36,7 @@ darty.wynn.gui.accueil = (function () { // fab
 				doWork(data);
 			}
 		});
-		console.log('RefreshPage() --- entre indicateurs et indicateurs ENT ! ')
+		// console.log('RefreshPage() --- entre indicateurs et indicateurs ENT ! ')
 		darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
 			if (error) { 
 				console.log('Erreur lors du chargement des valeurs : page accueil - entrées');
@@ -79,10 +79,10 @@ darty.wynn.gui.accueil = (function () { // fab
 			result.caEvol=darty.wynn.formatEvo(100 * (data.indicateurs.ca2m - data.indicateurs.ca1y) / data.indicateurs.ca1y);
 			result.concret= darty.wynn.formatConcret(data.indicateurs.vt2m / result.ent2m * 100 );
 		}
-		console.log('Dowork : data :');
-		console.log(data);
-		console.log('Dowork : result : ');
-		console.log(result);
+		// console.log('Dowork : data :');
+		// console.log(data);
+		// console.log('Dowork : result : ');
+		// console.log(result);
 		refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval); // TODO : VERIFIER pas de récursivité ! 
 		refreshTimerCa = refreshTimer;
 		//refreshTimerCa = window.setTimeout(refreshPage, darty.wynn.config.reqInterval); // TODO : VERIFIER pas de récursivité ! 
@@ -99,6 +99,7 @@ darty.wynn.gui.accueil = (function () { // fab
 		}
 			
 		$('#mainContentMiddle_home').html(pagefn(result));
+		modificationCA();
 	}
 	
     function start() {
@@ -146,7 +147,9 @@ darty.wynn.gui.accueil = (function () { // fab
 		});
 		
         $(document).on('click','div#CA_chiffre', function () {
-            window.location.assign(makeDrillUrl() );
+            var toto = makeDrillUrl();
+			// console.log(toto);
+			window.location.assign(toto);
 			// makeDrillUrl();
         });
         
@@ -156,7 +159,7 @@ darty.wynn.gui.accueil = (function () { // fab
         
 		darty.wynn.setFilters('accueil');
 	});
-	console.log('end of start');
+	// console.log('end of start');
 }
     	
     function modificationCA (){
@@ -256,16 +259,29 @@ darty.wynn.gui.accueil = (function () { // fab
 			return "http://" + window.location.host + "/details?agg=prd1";	
    		}
    		else {
-   			var agg = param.lastIndexOf("prd"); // bug s'il n'y en a pas ! 
-   			var url = param.split("?");
-			console.log('typeof agg : '+ typeof agg + ' agg : ' + agg);
-			if(typeof agg === 'number' && agg > 0) {
-				prd=parseInt( param.charAt(agg+3)) +1;
-				return "http://" + window.location.host + "/details?agg=prd" +prd+"&"+ url[1];
-			}
-			else {
-				return "http://" + window.location.host + "/details?agg=prd1";	
-			}
+			// console.log('param');
+			// console.log(param);
+			// récupérer l'index le plus grand, et retourner sur le filtre le plus important ?! 
+			// on split sur les '&', on enlève le ? sur le premier membre ! 
+			// on récupère le susbstring(3,4) le plus grand
+   			var split = param.split('&');
+			split[0] = split[0].substring(1, split[0].length); //remove & for first element
+			// console.log('split[0]')
+			// console.log(split[0]) // chaque split contient ses filtres ! 
+			// var agg = param.lastIndexOf("prd");
+   			// var url = param.split("?");
+			// console.log('typeof agg : '+ typeof agg + ' agg : ' + agg);
+			
+			// trouver l'indice le plus grand parmi les prd ! 
+			var valAgg = -1;
+			for(var e in split) // get Max Prd ! 
+				if (split[e].substring(0,3) == 'prd' && split[e].substring(3,4)>valAgg)
+					valAgg = split[e].substring(3,4);
+			valAgg = (valAgg == -1) ? 1 : parseInt(parseInt(valAgg)+1);
+			var end = "http://" + window.location.host + "/details?agg=prd" + valAgg;
+			for(var i in split)
+				end += '&'+split[i];
+			return end;
    		}
     }
 	
