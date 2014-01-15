@@ -234,10 +234,12 @@ darty.wynn.gui.details = (function () {
             });
 			
 			// Bouton Refresh Timer 
-            $('#blueContentTop').on('click', function () { 
-                if (refreshTimer) {
+            $(document).on('click','p#lastUpdate', function () {
+                console.log('SEMI ECHEC');
+				if (refreshTimer) {
 					/* Pour garder le tableau ouvert et l'ordre de tri ! */
 					updateTable();
+					console.log('SOMETHING ?§?§ ')
 					window.clearTimeout(refreshTimer);
                     refreshPage();
                 }

@@ -165,9 +165,11 @@ darty.wynn.gui.accueil = (function () { // fab
         }, darty.wynn.config.refreshCa);
         
 		$(document).on('click','p#lastUpdate', function () {
-            if (refreshTimer) {
+            console.log('SEMI ECHEC');
+			if (refreshTimer) {
                 window.clearTimeout(refreshTimer);
-                refreshTimer = null;
+                console.log('SOMETHING ?§?§ ')
+				refreshTimer = null;
                 refreshPage();
             }
         });
