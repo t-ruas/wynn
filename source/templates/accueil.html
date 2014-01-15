@@ -19,18 +19,18 @@
         <script id="indicateurs" type="text/x-dot-template">
 		
 			<a id="CA">
-                <div id="CA_content" class="color_border_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.ca, it.ca1y), it.ca1y, it.caGlobal2m, darty.wynn.pageData.budget.CA)%>">
+                <div id="CA_content" class="color_border_<%=it.caCoul%>">
                     <div id="CA_chiffre"><p> €</p></div>
-                    <div id="CA_pourcent" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.getEvol(it.ca, it.ca1y), it.ca1y, it.caGlobal2m, darty.wynn.pageData.budget.CA)%>"><p><%=darty.wynn.formatEvo(darty.wynn.getEvol(it.ca2m, it.ca1y))%></p></div>
+                    <div id="CA_pourcent" class="color_background_<%=it.caCoul%>"><p><%=it.caEvol%></p></div>
                 </div>
 			</a>
 		<div id="second_line">
                     
                     <a id="">
-                    <div id="block1" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsAcc2m,it.ca2m)), it.caPoidsAcc1y, it.caPoidsAccGlobal2m, darty.wynn.pageData.budget.ACCESSOIRES)%>">
+                    <div id="block1" class="color_background_<%=it.poidsAccCoul%>">
                         <div id="block1_chiffre">
                             <img src="./img/picto_accessoires2.png">
-                            <p><%=darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsAcc2m,it.ca2m))%></p>
+                            <p><%=it.poidsAcc%></p>
                         </div>
                         <div class="block_title">
                             <p>Accessoires</p>
@@ -39,10 +39,10 @@
                     </a>
                     
                     <a id="">
-                    <div id="block2" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsServ2m,it.ca2m)), it.caPoidsServ1y, it.caPoidsServGlobal2m, darty.wynn.pageData.budget.SERVICES)%>">
+                    <div id="block2" class="color_background_<%=it.poidsServCoul%>">
                         <div id="block2_chiffre">
                             <img src="./img/picto_services2.png">
-                            <p><%=darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsServ2m,it.ca2m))%></p>
+                            <p><%=it.poidsServ%></p>
                         </div>
                         <div class="block_title">
                             <p>Services</p>
@@ -51,10 +51,10 @@
                     </a>
                     
                     <a id="">    
-                    <div id="block3" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsOa2m,it.ca2m)), it.caPoidsOa1y, it.caPoidsOaGlobal2m, darty.wynn.pageData.budget.OFFRESACTIVES)%>">
+                    <div id="block3" class="color_background_<%=it.poidsOaCoul%>">
                         <div id="block3_chiffre">
                             <img src="./img/picto_remise2.png">
-                            <p><%=darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsOa2m,it.ca2m))%></p>
+                            <p><%=it.poidsOa%></p>
                         </div>
                         <div class="block_title">
                             <p>Offres active</p>
@@ -63,10 +63,10 @@
                     </a>
                     
                     <a id="">    
-                    <div id="block4" class="color_background_<%=darty.wynn.data.computeScore(darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsRem2m,it.ca2m)), it.caPoidsRem1y, it.caPoidsRemGlobal2m, darty.wynn.pageData.budget.REMISES)%>">
+                    <div id="block4" class="color_background_<%=it.poidsRemCoul%>">
                         <div id="block4_chiffre">
                             <img src="./img/picto_services.png">
-							<p><%=darty.wynn.formatPrct(darty.wynn.getPrct(it.caPoidsRem2m,it.ca2m))%></p>
+							<p><%=it.poidsRem%></p>
                         </div>
                         <div class="block_title">
                             <p>Remise</p>
@@ -81,13 +81,13 @@
 			<a class="thired_line_link">
 			<div id="block5">
 				<div id="block5_chiffre">
-					<p class="chiffre_p"><%=it.ent2m %></p>
+					<p class="chiffre_p"><%=it.ent%></p>
 				</div>
 				<div id="block5_title">
 					<p class="title">Entrées</p>
-					<p class="pourcent"><%=darty.wynn.formatEvo(darty.wynn.gui.accueil.calcEvol(it.ent2m, it.ent1y))%></p>
+					<p class="pourcent"><%=it.entEvol%></p>
 				</div>
-				<div id="block5_underline" class="color_background_<%=darty.wynn.data.computeScore(it.ent2m, it.ent1y, null, null)%>">
+				<div id="block5_underline" class="color_background_<%=it.entCoul%>">
 				</div>
 			</div>
 			</a>
@@ -95,13 +95,13 @@
 			<a class="thired_line_link">
 			<div id="block6">
 				<div id="block6_chiffre">
-					<p class="chiffre_p"><%=it.vt2m %></p>
+					<p class="chiffre_p"><%=it.vt%></p>
 				</div>
 				<div id="block6_title">
 					<p class="title">Ventes</p>
-					<p class="pourcent"><%=darty.wynn.formatEvo(darty.wynn.gui.accueil.calcEvol(it.vt2m, it.vt1y))%></p>
+					<p class="pourcent"><%=it.vtEvol%></p>
 				</div>
-				<div id="block6_underline" class="color_background_<%=darty.wynn.data.computeScore(it.vt2m, it.vt1y, null, null)%>">
+				<div id="block6_underline" class="color_background_<%=it.vtCoul%>">
 				</div>
 			</div>
 			</a>
@@ -109,12 +109,13 @@
 			<a class="thired_line_link">
 			<div id="block7">
 				<div id="block7_chiffre">
-					<p class="chiffre_p"><%=darty.wynn.formatEvo(it.concret)%></p>
+					<p class="chiffre_p"><%=it.concret%></p>
 				</div>
 				<div id="block7_title">
 					<p class="title">Concretisation</p>
+					<p class="pourcent"><%=it.concretEvol%></p>
 				</div>
-				<div id="block7_underline" class="color_background_<%=darty.wynn.data.computeScore(it.ent2m/it.vt2m, it.ent1y/it.vt1y, null, it.concret)%>">
+				<div id="block7_underline" class="color_background_<%=it.concretCoul%>">
 				</div>
 			</div>
 			</a>
@@ -126,6 +127,9 @@
 				<p>il y a une erreur avec les entrées</p> 
 			</span> 
 		</div>
+		
+		
+			
              
         </script>
 		
@@ -173,10 +177,10 @@
 			<div id="mainContentMiddle_home">
             </div>
 		</div>
-		<div id="blueContent">
+		<!-- <div id="blueContent">
 	        <div id="blueContentTop"></div>			
 	        <div id="blueContentMid"></div>			
 	        <div id="blueContentBot"></div>			
-	    </div>
+	    </div>-->
     </body>
 </html>

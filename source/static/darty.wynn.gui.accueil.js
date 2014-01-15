@@ -23,11 +23,8 @@ darty.wynn.gui.accueil = (function () { // fab
 		var data = {};
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
-				// console.log('Erreur lors du chargement des valeurs : page accueil ');
 				counter += 1;
             } else { 
-				// console.log('result : ');
-				// console.log(result.ca1y);// SUCCESS
 				counter += 1; // TODO :  sécurisé ?! 
 				data.indicateurs = result;
 			}
@@ -36,7 +33,7 @@ darty.wynn.gui.accueil = (function () { // fab
 				doWork(data);
 			}
 		});
-		// console.log('RefreshPage() --- entre indicateurs et indicateurs ENT ! ')
+		
 		darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
 			if (error) { 
 				console.log('Erreur lors du chargement des valeurs : page accueil - entrées');
@@ -49,47 +46,79 @@ darty.wynn.gui.accueil = (function () { // fab
 				data.entrees = {};
 				doWork(data); // cas non normal mais il faut continuer le traitement
 			}
-		});
-		
-		
-							/*var pagefn = doT.template($('#navigation-bar').text());
-							$('#content-header').html(pagefn(result));
-							// console.log('Menu de navigation chargee');
-
-							pagefn = doT.template($('#top-blue-part').text());
-							$('#blueContentTop').html(pagefn(result));
-							// console.log('partie droite chargee');
-							
-							// console.log('result :');
-							// console.log(result);*/
-				
+		});		
 	}
 	
 	function doWork(data) {
 		var result = {};
+		var f= _w.makeSimpleFiltersClone();
 		if(typeof data.entrees !== 'undefined') {
-			result.ent2m = data.entrees.ent2m;
-			result.ent1y = data.entrees.ent1y;
-			result.entDat = data.entrees.entDat;
+			result = {
+				ent: typeof data.entrees.ent2m != 'undefined' ? data.entrees.ent2m : '-',
+				entEvol: darty.wynn.formatEvo(darty.wynn.getEvol(data.entrees.ent2m,data.entrees.ent1y)),
+				// ent1y: data.entrees.ent1y,
+				entCoul: darty.wynn.score2Cls(darty.wynn.data.computeScore(data.entrees.ent2m, data.entrees.ent1y, data.entrees.entGlobal2m), 3)
+				// entGlobal2m: data.entrees.entGlobal2m,
+				// entDat: data.entrees.entDat
+			};
 		}
+		console.log('Result avec seulement les entrees',result);
 		if(typeof data.indicateurs !== 'undefined') {
-			ca2minutes = data.indicateurs.ca2m;
-			dernierCa = data.indicateurs.ca;
-			result = data.indicateurs;
-			result.caEvol=darty.wynn.formatEvo(100 * (data.indicateurs.ca2m - data.indicateurs.ca1y) / data.indicateurs.ca1y);
-			result.concret= darty.wynn.formatConcret(data.indicateurs.vt2m / result.ent2m * 100 );
+			// result = {};
+			result.ca = typeof data.indicateurs.ca2m != 'undefined' ? data.indicateurs.ca2m : '-';
+			if (f.org4 && f.agg=='org4') {
+				result.caEvol = parseFloat(data.indicateurs.prime).toFixed(2).toString().replace('.',' - ');
+				// console.log(parseFloat(data.indicateurs.prime).toFixed(2), parseFloat(data.indicateurs.prime).toFixed(2).toString(),typeof parseFloat(data.indicateurs.prime).toFixed(2).toString(), parseFloat(data.indicateurs.prime).toFixed(2).toString().replace('.',' - '), typeof parseFloat(data.indicateurs.prime).toFixed(2).toString().replace('.',' - '))
+				console.log('BYPASS Prime', typeof result.caEvol);
+				result.caCoul = darty.wynn.score2Cls(3,3);
+			} else {
+				result.caEvol = darty.wynn.formatEvo(darty.wynn.getEvol(data.indicateurs.ca2m,data.indicateurs.ca1y));
+				result.caCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(data.indicateurs.ca2m, data.indicateurs.ca1y, data.indicateurs.caGlobal2m, darty.wynn.pageData.budget.CA), 4);
+			}
+			
+			result.poidsAcc = darty.wynn.formatPrct(darty.wynn.getPrct(data.indicateurs.caPoidsAcc2m, data.indicateurs.ca2m));
+			result.poidsAccCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(darty.wynn.getPrct(data.indicateurs.caPoidsAcc2m, data.indicateurs.ca2m),
+																						darty.wynn.getPrct(data.indicateurs.caPoidsAcc1y, data.indicateurs.ca1y),
+																						darty.wynn.getPrct(data.indicateurs.caPoidsAccGlobal2m, data.indicateurs.caGlobal2m),
+																						darty.wynn.pageData.budget.ACCESSOIRES), 4);
+			
+			result.poidsServ = darty.wynn.formatPrct(darty.wynn.getPrct(data.indicateurs.caPoidsServ2m, data.indicateurs.ca2m));
+			result.poidsServCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(darty.wynn.getPrct(data.indicateurs.caPoidsServ2m, data.indicateurs.ca2m),
+																						darty.wynn.getPrct(data.indicateurs.caPoidsServ1y, data.indicateurs.ca1y),
+																						darty.wynn.getPrct(data.indicateurs.caPoidsServGlobal2m, data.indicateurs.caGlobal2m),
+																						darty.wynn.pageData.budget.SERVICES), 4);
+			
+			result.poidsRem = darty.wynn.formatPrct(darty.wynn.getPrct(data.indicateurs.caPoidsRem2m, data.indicateurs.ca2m)); // TODO : appliquer une formule particulière ? 
+			result.poidsRemCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(darty.wynn.getPrct(data.indicateurs.caPoidsRem2m, data.indicateurs.ca2m),
+																						darty.wynn.getPrct(data.indicateurs.caPoidsRem1y, data.indicateurs.ca1y),
+																						darty.wynn.getPrct(data.indicateurs.caPoidsRemGlobal2m, data.indicateurs.caGlobal2m),
+																						darty.wynn.pageData.budget.REMISE), 4);
+			
+			result.poidsOa = darty.wynn.formatPrct(darty.wynn.getPrct(data.indicateurs.caPoidsOa2m, data.indicateurs.ca2m));
+			result.poidsOaCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(darty.wynn.getPrct(data.indicateurs.caPoidsOa2m, data.indicateurs.ca2m),
+																						darty.wynn.getPrct(data.indicateurs.caPoidsOa1y, data.indicateurs.ca1y),
+																						darty.wynn.getPrct(data.indicateurs.caPoidsOaGlobal2m, data.indicateurs.caGlobal2m),
+																						darty.wynn.pageData.budget.OFFRESACTIVES), 4);
+			
+			result.vt = typeof data.indicateurs.vt2m != 'undefined' ? data.indicateurs.vt2m : '-';
+			result.vtEvol = darty.wynn.formatEvo(darty.wynn.getEvol(data.indicateurs.vt2m,data.indicateurs.vt1y));
+			result.vtCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(data.indicateurs.vt2m, data.indicateurs.vt1y, data.indicateurs.vtGlobal2m), 3);
+			
+			result.concret = darty.wynn.formatPrct(data.indicateurs.vt2m / result.ent2m);
+			result.concretEvol = darty.wynn.formatEvo(darty.wynn.getEvol(data.indicateurs.vt2m / result.ent2m, data.indicateurs.vt1y / result.ent1y));
+			result.concretCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(data.indicateurs.vt2m / result.ent2m, data.indicateurs.vt1y / result.ent1y, data.indicateurs.vtGlobal2m / result.entGlobal2m), 3);
+			
+			dernierCa = typeof data.indicateurs.ca != 'undefined' ? data.indicateurs.ca : 0;
+			ca2minutes = typeof data.indicateurs.ca2m != 'undefined' ? data.indicateurs.ca2m : 0;
 		}
-		// console.log('Dowork : data :');
-		// console.log(data);
-		// console.log('Dowork : result : ');
-		// console.log(result);
+		
 		refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval); // TODO : VERIFIER pas de récursivité ! 
 		refreshTimerCa = refreshTimer;
 		//refreshTimerCa = window.setTimeout(refreshPage, darty.wynn.config.reqInterval); // TODO : VERIFIER pas de récursivité ! 
 		lastRefresh = new Date();
 		nextRefresh = new Date(lastRefresh.getTime() + darty.wynn.config.reqInterval);
 		
-		checkEnt(result);
+		checkEntrees(result);
 		
 		if (!darty.wynn.checkBrowser()) {// false = IE8 ! 
 			var pagefn = doT.template($('#indicateurs').html());
@@ -97,8 +126,9 @@ darty.wynn.gui.accueil = (function () { // fab
 		else {
 			var pagefn = doT.template($('#indicateurs').text());
 		}
-			
+		// alert('Modification dans Accueil.js pour constituer un objet page d\'accueil')
 		$('#mainContentMiddle_home').html(pagefn(result));
+		console.log('Data formattées pour Dashboard ', result)
 		modificationCA();
 	}
 	
@@ -114,10 +144,10 @@ darty.wynn.gui.accueil = (function () { // fab
 
         window.setInterval(function () { 
 			var jour = new Date();
-			var text = parseInt(jour.getDate()) + '/'+parseInt(jour.getMonth()) + '/'+parseInt(jour.getYear()%100)
+			var text = parseInt(jour.getDate()) + '/'+(parseInt(jour.getMonth())+1) + '/'+parseInt(jour.getYear()%100)
 			if (refreshTimer) {
 				$('#lastUpdate').remove();
-                $('#blueContentTop').prepend('<p id="lastUpdate">Dernière Mise à jour le : '+text+' à '+darty.wynn.formatTimeSecondLess(new Date(lastRefresh.getTime() - darty.wynn.config.timeDiff)) + ' <br />Prochaine mise à jour dans: ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's</p>');
+                $('#blueContentTop').prepend('<p id="lastUpdate">Dernière Màj: '+text+' à '+darty.wynn.formatTimeSecondLess(new Date(lastRefresh.getTime() - darty.wynn.config.timeDiff)) + '<br />Prochaine Màj: ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's</p>');
 			}
 			else {
 				$('#lastUpdate').remove();
@@ -134,13 +164,21 @@ darty.wynn.gui.accueil = (function () { // fab
             }
         }, darty.wynn.config.refreshCa);
         
-		$(document).on('click','#blueContentTop', function () {
+		$(document).on('click','p#lastUpdate', function () {
             if (refreshTimer) {
                 window.clearTimeout(refreshTimer);
                 refreshTimer = null;
                 refreshPage();
             }
         });
+        // $(document).on('click','#blueContentBot', function () {
+            // console.log(darty.wynn.formatEvo(0));
+            // console.log(darty.wynn.formatEvo(1/0));
+            // console.log(darty.wynn.formatEvo('-'));
+            // console.log(darty.wynn.formatEvo('é'));
+            // console.log(darty.wynn.formatEvo(e));
+            // console.log(darty.wynn.formatEvo(10.5));
+        // });
         
 		$(document).on('click', 'span.close', function () { 
 			darty.wynn.removeFilters('accueil',$(this).parent().parent().attr('class'));
@@ -154,10 +192,11 @@ darty.wynn.gui.accueil = (function () { // fab
         });
         
 		$(document).on('click', 'span#home', function () {
-			window.location.assign("http://" + window.location.host + "/accueil");
+			window.location.assign("http://" + window.location.host + "/accueil?agg=prd1");
 		});
         
 		darty.wynn.setFilters('accueil');
+		
 	});
 	// console.log('end of start');
 }
@@ -171,7 +210,7 @@ darty.wynn.gui.accueil = (function () { // fab
 		// console.log('end of modifCA');
     }
     
-    function checkEnt(statEntrees){
+    function checkEntrees(statEntrees){
 		if(typeof statEntrees.entDat === 'undefined')
 			return false;
     	var entrees = statEntrees.entDat.toString();
@@ -255,34 +294,35 @@ darty.wynn.gui.accueil = (function () { // fab
 	
 	function makeDrillUrl() {	
 	var param = window.location.search;
-   		if (param == ""){
-			return "http://" + window.location.host + "/details?agg=prd1";	
-   		}
+	var complet = "";
+		console.log('makeDrillUrl ! ');
+		if (param == ""){
+			console.log('Param is empty ! ');
+			complet = "http://" + window.location.host + "/details?agg=prd1";	
+		}
    		else {
-			// console.log('param');
-			// console.log(param);
-			// récupérer l'index le plus grand, et retourner sur le filtre le plus important ?! 
-			// on split sur les '&', on enlève le ? sur le premier membre ! 
-			// on récupère le susbstring(3,4) le plus grand
-   			var split = param.split('&');
-			split[0] = split[0].substring(1, split[0].length); //remove & for first element
-			// console.log('split[0]')
-			// console.log(split[0]) // chaque split contient ses filtres ! 
-			// var agg = param.lastIndexOf("prd");
-   			// var url = param.split("?");
-			// console.log('typeof agg : '+ typeof agg + ' agg : ' + agg);
+			var split = param.split('&');	
+			split[0] = split[0].substring(1, split[0].length);
+			var end = "http://" + window.location.host + "/details";
 			
-			// trouver l'indice le plus grand parmi les prd ! 
-			var valAgg = -1;
-			for(var e in split) // get Max Prd ! 
-				if (split[e].substring(0,3) == 'prd' && split[e].substring(3,4)>valAgg)
-					valAgg = split[e].substring(3,4);
-			valAgg = (valAgg == -1) ? 1 : parseInt(parseInt(valAgg)+1);
-			var end = "http://" + window.location.host + "/details?agg=prd" + valAgg;
-			for(var i in split)
-				end += '&'+split[i];
-			return end;
+			for (var i in split) {
+				// console.log('i : ' + i + ' split[i] : ' + split[i].substring(0,3));
+				if(split[i].substring(0,3) == 'agg') {
+					var valAgg = split[i].substring(4,8);
+					complet.length == 0 ? complet = end + "?agg=" + valAgg : complet += "agg="+valAgg;
+					// console.log('AGG');
+				}
+				else if(split[i].substring(0,3) == 'prd' || split[i].substring(0,3) == 'org') {
+					complet.length == 0 ? complet = end + "?"+split[i] : complet += "&" + split[i];
+					// console.log(split[i].substring(0,3).toUpperCase())
+				}
+				else {
+					console.log('split[i]');
+					console.log(split[i]);
+				}
+			}
    		}
+		return complet;
     }
 	
     return {

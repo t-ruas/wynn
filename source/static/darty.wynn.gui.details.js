@@ -5,15 +5,16 @@ darty.wynn.gui.details = (function () {
     var refreshTimer = null;
     var lastRefresh = null;
     var nextRefresh = null;
-
-	var oneTime = false;
+	var flag1erAffichage = true;
+	var metaDataTable = {};
+				
     function refreshPage() { // controller de la page
         refreshTimer = null;
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
-				// console.log('result : ');
-				// console.log(result);
+				
+				// Algo pour calculer le nombre de page, le nombre d'onglet à créer, ainsi que les objets dans la page !
 				var pageActive = parseInt($('.actif').html()); 																// ok ! 
 				var pageNumber = result.length%darty.wynn.config.linePerPage > 0 ? parseInt(result.length/darty.wynn.config.linePerPage) + 1 : parseInt(result.length/darty.wynn.config.linePerPage);
 				var text = '';
@@ -25,6 +26,7 @@ darty.wynn.gui.details = (function () {
 						text += 'noActif';
 					text += '" value="'+parseInt(i+1)+'">'+parseInt(i+1)+'</span>';
 				}
+				
 				// récupérer la valeur à modifier ! 
 				if (!darty.wynn.checkBrowser()) {// false = IE8 ! 
 					$('#mainContentMiddle').html(doT.template($('#tmplDetailsTable').html())(prepareModel(result, pageActive)));
@@ -32,6 +34,8 @@ darty.wynn.gui.details = (function () {
 				else {
 					$('#mainContentMiddle').html(doT.template($('#tmplDetailsTable').text())(prepareModel(result, pageActive)));
 				}
+				// console.log('Mise à jour des infos de la page ! ');
+				// prepareModel(result, pageActive); // a dégager et remettre le if/else au dessus ! 
 				
 				if(parseInt(pageNumber) > 1)
 					$('#pageNumberLoader').prepend(text);
@@ -45,65 +49,77 @@ darty.wynn.gui.details = (function () {
 				getMenuAgg(function(){ // une fois le code généré, on le masque 
 					$("div.menuDeroul").css({"display":"hidden"});
 				});
-				if ((obj.filtres.agg.substring(0,3) == 'prd' && obj.filtres.agg.substring(3,4) == '6' )||
-					(obj.filtres.agg.substring(0,3) == 'org' && obj.filtres.agg.substring(3,4) == '4' )) {
-					$("table#detailsTable").find("a").removeAttr("href");
-					$(".libelle").css("font-size","60%"); // contrôle ?!? Vérification ?!
-					// console.log($('.first-column div.code a').text());
+				
+				if ((typeof obj.filtres.prd6 != 'undefined' && obj.filtres.agg == 'org4' )||
+					(typeof obj.filtres.org4 != 'undefined' && obj.filtres.agg == 'prd6' )) {
+					$("table#detailsTable tbody").find("a").removeAttr("href");
+					console.log(obj);
+					$(".libelle").css("font-size","60%"); 													// contrôle ?!? Vérification ?!
 				}
-				else
+				else if (obj.filtres.agg == 'org4' || obj.filtres.agg == 'prd6')
 				{
+					$(".libelle").css("font-size","60%"); 
+				}
+				else {
 					$(".code").remove();
 				}
-				$("table").tablesorter({ // configuration du tri de tableau ! 
-					headers: { 
+				
+				$("table").tablesorter(// configuration du tri de tableau ! TODO : faire fonctionner l'historique de tri ! 
+					{ headers: { 
 					0: {sorter:'subclass'},
 					1: {sorter:'currency'}, 
 					2: {sorter:'percent'},
 					3: {sorter:'percent'},
 					4: {sorter:'percent'},
 					5: {sorter:'percent'},
-					6: {sorter:'percent'}
-					} 
+					6: {sorter:'percent'} }
 				});
-				// pour réduire le tableau au rechargement de la page ! 
-				$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
-				if($('#detailsTable').attr('class'))
-					$('#detailsTable').removeClass();
-				else
+				
+				if((metaDataTable.orientation || metaDataTable.col) && metaDataTable.etat) { // Mise à jour du tableau postRefresh ! 
+					var sorting = [[(typeof metaDataTable.col === 'number' ? metaDataTable.col : 0),metaDataTable.orientation == 'up' ? 1 : 0]]; 
+					$("table").trigger("sorton",[sorting]);
+					metaDataTable.etat == 'ferme' ? $('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle() : '';
+				}
+				if (flag1erAffichage) {
+					$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
 					$('#detailsTable').addClass('reducted');
+					flag1erAffichage = false;
+				}
 				
-				
+				// if(metaDataTable.orientation || metaDataTable.col || metaDataTable.etat)
+					// console.log('metaDataTable contient des objets');
+				// else
+					// console.log('metaDataTable est vide ! ');
 			}
         });
     }
 	
 	// function de répartition des données dans le template HTML
     function prepareModel(data, pageNumber) {
+		// console.log('Data : ', data);
 		if (isNaN(pageNumber))
 			pageNumber = 1;
-		// console.log('prepare model ! pageNumber : ' + pageNumber);
-        var model = {
+		var model = {
             list: []
         };
 		var sum = {}; 
-		
-        var fields = ['ca1y', 'ca2m', 'vt1y', 'vt2m', 'vtAcc1y', 'vtAcc2m', 'vtServ1y', 'vtServ2m', 'vtOa1y', 'vtOa2m', 'caRem1y', 'caRem2m'];
         var t = {};
-
-        for (var i = 0, imax = fields.length; i < imax; i++) {
+		// var fields = ['ca', 'ca2m', 'ca1y', 'caGlobal1y', 'caGlobal2m', 'vt2m', 'vt1y',
+		// 'caPoidsOaGlobal2m', 'caPoidsRemGlobal2m', 'caPoidsAccGlobal2m',
+		// 'caPoidsServGlobal2m', 'caPoidsOa1y','caPoidsRem1y','caPoidsAcc1y','caPoidsServ1y',
+		// 'caPoidsOa2m','caPoidsRem2m','caPoidsAcc2m','caPoidsServ2m','primevendeur']; // si prime TODO 
+		var fields = ['ca', 'ca2m', 'ca1y', 'caGlobal1y', 'caGlobal2m', 'vt2m', 'vt1y',
+		'caPoidsOaGlobal2m', 'caPoidsRemGlobal2m', 'caPoidsAccGlobal2m',
+		'caPoidsServGlobal2m', 'caPoidsOa1y','caPoidsRem1y','caPoidsAcc1y','caPoidsServ1y',
+		'caPoidsOa2m','caPoidsRem2m','caPoidsAcc2m','caPoidsServ2m'];
+		for (var i = 0, imax = fields.length; i < imax; i++) {
             t[fields[i]] = 0; // init
 			sum[fields[i]] = 0;
         }
-
 		var cptNotZero = 1;
-		
-		//console.log('jmax = ' +  data.length);
-        for (var j = 0, jmax = data.length; j < jmax; j++) {
+		for (var j = 0, jmax = data.length; j < jmax; j++) {
 			cptNotZero ++;
-			
-			var lineData = data[j]; 																	// lineData contient toutes les infos d'une ligne
-																										// console.log('lineData : ');
+			var lineData = data[j]; 
 			var lineModel = createLineModel(lineData); 													// on créé la ligne
 			lineModel.cd = lineData.cd;
             lineModel.lib = lineData.lib; 																// on rajoute le lib
@@ -111,71 +127,101 @@ darty.wynn.gui.details = (function () {
             lineModel.dbQuery = makeDashboardQuery(lineData.cd); 										// le second lien
 			lineModel.order = typeof lineData.ordre === 'number' ? lineData.ordre : cptNotZero;
 			if (j >= (darty.wynn.config.linePerPage*(pageNumber-1)) && j < (darty.wynn.config.linePerPage*pageNumber)) {
-			//	console.log('j : ' + j)
-				model.list.push(lineModel); 																}// on rajoute dans la liste de model.
-			// on ne push que les lignes de cette page précise ! 
-			createSumLine(lineData, sum); // mais on veut une somme correcte, donc on garde la somme =)
+				model.list.push(lineModel);}															// on rajoute dans la liste de model.
+			createSumLine(lineData, sum); 																// mais on veut une somme correcte, donc on garde la somme =)
+			console.log(data[j]);
         }
-
-		// console.log('Total : ');
-        model.totals = createLineModel(sum);
-        return model;
+		model.totals = createLineModel(sum);
+		f = _w.makeSimpleFiltersClone();
+		model.totals.dbQuery = "/accueil?" + _w.makeQuery(f);
+		
+		return model;
     }
 	
 	function createSumLine(data, sum) { // somme les valeurs d'une ligne pour l'ensemble
-		var fields = ['ca1y', 'ca2m', 'vt1y', 'vt2m', 'vtAcc1y', 'vtAcc2m', 'vtServ1y', 'vtServ2m', 'vtOa1y', 'vtOa2m', 'caRem1y', 'caRem2m'];
+		var fields = ['ca', 'ca2m', 'ca1y', 'caGlobal1y', 'caGlobal2m', 'vt2m', 'vt1y',
+		'caPoidsOaGlobal2m', 'caPoidsRemGlobal2m', 'caPoidsAccGlobal2m',
+		'caPoidsServGlobal2m', 'caPoidsOa1y','caPoidsRem1y','caPoidsAcc1y','caPoidsServ1y',
+		'caPoidsOa2m','caPoidsRem2m','caPoidsAcc2m','caPoidsServ2m','primevendeur'];
 		for (y = 0; y < fields.length; y++)
 		{
-			if (typeof data[fields[y]] === 'number')
+			if (typeof data[fields[y]] === 'number') {
 				sum[fields[y]] += data[fields[y]];
+			}
 		}
 	}
 	
     // Ajout d'un objet sur les données de la ligne pour ne pas mélanger les valeurs d'affichage avec les données numériques en entrée.
     function createLineModel(data) {
-        _w.data.computeLineValues(data);
-		return {
-            ca: _w.formatPrice(data.ca2m),
+        var result = _w.data.computeLineValues(data);
+		var z = {
+			ca: _w.formatPrice(result.ca2m),
             caEvo: {
-                val: _w.formatEvo(data.caEvo2m),
-                cls: isNaN(data.caEvo2m) || !isFinite(data.caEvo2m) ? 'gray' : _w.score2Cls(_w.data.computeScoreEvol(data.caEvo2m, data.ca1y, data.caEvoGlobal2m, _w.pageData.budget.CA), 4)
+                val: _w.formatEvo(result.caEvo2m),
+                cls: isNaN(result.caEvo2m) || !isFinite(result.caEvo2m) ? 'gray' : _w.score2Cls(_w.data.computeScoreEvol(result.caEvo2m, data.ca1y, data.caEvoGlobal2m, _w.pageData.budget.CA), 4)
             },
 			acc: {
-                val: _w.formatPrct(data.caPartAcc2m),
-                cls: isNaN(data.caPartAcc2m) || !isFinite(data.caPartAcc2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(data.caPartAcc2m, data.caPartAcc1y, data.caPartAccGlobal2m,_w.pageData.budget.ACCESSOIRES), 4)
+                val: _w.formatPrct(result.caPartAcc2m), 							// seulement la forme, le fond est modifié dans computeLineValues ! 
+                cls: isNaN(result.caPartAcc2m) || !isFinite(result.caPartAcc2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(result.caPartAcc2m, result.caPartAcc1y, result.caPartAccGlobal2m,_w.pageData.budget.ACCESSOIRES), 4)
             },
 			serv: {
-                val: _w.formatPrct(data.caPartServ2m),
-                cls: isNaN(data.caPartServ2m) || !isFinite(data.caPartServ2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(data.caPartServ2m, data.caPartServ1y, data.caPartServGlobal2m, _w.pageData.budget.SERVICES), 4)
+                val: _w.formatPrct(result.caPartServ2m),
+                cls: isNaN(result.caPartServ2m) || !isFinite(result.caPartServ2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(result.caPartServ2m, result.caPartServ1y, result.caPartServGlobal2m, _w.pageData.budget.SERVICES), 4)
             },
-			rem: {
-                val: _w.formatPrct(data.caPartRem2m),
-                cls: isNaN(data.caPartRem2m) || !isFinite(data.caPartRem2m)  ? 'gray' : _w.score2Cls(_w.data.computeScore(data.caPartRem2m, data.caPartRem1y, data.caPartRemGlobal2m, _w.pageData.budget.REMISE), 4)
+			rem: { // TODO : appliquer une formule particulière ? 
+                val: _w.formatPrct(result.caPartRem2m),
+                cls: isNaN(result.caPartRem2m) || !isFinite(result.caPartRem2m)  ? 'gray' : _w.score2Cls(_w.data.computeScore(result.caPartRem2m, result.caPartRem1y, result.caPartRemGlobal2m, _w.pageData.budget.REMISE), 4)
             },
 			oa: {
-                val: _w.formatPrct(data.caPartOa2m),
-                cls: isNaN(data.caPartOa2m) || !isFinite(data.caPartOa2m)  ? 'gray' : _w.score2Cls(_w.data.computeScore(data.caPartOa2m, data.caPartOa1y, data.caPartOaGlobal2m,_w.pageData.budget.OFFRESACTIVES), 4)
-            },
+                val: _w.formatPrct(result.caPartOa2m),
+                cls: isNaN(result.caPartOa2m) || !isFinite(result.caPartOa2m)  ? 'gray' : _w.score2Cls(_w.data.computeScore(result.caPartOa2m, result.caPartOa1y, result.caPartOaGlobal2m,_w.pageData.budget.OFFRESACTIVES), 4)
+			}
         }
+		// var f = _w.makeSimpleFiltersClone();
+		// if(f.agg == 'org4') {
+			// console.log('BYPASS des KPI pour Prime Vendeur');
+			// z.caEvo.val = _w.formatPrct(result.prime);
+		// } SI prime TODO 
+		return z;
     }
-	// function de création de la requ^te pour l'appel vers Dashboard
+	// function de création de la requête pour l'appel vers Dashboard
     function makeDashboardQuery(cd) {
-        var f = _w.makeSimpleFiltersClone();
+		// console.log('cd',cd)
+		var f = _w.makeSimpleFiltersClone();
+		var aggreg = f.agg;
         f[f.agg] = cd;
-        delete f.agg;
-        return _w.makeQuery(f);
+		console.log(f, test);
+        var test = delete f.agg;
+		console.log(f, test);
+		return 'agg='+aggreg+'&'+_w.makeQuery(f);
     }
 	// function de création de la requête pour l'appel en Drill Down
     function makeDrillDownQuery(cd) {
         var f = _w.makeSimpleFiltersClone();
-        
+		// console.log('1er f', f, 'f.agg.slice(0,3) = ', f.agg.slice(0,3),'f.agg.slice(3) = ', f.agg.slice(3));
         f[f.agg] = cd;
-        
-        f.agg = f.agg.slice(0,3) + (parseInt(f.agg.slice(3)) + 1);
+		if(f.agg == 'prd6' || f.agg == 'org4')
+			f.agg = f.agg.slice(0,3) == 'prd' ? (darty.wynn.getMaxFilter('org')== 4 ? 'org4' : 'org'+parseInt(darty.wynn.getMaxFilter('org')+1) ):
+				(darty.wynn.getMaxFilter('prd')== 6 ? 'prd6' : 'prd'+parseInt(darty.wynn.getMaxFilter('prd')+1));
+		else
+			f.agg = f.agg.slice(0,3) + (parseInt(f.agg.slice(3)) + 1);
+		// console.log('2nd f', f, 'f[f.agg]', f.agg);
+		// console.log('makeQuery(f)',_w.makeQuery(f));
         return _w.makeQuery(f);
     }
 	
+	
+	function updateTable() {
+		metaDataTable.orientation = $('th.headerSortUp').length>0 ? 'up' : ($('th.headerSortDown').length>0 ? 'down' : '');
+		metaDataTable.col = metaDataTable.orientation == 'up' ? parseInt($('th.headerSortUp').attr('id').substring(3,4)) : (metaDataTable.orientation == 'down' ? parseInt($('th.headerSortDown').attr('id').substring(3,4)) : '');
+		metaDataTable.etat = $('#detailsTable').attr('class') == 'reducted' ? 'ferme':'ouvert';
+		// console.log(metaDataTable.orientation, metaDataTable.col, metaDataTable.etat); 
+		// up = ordre croissant A B C 1 2 3
+		// down = ordre décroissant C B A 3 2 1 
+	};
+	
     function start() {
+		// alert('Start ! ');
         $(document).ready(function () {
 			// agrandir le tableau avec le volet droit 
             $(document).on('click', '#detailsTable .linkExpand', function () {
@@ -188,62 +234,46 @@ darty.wynn.gui.details = (function () {
             });
 			
 			// Bouton Refresh Timer 
-            $('#blueContentTop').on('click', function () {
+            $('#blueContentTop').on('click', function () { 
                 if (refreshTimer) {
-                    window.clearTimeout(refreshTimer);
+					/* Pour garder le tableau ouvert et l'ordre de tri ! */
+					updateTable();
+					window.clearTimeout(refreshTimer);
                     refreshPage();
                 }
             });
+			
+			// $(document).on('click','#blueContentBot', function () { // TODO : REMOVE ! 
+				// /* Pour garder le tableau ouvert et l'ordre de tri ! */
+				// metaDataTable.orientation = $('th.headerSortUp').length>0 ? 'up' : ($('th.headerSortDown').length>0 ? 'down' : '');
+				// metaDataTable.col = metaDataTable.orientation == 'up' ? $('th.headerSortUp').attr('id').substring(3,4) : (metaDataTable.orientation == 'down' ? $('th.headerSortDown').attr('id').substring(3,4) : '');
+				// metaDataTable.etat = $('#detailsTable').attr('class') == 'reducted' ? 'ferme':'ouvert';
+				// console.log(metaDataTable.orientation, metaDataTable.col, metaDataTable.etat); 
+			// });
+			
+			// $('#blueContentMid').on('click', function () { // TODO : REMOVE ! 
+				// console.log('La lumière est éteinte ');
+				// if(metaDataTable.orientation || metaDataTable.col || metaDataTable.etat)
+					// console.log('metaDataTable contient des objets');
+				// else
+					// console.log('metaDataTable est vide ! ');
+            // });
             
+			
 			// Bouton radio de choix de dimension
 			$(document).on('click', 'div#bouton span.active', function () {
 				// trouver le max de chaque dimension, et en fonction de celle ou l'on va, appliquer le max ! 
-				var split = window.location.search.split("&");
-				
-				// console.log('changement de dimension => go to ('+agg+')');
-				// console.log('split : ');
-				// console.log(split);
-				var url = '';
-				var maxPrd = 0;
-				var maxOrg = 0;
-				for (var n in split) {
-					if (n != 0) {
-						// console.log('split['+n+'] : ' + split[n].substring(0,3));
-						// console.log(split[n])
-						if (split[n].substring(0,3) == 'prd') {
-							if (split[n].substring(3,4) > maxPrd) {
-								maxPrd = parseInt(split[n].substring(3,4));
-							}
-						}
-						else if (split[n].substring(0,3) == 'org') {
-							if (split[n].substring(3,4) > maxOrg) {
-								maxOrg = parseInt(split[n].substring(3,4));
-							}
-						}
-						else {
-							console.log('Bug changement de dimension ! ')
-						}
-					}
+				var f = _w.makeSimpleFiltersClone();
+				var max = false;
+				var top = 0;
+				for (var i in f) {
+					if(($('span.active').attr('id') == 'prd' && i == 'prd6') || ($('span.active').attr('id') == 'org' && i == 'org4'))
+						max = true;
+					else if (i.substring(0,3) == $('span.active').attr('id'))
+						top = parseInt(i.substring(3,4));
 				}
-				var agg = '';
-				maxPrd += 1;
-				maxOrg += 1;
-				if (split[0].substring(5,8) == 'org') // &agg=org3
-					agg = 'prd'+(maxPrd); 
-				else
-					agg = 'org'+(maxOrg);
-				
-				for(var i = 0; i < split.length; i++) {
-					if (i != 0) {
-						url += '&'+split[i];
-					}
-					else {
-						url += '?agg='+agg;
-					}
-				}
-					
-				// console.log();
-				window.location.assign("http://" + window.location.host + "/details" + url);
+					f.agg = (f.agg.substring(0,3) == 'prd'? 'org':'prd') + parseInt(top + 1);
+				window.location.assign("http://" + window.location.host + "/details?" + _w.makeQuery(f));
 			});
 			
 			// Menu déroulant => Redirect => itself + Aggregat 
@@ -268,7 +298,7 @@ darty.wynn.gui.details = (function () {
 			
 			// Bouton Home => Redirect => Accueil 
 			$(document).on('click', 'span#home', function () {
-                window.location.assign("http://" + window.location.host + "/accueil");
+                window.location.assign("http://" + window.location.host + "/accueil?agg=prd1");
             });
 			
 			// Menu déroulant => Affiche les options d'aggregat 
@@ -282,24 +312,23 @@ darty.wynn.gui.details = (function () {
             });
 			
 			// Menu déroulant => Affiche les options d'aggregat 
-			$(document).on('click', 'div.delete', function () {
-                $("table").tablesorter({ // configuration du tri de tableau ! 
-					headers: { 
-					0: {sorter:'subclass'},
-					1: {sorter:'currency'}, 
-					2: {sorter:'percent'},
-					3: {sorter:'percent'},
-					4: {sorter:'percent'},
-					5: {sorter:'percent'},
-					6: {sorter:'percent'}
-					} 
-				
-				}); 
-				//$('div#zone').parent().addClass('headerSortDown');
-				var elem = $("div.delete").remove();
-				//$('div#zone').append('');
-				//$('div#zone').append('<a><img class="arrow" src="./img/arrow.png"></a>')
-            });
+			// $(document).on('click', 'div.delete', function () {
+                // $("table").tablesorter({ // configuration du tri de tableau ! 
+					// headers: { 
+					// 0: {sorter:'subclass'},
+					// 1: {sorter:'currency'}, 
+					// 2: {sorter:'percent'},
+					// 3: {sorter:'percent'},
+					// 4: {sorter:'percent'},
+					// 5: {sorter:'percent'},
+					// 6: {sorter:'percent'}
+					// } 
+				// }); 
+				// $('div#zone').parent().addClass('headerSortDown');
+				// var elem = $("div.delete").remove();
+				// $('div#zone').append('');
+				// $('div#zone').append('<a><img class="arrow" src="./img/arrow.png"></a>')
+            // });
 			
 			// bouton des onglets du tableau
 			$(document).on('click', '.pageNumber.noActif', function () {
@@ -312,10 +341,11 @@ darty.wynn.gui.details = (function () {
 			
             window.setInterval(function(){ 
 				var jour = new Date();
-				var text = parseInt(jour.getDate()) + '/'+parseInt(jour.getMonth()) + '/'+parseInt(jour.getYear()%100)
+				updateTable(); // TODO : ne pas en avoir autant d'exécution, bloquer sur > à délai max - 5 secondes ?!?! 
+				var text = parseInt(jour.getDate()) + '/'+(parseInt(jour.getMonth())+1) + '/'+parseInt(jour.getYear()%100)
 				if (refreshTimer) {
 					$('#lastUpdate').remove();
-					$('#blueContentTop').prepend('<p id="lastUpdate">Dernière Mise à jour le : '+text+' à '+darty.wynn.formatTimeSecondLess(new Date(lastRefresh.getTime() - darty.wynn.config.timeDiff)) + ' <br />Prochaine mise à jour dans: ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's</p>');
+					$('#blueContentTop').prepend('<p id="lastUpdate">Dernière Màj: '+text+' à '+darty.wynn.formatTimeSecondLess(new Date(lastRefresh.getTime() - darty.wynn.config.timeDiff)) + ' <br />Prochaine Màj: ' + Math.ceil((nextRefresh - new Date()) / 1000) + 's</p>');
 				}
 				else {
 					$('#lastUpdate').remove();
@@ -326,7 +356,7 @@ darty.wynn.gui.details = (function () {
             
 			darty.wynn.setFilters('details');
 			refreshPage();
-			$("table").tablesorter({ }); 
+			// $("table").tablesorter({ }); 
 			$('div.delete').remove();
         });
     }

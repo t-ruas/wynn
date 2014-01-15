@@ -11,10 +11,6 @@
 	border: 1px dotted black;
 }
 
-#lastUpdate {
-	/*Font, font-size, position, */
-	color: white;
-}
 .pageNumber{
 	margin: 0 5px;
 	color: black;
@@ -58,8 +54,8 @@ html {
     position: absolute;
     top: 0px;
     bottom: 0px;
-    left: 0px;
-    right: 30.00%;
+    left: 15.00%;
+    right: 15.00%;
 	height: 100%;
     background: #24292a url(./img/bg_1024bis.jpg) no-repeat;
 	overflow:auto;}
@@ -164,7 +160,7 @@ div#ariane {
     height:36px;}
 
 
-#ariane_prod {
+#ariane_prd {
     font-family: "dartySans","arial","Serif";
     float:left;
     color:#ffffff;
@@ -193,7 +189,7 @@ div#ariane {
     padding-bottom:7px;
     display:block;}
 
-#close_prod{
+#close_prd{
     font-family: "dartyBold","arial","Serif";
     float:left;
     text-align:center;
@@ -232,7 +228,7 @@ div#ariane {
 
 #CA_content {
     width:100%;
-    height:200px;
+    height:180px;
     float:left;
     position:relative;}
 
@@ -289,7 +285,7 @@ div#ariane {
 
 #block1 {
     width:23.5%;
-    height:100%;
+    height:90%;
     float:left;}
 
 /*#block1:hover {
@@ -304,12 +300,12 @@ div#ariane {
     width:18%;
     float:left;
     margin-left:15%;
-    margin-top:25%;}
+    margin-top:15%;}
 
 #block1_chiffre p{
     position:relative;
     float:left;
-    margin-top:30%;
+    margin-top:25%;
     color:#ffffff;
     margin-left:15%;
     font-family: "dartyLight","arial","Serif";
@@ -330,7 +326,7 @@ div#ariane {
 
 #block2 {
     width:23.5%;
-    height:100%;
+    height:90%;
     float:left;
     margin-left:2%;
 }
@@ -347,7 +343,7 @@ div#ariane {
     width:20%;
     float:left;
     margin-left:15%;
-    margin-top:25%;}
+    margin-top:15%;}
 
 #block2_chiffre p{
     color:#ffffff;
@@ -355,11 +351,11 @@ div#ariane {
     font-size:1.1em;
     float:left;
     margin-left:15%;
-    margin-top:30%;}
+    margin-top:25%;}
 
 #block3 {
     width:23.5%;
-    height:100%;
+    height:90%;
     float:left;
     margin-left:2%;
 }
@@ -375,7 +371,7 @@ div#ariane {
     width:20%;
     float:left;
     margin-left:15%;
-    margin-top:25%;}
+    margin-top:15%;}
 
 #block3_chiffre p{
     color:#ffffff;
@@ -383,11 +379,11 @@ div#ariane {
     font-size:1.1em;
     float:left;
     margin-left:15%;
-    margin-top:30%;}
+    margin-top:25%;}
 
 #block4 {
     width:23.5%;
-    height:100%;
+    height:90%;
     float:left;
     margin-left:2%;
 }
@@ -404,7 +400,7 @@ div#ariane {
     width:20%;
     float:left;
     margin-left:15%;
-    margin-top:25%;}
+    margin-top:15%;}
 
 #block4_chiffre p{
     color:#ffffff;
@@ -412,7 +408,7 @@ div#ariane {
     font-size:1.1em;
     float:left;
     margin-left:15%;
-    margin-top:30%;}
+    margin-top:25%;}
 
 /************************************************
                   THIRED LINE
@@ -420,9 +416,9 @@ div#ariane {
 
 #thired_line {
     width:100%;
-    height:100px;
+    height:80px;
     float:left;
-    margin-top:2%;
+    margin-top:0%;
     position:relative;
 }
 
@@ -442,7 +438,7 @@ div#ariane {
 
 #block5_chiffre {
     width:100%;
-    height:40%;
+    height:50%;
     font-family: "dartyBold","arial","Serif";
     font-size:1.8em;
     background-color:#C1BFB1
@@ -450,13 +446,13 @@ div#ariane {
 
 #block5_title {
     width:100%;
-    height:25%;
+    height:42%;
     background-color:#C1BFB1
 }
 
 #block5_underline {
     width:100%;
-    height:10%;
+    height:8%;
 }
 
 .chiffre_p {
@@ -491,20 +487,20 @@ div#ariane {
 
 #block6_chiffre {
     width:100%;
-    height:40%;
+    height:50%;
     font-family: "dartyBold","arial","Serif";
     font-size:1.8em;
     background-color:#C1BFB1}
 
 #block6_title {
     width:100%;
-    height:25%;
+    height:42%;
     background-color:#C1BFB1}
 
 #block6_underline {
     width:100%;
-    height:10%;
-	opacity:0.8;}
+    height:8%;
+}
 
 #block7 {
     width:32%;
@@ -518,19 +514,19 @@ div#ariane {
 
 #block7_chiffre {
     width:100%;
-    height:40%;
+    height:50%;
     font-family: "dartyBold","arial","Serif";
     font-size:1.8em;
     background-color:#C1BFB1}
 
 #block7_title {
     width:100%;
-    height:25%;
+    height:42%;
     background-color:#C1BFB1}
 
 #block7_underline {
     width:100%;
-    height:10%;
+    height:8%;
 }
 
 
@@ -659,7 +655,7 @@ thead>tr>th.header.headerSortUp {
 
 thead {}
 
-th#menu {
+th#col0 {
 	position: relative;
 	vertical-align:middle;
 	width: 12%;
@@ -714,14 +710,14 @@ td.content {text-align: center;}
 	position: absolute;
 }*/
 
-#detailsTable.reducted  th{ /* Laisser en dessous du detailsTable! */
-	width: 44%;}
-
-
-#detailsTable.reducted th#menu { /* Laisser en dessous du th#menu! */
+#detailsTable.reducted th#col0 { /* Laisser en dessous du th#menu! */
 	width: 28%;
 	min-width: 100px;
 	max-width: 60%;}
+
+#detailsTable.reducted  th{ /* Laisser en dessous du detailsTable! */
+	width: 44%;}
+
 
 #detailsTable {
     font-family:"dartySans","arial","Serif";
@@ -914,14 +910,32 @@ tfoot {text-align : center;}
 	height: 100%;
     background-color: rgb(90, 153, 211);}
 
-#blueContentTop {
+/*#blueContentTop {
 	background-color: rgb(29, 72, 81);
 	position: absolute;
 	top:0px;
 	right:0px;
 	left:0px;
 	height:10%;
-	width: 100%;}
+	width: 100%;
+	}
+*/
+#blueContentTop {
+	background-color: rgb(206,206,206);
+	color : rgb(90, 94, 107);
+	top: 0px;
+	position: absolute;
+	left: 300px;
+	height: 50px;
+	width: 150px;
+	text-align: center;
+	padding: 8px;
+	border-bottom-left-radius: 22px;
+	border-bottom-right-radius: 22px;
+	opacity: 0.8;
+	margin : 0 auto;
+	clear: both
+}
 
 #blueContentMid {
 	background-color: rgb(115, 194, 251);

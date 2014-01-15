@@ -33,26 +33,26 @@
 		<table id="detailsTable">
 			<thead>
                     <tr>
-					    <th id="menu">
+					    <th id="col0">
 							<div id="zone">									
 							</div>
 						</th>
-                        <th id="ca">CA
+                        <th id="col1">CA
 							<!-- <img class="arrow" src="./img/arrow.png"> -->
 						</th>
-                        <th id="evolCa">% Evol
+                        <th id="col2">% Evol
 							<!-- <img class="arrow" src="./img/arrow.png"> -->
 						</th>
-                        <th id="acc">Acc.
+                        <th id="col3">Acc.
 							<!-- <img class="arrow" src="./img/arrow.png"> -->
 						</th>
-                        <th id="gar">Gar.
+                        <th id="col4">Gar.
 							<!-- <img class="arrow" src="./img/arrow.png"> -->
 						</th>
-                        <th id="oa">OA.
+                        <th id="col5">OA.
 							<!-- <img class="arrow" src="./img/arrow.png"> -->
 						</th>
-                        <th id="rem">Rem.
+                        <th id="col6">Rem.
 							<!-- <img class="arrow" src="./img/arrow.png"> -->
 						</th>
                     </tr>
@@ -73,8 +73,8 @@
 				<tfoot>
                     <tr>
 						<td>TOTAL</td>
-                        <td class="color_X"><%=it.totals.ca%></td>
-                        <td class="color_background_<%=it.totals.caEvo.cls%>"><%=it.totals.caEvo.val%></td>
+                        <td class="color_X"><a href="<%=it.totals.dbQuery%>"><%=it.totals.ca%></a></td>
+                        <td class="color_background_<%=it.totals.caEvo.cls%>" ><%=it.totals.caEvo.val%></td>
                         <td class="color_underline_<%=it.totals.acc.cls%>"><%=it.totals.acc.val%></td>
                         <td class="color_underline_<%=it.totals.serv.cls%>"><%=it.totals.serv.val%></td>
                         <td class="color_underline_<%=it.totals.oa.cls%>"><%=it.totals.oa.val%></td>
@@ -86,27 +86,30 @@
     </head>
     <body>
         <div id="mainContent">
-            <div id="mainContentTop">
+			<div id="mainContentTop">
                 <div id="breadcrumb">
 					<div id="bouton-home">
-						<div id="bouton"><a>
-							<span id="prd" class="active">Produits</span><span id="org" class="active">Lieux</span>
+						<div id="bouton">
+							<a>
+								<span id="prd" class="active">Produits</span><span id="org" class="active">Lieux</span>
 							</a>
 						</div>
 					</div>
 				</div>
+				
             </div>
             <div id="mainContentMiddle">
             </div>
             <div id="mainContentBottom">
                 <div id="refreshTimer"></div>
             </div>
+			
         </div>
-        <div id="blueContent">
+        <!-- <div id="blueContent">
 	        <div id="blueContentTop"></div>			
 	        <div id="blueContentMid"></div>			
 	        <div id="blueContentBot"></div>			
-	    </div>
+	    </div> -->
         <div style="clear: both;"></div>
     </body>
 </html>

@@ -817,7 +817,8 @@ Content_home
     margin-top:50px;}
 
 #CA_pourcent {
-    width:23.5%;
+    width:24.5%;
+	height: 97%;
     font-size:1.5em;}
 
 #CA_pourcent p {
@@ -1121,7 +1122,7 @@ td.content.first-column {width:30%;font-size:90%;}
 .color_underline_3 {border-bottom : 3px solid rgb(0,176,80);font-size:80%;} 
 .color_underline_gray {border-bottom : 3px solid rgb(187,187,187);font-size:80%;}
 
-.color_X {width:45%;font-size:90%;}
+.color_X {font-size:90%;}
 .color_0 {width:50%;color:rgba(255,0,0,0.8);font-size:90%;} 
 .color_1 {width:50%;color:rgba(255,192,0,0.8);font-size:90%;}
 .color_2 {width:50%;color:rgba(146,208,80,0.8);font-size:90%;} 

@@ -16,15 +16,13 @@ function postSearch(type, data, callback) {
 }
 
 function sendRequest(options, data, callback) {
-	// pour retrouver un libellé en particulier s'il manque
-    options.hostname = _config.elasticSearch.host;
+	options.hostname = _config.elasticSearch.host;
     options.port = _config.elasticSearch.port;
     options.path = '/' + _config.elasticSearch.index + options.path;
     // On lance la requête
     var req = _http.request(options, function (response) {
         var content = '';
         response.on('data', function (chunk) {
-		//_logger.info('CHUNK : ' + chunk);
 		content += chunk;
         });
         response.on('end', function () {
@@ -32,7 +30,6 @@ function sendRequest(options, data, callback) {
             if (result.error) {
                 callback(new _errors.Error('2 ElasticSearchError', result.error));
             } else {
-				// _logger.info('2 Réponse ElasticSearch ON : ' + _util.inspect(result, {depth: null}));
 				_config.nbEsQueries++;
 				callback(null, result);
             }
@@ -44,8 +41,7 @@ function sendRequest(options, data, callback) {
         _logger.info('Requête ElasticSearch : ' + _util.inspect(data, {depth: null}));
         req.write(JSON.stringify(data));
     }
-	//console.log('###### => appel vers req.end()');	
-    req.end();
+	req.end();
 }
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\ pour récupérer les entrées, a merger avec les précédentes
@@ -101,24 +97,23 @@ function getBudget(callback) {
 	var ddate = '';
 	
 	if(_config.DED_year == 0 && _config.DED_month == 0 && _config.DED_day == 0) {
-		ddate = '20' + parseInt(value_of_date.getYear()%100) + '' +(parseInt(value_of_date.getMonth())+ 1) +'';
+		ddate = '20' + parseInt(value_of_date.getYear()%100) + '';
+		ddate += '' + (parseInt(value_of_date.getMonth())+ 1) > 10 ? (parseInt(value_of_date.getMonth())+ 1) : ('0'+(parseInt(value_of_date.getMonth())+ 1))+'';
 		ddate += parseInt(value_of_date.getDate()) > 9 ? value_of_date.getDate() : '0' + value_of_date.getDate()+ '';
 	}
 	else {
 		ddate = '20'+_config.DED_year+'';
 		
 		var tmp = '' + _config.DED_month + '';
-		tmp++;
+		tmp++; // les mois commencent à 0 ! 
 		tmp = tmp > 9 ? tmp : '0'+tmp;
-		console.log('DED_month : ' + _config.DED_month + 'Month : ' + tmp + ' - ' + typeof tmp);
-		
+		// console.log('DED_month : ' + _config.DED_month + 'Month : ' + tmp + ' - ' + typeof tmp);
 		ddate += tmp;
 		tmp = '' + _config.DED_day + '';
 		tmp = tmp > 9 ? tmp : '0'+tmp;
 		ddate += tmp;
-		console.log('Day : ' + tmp + ' - ' + typeof tmp);
-		console.log(ddate + '' + typeof ddate);
-		
+		// console.log('Day : ' + tmp + ' - ' + typeof tmp);
+		// console.log(ddate + '' + typeof ddate);
 	}
 	
 	console.log(ddate, typeof ddate);
@@ -144,7 +139,6 @@ function getBudget(callback) {
 
 function prepareDateFilters(tempsComptSet) {
     var dates = new Array(5);
-	// dates[0] = new Date(2013, 10, 30); // a commenter ! 
 	
 	if(_config.DED_year == 0 && _config.DED_month == 0 && _config.DED_day == 0) {
 		dates[0] = new Date();
@@ -155,15 +149,10 @@ function prepareDateFilters(tempsComptSet) {
 		var c = _config.DED_day;
 		dates[0] = new Date(a, b, c);
 		console.log(typeof a, typeof b, typeof c, dates[0]);
-		
-		// '20' + parseInt(value_of_date.getYear()%100) + '' +(parseInt(value_of_date.getMonth())+ 1) +'';
-		// ddate += parseInt(value_of_date.getDate()) > 9 ? value_of_date.getDate() : '0' + value_of_date.getDate()+ '';
 	}
 	
 	// dates[0] = new Date(); 
 	var dateRef = new Date();
-	// console.log('XXXXXXXXXXXXXXXXXXXXXXX dates[0] : ' + dates[0]);
-    // dates[0].setMinutes(dates[0].getMinutes() -  _config.tempsChargReel); // 2min
 	dates[0].setHours(dateRef.getHours()); // config pour 01/12/2013
     dates[0].setMinutes(dateRef.getMinutes() -  _config.tempsChargReel); // 2min
 	console.log(dates[0])
@@ -212,8 +201,7 @@ function makeNavFilters(options, prefix) {
         if (n in options && n.slice(0, 3) === prefix) {
             var o = {};
             o[filterFields[n].cd] = options[n].toLowerCase();
-			// console.log('XXXXXXXXXXXXXXXXXX  Guillaume ! =>>> ' + options[n].toLowerCase())
-            filters.push({term: o});
+			filters.push({term: o});
         }
     }
     return filters;
@@ -226,17 +214,16 @@ function getFilterText(options, callback) {
     var o = {};
     var cancel = false;
     var i = 0;
+	// console.log('Here are options : ')
+	// console.log(options);
     for (var m in options) {
         (function (n) {
             if (n in filterFields) {
                 i++;
-                // _logger.info('2 Réponse test : ' + _util.inspect(filterFields[n], {depth: null}));
-				console.log(' getLib -> filterFields[n] : ' + filterFields[n] + ' -> options[n] : ' + options[n]);
+                // console.log(' getLib -> filterFields[n] : ' + filterFields[n] + ' -> options[n] : ' + options[n]);
                 getLib(filterFields[n], options[n], function (error, result) {
-                    // En cas d'erreur sur un des codes, on sort en erreur et ignore tous les autres retours.
                     if (error) {
-                    	// _logger.info('2 Réponse ERROR : ' + _util.inspect(error, {depth: null}));
-                        callback(error);
+                    	callback(error);
                         cancel = true;
                     }
                     if (!cancel) {
@@ -297,7 +284,6 @@ function getLib(field, code, callback) {
             filter: {term: f}
         };
 		
-		
 		// _logger.info('Réponse ElasticSearch : ' + _util.inspect(data, {depth: null}));
 		// pour retrouver un libellé en particulier s'il manque
         postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
@@ -325,7 +311,7 @@ function getIndicators(options, callback) {
 	var fVt = {field: 'NVENTE'};
     var fCa = {field: 'PVTOTAL'};
 	
-	
+	var fVend = { field: 'PRIMEVENDEUR'};
 	var fRem = { field: 'POIDSREMISE'}; 		// Nom_du_field_ou_se_trouve_le_ca_remisé
 	var fAcc = { field: 'POIDSACC'}; 			// Nom_du_field_ou_se_trouve_le_ca_des_accessoires
 	var fOa = { field: 'POIDSOA'};  			// Nom_du_field_ou_se_trouve_le_ca_des_offres_actives
@@ -342,11 +328,11 @@ function getIndicators(options, callback) {
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fCa},
             'ca_global_1y': {facet_filter: {and: [fDates[3]].concat(fPrd)}, statistical: fCa},
             'ca_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fCa},
+			'prime_vendeur': {facet_filter: {and: [fDates[1]].concat(fOrg)}, terms: fVend},
             'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_global_1y': {facet_filter: {and: [fDates[3]].concat(fPrd)}, terms: fVt},
             'vt_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fVt},
-			
 			
 			'ca_poids_acc_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fAcc},
 			'ca_poids_acc_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fAcc},
@@ -389,10 +375,12 @@ function getIndicators(options, callback) {
                 vtGlobal1y: getVtFacet('vt_global_1y'),
                 vtGlobal2m: getVtFacet('vt_global_2m'),
 				
+				prime: getVtFacet('prime_vendeur'),
+				
 				caPoidsAcc2m: getCaFacet('ca_poids_acc_2m'),
                 caPoidsAcc1y: getCaFacet('ca_poids_acc_1y'),
                 caPoidsAccGlobal2m: getCaFacet('ca_poids_acc_global_2m'),
-				
+
 				caPoidsServ2m: getCaFacet('ca_poids_serv_2m'),
                 caPoidsServ1y: getCaFacet('ca_poids_serv_1y'),
                 caPoidsServGlobal2m: getCaFacet('ca_poids_serv_global_2m'),
@@ -415,6 +403,7 @@ function getIndicatorsEnt(options, callback) {
     var fDates = prepareDateFilters(_config.derniereEntrees);
     var fEnt = {field: 'QENTRE'};
 	var fDat = {field: 'DATE'};
+	var fVt = {field: 'NVENTE'};
     var fOrg = makeNavFilters(options, 'org');
 
     var data = {
@@ -422,6 +411,7 @@ function getIndicatorsEnt(options, callback) {
         facets: {
             'ent_2m': {facet_filter: {and: [fDates[1]].concat(fOrg)}, statistical: fEnt},
             'ent_1y': {facet_filter: {and: [fDates[3]].concat(fOrg)}, statistical: fEnt},
+			'ent_global_2m': {facet_filter: {and: [fDates[1]]}, statistical: fEnt},
             'ent_dat': {facet_filter: {and: [fDates[2]].concat(fOrg)}, statistical: fDat}
         }
     };
@@ -439,6 +429,7 @@ function getIndicatorsEnt(options, callback) {
             callback(null, {
                 ent2m: getEntFacet('ent_2m') ,
                 ent1y: getEntFacet('ent_1y'),
+				entGlobal2m: getEntFacet('ent_global_2m'),
 				entDat: getMaxDate('ent_dat'),
             });
         }
@@ -456,14 +447,12 @@ function getDetails(options, callback) {
         field: aggField.cd,
         script: 'term + ";" + _source.' + aggField.lib
     };
-	// console.log(aggField.cd + ' - ' + aggField.lib + ' = ' + aggField.cd.substring(5,6))
 	var fOrd = {
 		size: _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
-        //field: aggField.cd,
-        field: ('ORDRECAT' + aggField.cd.substring(5,6)),
+        field: ('ORDRECAT'+(aggField.cd.substring(0,4) == 'CORG' ? aggField.cd.substring(4,5) : (aggField.cd == 'CPRODUIT' ? '5':(aggField.cd == 'CVENDEUR' ? '3' : (aggField.cd.substring(0,5) == 'CPROD' ? parseInt(parseInt(aggField.cd.substring(5,6))-1): ''))))),
 		script: 'term + ";" + _source.' + aggField.cd
     };
-    // on concatène le numéro de vente avec l'axe d'aggrégation pour avoir un count de ventes et non de lignes.
+	// on concatène le numéro de vente avec l'axe d'aggrégation pour avoir un count de ventes et non de lignes.
     var fVt = {
 		size: _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
         field: aggField.cd,
@@ -474,6 +463,11 @@ function getDetails(options, callback) {
         key_field: aggField.cd,
         value_field: 'PVTOTAL'
     };
+	// var fVend = {
+		// size: _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
+        // field: aggField.cd,
+        // script: '_source.PRIMEVENDEUR + ";" + term'
+    // };
 	var fRem = {
 		size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
 		key_field: aggField.cd,
@@ -498,13 +492,16 @@ function getDetails(options, callback) {
 	var fPrd = makeNavFilters(options, 'prd');
     var fOrg = makeNavFilters(options, 'org');
 	
+	// si filtre avec CVENDEUR
+	
     var data = {
         size: 0,
         facets: {
             // 'ordre': {facet_filter: {and: [fDates[0], fDates[3]]}, terms: fOrd},
             // 'lib': {facet_filter: {and: [fDates[0], fDates[3]].concat(fPrd).concat(fOrg)}, terms: fLib},
-            'ordre': {facet_filter: {and: [fDates[3]]}, terms: fOrd}, 											// TODO : Mettre les bonnes dates 
-            'lib': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fLib},					// TODO : Mettre les bonnes dates 
+            'ordre': {facet_filter: {and: [fDates[0]]}, terms: fOrd}, 											// TODO : Mettre les bonnes dates 
+            'lib': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms: fLib},					// TODO : Mettre les bonnes dates 
+			// 'primevendeur': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms: fVend},
             'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
@@ -538,31 +535,50 @@ function getDetails(options, callback) {
         if (error) {
             callback(error);
         } else {
-            var o = {};
+			var o = {};
 			
-			var addOrdo = function (p, terms) { // a garder ! 
+			var addTerm = function (p, terms) { // a garder ! 
 				for (var i = 0, imax = terms.length; i < imax; i++) {
 					var part = terms[i].term.split(';');
 					part[1] = part[1].toLowerCase();
 					if (o[part[1]]) {
-						if (typeof o[part[1]][p] !== 'number')
-							o[part[1]][p] = 0;
-						o[part[1]][p] = part[0];
+						o[part[1]][p] = parseFloat(part[0]);
 					}
 				}
 			}
+			// var addTerm = function (p, terms) { 
+				// console.log('p',p,'terms',terms, 'terms.length', terms.length)// a garder ! 
+				// p = primevendeur
+				// terms = 
+				// [{term: '009440;0,0',
+					// count: 1}]
+				
+				// for (var i = 0, imax = terms.length; i < imax; i++) {
+					// var part = terms[i].term.split(';');
+					// part[1] = part[1].toLowerCase();
+					// console.log('OK', typeof part[1],part[1], part[0]);
+					// if (o[part[1]]) { // si l'objet existe 
+						// if (true) {
+							// o[part[0]][p] = parseFloat(part[1]);
+						// }
+						// o[part[1]][p] = parseFloat(part[0]);
+					// }
+				// }
+			// }
 			
 			var mergeCaList = function (p, terms) { // TODO : vérifier que l'addition marche bien !
                 for (var i = 0, imax = terms.length; i < imax; i++) {
                     var term = terms[i];
-					if (!o[term.term]) return; // si on tombe sur un lib qui n'est pas bien renseigné TODO : remove
-					if (typeof o[term.term][p] !== 'number')  // permet de tester la valeur associé au lib
+					if (!o[term.term]) {
+						// console.log('Ligne de rejet : p', p, 'terms', terms);
+						return;
+					}  	// si on tombe sur un lib qui n'est pas bien renseigné TODO : remove
+					if (typeof o[term.term][p] !== 'number')  	// permet de tester la valeur associé au lib
                         o[term.term][p] = 0; 
-                    o[term.term][p]+= term.total; //  << ici 
+                    o[term.term][p]+= term.total; 
                 }
-				// console.log(o);
             }
-
+			
             var mergeVtList = function (p, terms) { // récupère les VALEURS des terms 'pem', 'div', 'gem'
 				for (var i = 0, imax = terms.length; i < imax; i++) {
 				    var term = terms[i].term.split(';')[0];
@@ -577,35 +593,32 @@ function getDetails(options, callback) {
                 libCache[aggField.cd] = {};
             }
             // On commence par les libellés pour créer les objets.
-            for (var i = 0, imax = result.facets['lib'].terms.length; i < imax; i++) {
-                var parts = result.facets['lib'].terms[i].term.split(';');
+			for (var i = 0, imax = result.facets['lib'].terms.length; i < imax; i++) {
+				var parts = result.facets['lib'].terms[i].term.split(';');
                 o[parts[0]] = {
                     cd: parts[0],
                     lib: parts[1]
                 };
-				// console.log(o[parts[0]]);                               
-				// On en profite pour remplir le cache des libellés. 
-                if (!libCache[aggField.cd][parts[0]]) {
+				if (!libCache[aggField.cd][parts[0]]) {
                     libCache[aggField.cd][parts[0]] = parts[1];
                 }
                 
             }
 
-            addOrdo('ordre', result.facets['ordre'].terms); // ordonnancement 
-			
+            addTerm('ordre', result.facets['ordre'].terms); // ordonnancement 
+			// console.log('OOO',o);
+            // addTerm('primevendeur', result.facets['primevendeur'].terms); // ordonnancement 
+			// console.log('OOP',o);
+			// addPrimeVendeur
 			mergeCaList('ca', result.facets['ca'].terms);
             mergeCaList('ca2m', result.facets['ca_2m'].terms);
             mergeCaList('ca1y', result.facets['ca_1y'].terms);
             mergeCaList('caGlobal1y', result.facets['ca_global_1y'].terms);
             mergeCaList('caGlobal2m', result.facets['ca_global_2m'].terms);
-            mergeVtList('vt2m', result.facets['vt_2m'].terms);
+            
+			mergeVtList('vt2m', result.facets['vt_2m'].terms);
             mergeVtList('vt1y', result.facets['vt_1y'].terms);
             
-			mergeCaList('evolPoidsOa', result.facets['ca_poids_oa_2m'].terms);		// non divisé par le ca global ! 
-			mergeCaList('evolPoidsRem', result.facets['ca_poids_rem_2m'].terms);	// non divisé par le ca global !
-			mergeCaList('evolPoidsAcc', result.facets['ca_poids_acc_2m'].terms);	// non divisé par le ca global !
-			mergeCaList('evolPoidsServ', result.facets['ca_poids_serv_2m'].terms);	// non divisé par le ca global ! 
-			
 			mergeCaList('caPoidsOaGlobal2m', result.facets['ca_poids_oa_global_2m'].terms);	
 			mergeCaList('caPoidsRemGlobal2m', result.facets['ca_poids_rem_global_2m'].terms);	
 			mergeCaList('caPoidsAccGlobal2m', result.facets['ca_poids_acc_global_2m'].terms);	
@@ -614,6 +627,7 @@ function getDetails(options, callback) {
 			mergeCaList('caPoidsOa1y', result.facets['ca_poids_oa_1y'].terms);	
 			mergeCaList('caPoidsRem1y', result.facets['ca_poids_rem_1y'].terms);	
 			mergeCaList('caPoidsAcc1y', result.facets['ca_poids_acc_1y'].terms);	
+			// console.log('result.facets["ca_poids_acc_1y"].terms',result.facets['ca_poids_acc_1y'].terms);
 			mergeCaList('caPoidsServ1y', result.facets['ca_poids_serv_1y'].terms);
 			
 			mergeCaList('caPoidsOa2m', result.facets['ca_poids_oa_2m'].terms);	
@@ -621,20 +635,14 @@ function getDetails(options, callback) {
 			mergeCaList('caPoidsAcc2m', result.facets['ca_poids_acc_2m'].terms);	
 			mergeCaList('caPoidsServ2m', result.facets['ca_poids_serv_2m'].terms);
 			
-			// console.log('Objet -O- : ');
-			// console.log(o);
-			
 			var totalLines = 0;
 			
             var u = [];
-
-            for (var n in o) {
+			
+			for (var n in o) {
                 u.push(o[n]);
             }
-			// console.log('u');
-			// console.log(u);
-            
-            callback(null, u);
+			callback(null, u);
         }
     });
 }

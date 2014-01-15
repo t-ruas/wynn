@@ -122,6 +122,7 @@ var routes = {
                         if (error) {
                             callback(error);
                         } else {
+							console.log('RESULT');
                             callback(error, {file: 'accueil.html', fileData: result});
                         }
                     });
@@ -133,8 +134,8 @@ var routes = {
 			pattern: /^\/details$/i,
             handler: function (context, callback) {
                 if (authorizeOrRedirect(context, callback)) {
-                    // on récupère les données qui seront necessaire à la conception de la page (données envoyées avec le template)
-						
+						// on récupère les données qui seront necessaire à la conception de la page (données envoyées avec le template)
+						// console.log(context);
 						getRefData(context, function (error, result) {
                         if (error) {
                             callback(error);
@@ -195,8 +196,8 @@ var routes = {
             handler: function (context, callback) {
                 if (authorizeOrFail(context, callback)) {
                     _data.getIndicators(context.content, function (error, result) {
-						console.log('result : ');
-						console.log(result);
+						console.log('result : ',result);
+						// console.log();
                         callback(error, {data: result});
                     });
                 }
@@ -207,7 +208,8 @@ var routes = {
             handler: function (context, callback) {
                 if (authorizeOrFail(context, callback)) {
                     _data.getDetails(context.content, function (error, result) {
-                        callback(error, {data: result});
+                        console.log('result : ',result);
+						callback(error, {data: result});
                     });
                 }
             }
@@ -219,22 +221,40 @@ var routes = {
 // filtres, budget, ordre.
 function getRefData(context, callback) {  	
     var data = {};
+	console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+	// console.log(context);
+	// var argments = context.path.query;
+	// console.log(context.path.query);
+	// var tab = argments.toString().split("|");
+	console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF');
+	// console.log(arguments[2]);
+	
     _data.getFilterText(context.path.query, function (error, result) {
-    	
-        if (error) {
+    	if (error) {
             callback(error);
         } else {
-        	/*_logger.info('2 Réponse dans RefData : ' + _util.inspect(result, {depth: null}));*/
-			// ajout des filtres
-            data.filtres = result;
+        	data.filtres = result;
+			console.log('This is result : ')
+			console.log(result);
+			data.tri = {};
+			console.log(typeof data.filtres.T)
+			if(data.filtres.T != '' && typeof data.filtres.T != 'undefined') {
+				data.tri.column = data.filtres.T.substring(0,1);
+				data.tri.value = data.filtres.T.substring(1,2);
+				console.log(data.tri);
+				delete(data.filtres.T);
+			}
+			if (typeof data.tri.column == 'undefined')
+				console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP')
+			console.log("FILTRES : ");
+			console.log(data.filtres);
+			console.log(context.path.query);
+			
 				_data.getBudget(function (error, result) {
                 if (error) {
                     callback(error);
                 } else {
-					// ajout des budget
-                    data.budget = result;
-					// console.log('DATA_BUDGET LOADING ! >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-					// console.log(result);
+					data.budget = result;
                     callback(error, data);
                 }
             });

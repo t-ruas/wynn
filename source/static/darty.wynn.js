@@ -17,6 +17,7 @@ var darty = {
         },
     }
 };
+// var obj = darty.wynn.pageData;
 
 darty.wynn.clone = function(x) {
 	try {
@@ -36,14 +37,16 @@ darty.wynn.priceToStr = function (n) {
 };
 
 darty.wynn.getPrct = function (a, b) {
-    return 100 * a / b;
+	// console.log('Poids Acc : '  + a + ' CA2M : ' + b + 'results : ' + a/(a+b)*100);
+    return isNaN(a) || isNaN(b) || (a+b) == 0 ? 0 : a/(a+b)*100;
 }
 
-darty.wynn.getEvol = function (a, b) { // b : 1y, a : 2m
+darty.wynn.getEvol = function (a, b) { // b : 1y, a : 2m 
+	// console.log('getEvol - b : ' + b + ' a != 0 : ' + a);
 	if(b > 0 && a == 0) {
 		return -100;
 	} else {
-		return 100 * (a - b) / b;
+		return typeof (100 * (a - b) / b) === 'number' ? 100 * (a - b) / b : '-';
 	}
 }
 
@@ -51,12 +54,21 @@ darty.wynn.formatPrice = function (n) {
     return isNaN(n) ? 0 + ' €': (darty.wynn.priceToStr(n)) + ' €';
 };
 
-darty.wynn.formatEvo = function (n) {
-    return isNaN(n) ? '- %' : ((n < 0 ? '-' : '') + Math.abs(n).toFixed(1) + '%');
+darty.wynn.formatEvo = function (n) { // pour maquille le pourcentage d'evo 
+	if (n == 'Infinity' || isNaN(n)){
+		console.log('Format Evo :',isNaN(n), isFinite(n));
+		return '- %';}
+	else {
+		console.log('Format Evo :',isNaN(n), isFinite(n));
+		return ((n < 0 ? '-' : '') + Math.abs(n).toFixed(1) + ' %');
+	}
 };
 
-darty.wynn.formatPrct = function (n) {
-	return isNaN(n) ? ' 0 %' : (Math.abs(n).toFixed(1) + ' %');
+darty.wynn.formatPrct = function (n) { // pour maquiller le pourcentage 
+	if (n == 'Infinity' || isNaN(n))
+		return '- %';
+	else 
+		return ((n < 0 ? '-' : '') + Math.abs(n).toFixed(1) + ' %');
 };
 
 darty.wynn.formatConcret = function (n) {
@@ -86,6 +98,7 @@ darty.wynn.score2Cls = function (score, max) {
         case 1: return max === 4 ? '1' : '2';
         case 2: return max === 4 ? '2' : '3';
         case 3: return '3';
+		default: return '0';
     }
 };
 
@@ -152,39 +165,99 @@ darty.wynn.removeFilters = function(type, dim) {
 			window.location.assign("http://" + window.location.host + "/accueil");
 }
 
-darty.wynn.setFilters = function(type) {
-	var text = {};
-	text.prdRep = 'Tous Produits';
-	text.orgRep = 'Darty France';
-	text.prd = '';
-	text.org = '';
-	text.intro1 = '<div id="ariane';
-	text.intro2 = '>'
-	text.endReq = '</div>'
-	text.org_close = '<a><span id="close_org" class="close"><</span></a>';
-	text.prd_close = '<a><span id="close_prod" class="close"><</span></a>';
-	var obj = darty.wynn.pageData;
-	for(var index in obj.filtres) { 
-		if (index.substring(0,3) == 'org')
-			text.org = '<span id="'+obj.filtres[index].lib+'" class="org"> '+obj.filtres[index].lib +' </span>'+'</div>'
-		else if (index.substring(0,3) == 'prd')
-			text.prd = '<span id="'+obj.filtres[index].lib+'" class="prd"> '+obj.filtres[index].lib +' </span>'+'</div>';
-	}
-	// on enlève les 2 blocs à refaire ariane1 => Produits, ariane2 => Lieux
-							
-	$('#bouton-home').append("<a><span id='home'>Accueil</span></a><div id='ariane'></div>").each(function(){
-		if (text.org != '') // si pas de filtre org 
-			$("#ariane").append(text.intro1+'1" class="org">'+text.org_close+'<div id="ariane_org"'+text.intro2+text.org+'</div>'+text.endReq);
-		else   // si filtre org 
-			$("#ariane").append(text.intro1+'1" class="org"><div id="ariane_org"'+text.intro2+text.orgRep+'</div>'+text.endReq); 
-		if (text.prd != '')  // si pas de filtre prd
-			$("#ariane").append(text.intro1+'2" class="prd">'+text.prd_close+'<div id="ariane_prod"'+text.intro2+text.prd+'</div>'+text.endReq); 
-		else  // si filtre prd
-			$("#ariane").append(text.intro1+'2" class="prd"><div id="ariane_prod"'+text.intro2+text.prdRep+'</div>'+text.endReq); 
-		if (type == 'details') {
-			var agg = 'span#'+obj.filtres.agg.substring(0,3);
-			$(agg).removeClass().addClass('noActive');
-			
+darty.wynn.getMaxFilter = function(dim) { // retourne chaine vide ou indice max ! 
+	var max = 0 , flag = false;
+	var f = darty.wynn.makeSimpleFiltersClone();
+	// console.log(f, max, flag);
+	if (typeof dim != 'undefined') {
+		for (var u in f) {
+			// console.log('test getMaxFilter', u, 'dimension : ', dim)
+			if (u.substring(0,3) == dim) {
+				max = max > parseInt(u.substring(3,4)) ? max : u.substring(3,4);
+				// console.log('test getMaxFilter', u.substring(3,4), 'Max : ', max)
+				flag = true;
+			}
 		}
-	});
+	}
+	else
+		for (var h in f) {
+			if (h.substring(0,3) != 'agg') {
+				max = max > parseInt(u.substring(3,4)) ? max : u.substring(3,4);
+				console.log('test getMaxFilter', u.substring(3,4), 'Max : ', max)
+				flag = true;
+			}
+		}
+	max = parseInt(max);
+	// console.log('typeof max :', typeof max, 'val de max : ', max, 'Dimension : ', dim)
+	console.log("Réussite de getMaxFilter ? ",flag);
+	return flag ? parseInt(max) : '';
+}
+
+darty.wynn.setFilters = function(type) {
+	var cont = {};
+	cont.prdRep = 'Tous Produits';
+	cont.orgRep = 'Darty France';
+	cont.prd = '';
+	cont.org = '';
+	cont.intro1 = '<div id="ariane';
+	cont.intro2 = '>'
+	cont.endReq = '</div>'
+	cont.org_close = '<a><span id="close_org" class="close"><</span></a>';
+	cont.prd_close = '<a><span id="close_prd" class="close"><</span></a>';
+	var obj = darty.wynn.pageData;
+	var val = 0;
+	var rendu='';
+	// console.log(obj);
+	for(var index in obj.filtres) { 
+		// console.log('XXXXXXXXXXXXXXXXXXXX -> index', index);
+		if (index.substring(0,3) == 'org' && parseInt(index.substring(3,4)) == darty.wynn.getMaxFilter('org')) {
+			cont.org = '<span id="" class="org"> ';
+			cont.org += obj.filtres[index].lib.length > 0 ? obj.filtres[index].lib +' </span>': obj.filtres[index].cd +' </span>';
+			// cont.org +=;
+			// cont.org = '<span id="'+obj.filtres[darty.wynn.getMaxFilter('org')].lib+'" class="org"> '+obj.filtres[darty.wynn.getMaxFilter('org')].lib +' </span>'+'</div>'
+		}
+		if (index.substring(0,3) == 'prd' && parseInt(index.substring(3,4)) == darty.wynn.getMaxFilter('prd')) {
+			cont.prd = '<span id="" class="prd"> ';
+			cont.prd += obj.filtres[index].lib.length > 0 ? obj.filtres[index].lib +' </span>': obj.filtres[index].cd + ' </span>';
+			// cont.prd +=;
+			// cont.prd = '<span id="'+obj.filtres[darty.wynn.getMaxFilter('prd')].lib+'" class="prd"> '+obj.filtres[darty.wynn.getMaxFilter('prd')].lib +' </span>'+'</div>';
+		}
+	}
+	console.log(cont.prd);
+	console.log(cont.org);
+	// console.log(cont.prd, cont.org);
+	// on enlève les 2 blocs à refaire ariane1 => Produits, ariane2 => Lieux
+	rendu = "<div id='blueContentTop'><p id='lastUpdate'></p></div><a><span id='home'>Accueil</span></a><div id='ariane'>";
+	// rendu = "<div id='blueContentTop'><p id='lastUpdate'></p></div><a><span id='home'>Accueil</span></a><div id='ariane'>";
+	
+	rendu += (cont.org != '') ? '<div id="ariane1" class="org"><a><span id="close_org" class="close"><</span></a><div id="ariane_org">'+cont.org+'</div></div>': 
+	'<div id="ariane1" class="org"><div id="ariane_org"><span id="" class="org">'+cont.orgRep+'</span></div></div>';
+	
+	rendu += (cont.prd != '') ? '<div id="ariane2" class="prd"><a><span id="close_prd" class="close"><</span></a><div id="ariane_prd">'+cont.prd+'</div></div></div>' : 
+	'<div id="ariane2" class="prd"><div id="ariane_prd"><span id="" class="prd">'+cont.prdRep+'</span></div></div></div>';
+	
+		// rendu += '<o>'+cont.orgRep+'Guigui est chaud</p>';
+		// cont.intro1+'1" class="org">'+cont.org_close+'<div id="ariane_org"'+cont.intro2+cont.org+'</div>'+cont.endReq :
+		// cont.intro1+'1" class="org"><div id="ariane_org"'+cont.intro2+cont.orgRep+'</div>'+cont.endReq;
+	// rendu += (cont.prd != '')  ? 
+		// cont.intro1+'2" class="prd">'+cont.prd_close+'<div id="ariane_prod"'+cont.intro2+cont.prd+'</div>'+cont.endReq : 
+		// cont.intro1+'2" class="prd"><div id="ariane_prod"'+cont.intro2+cont.prdRep+'</div>'+cont.endReq;
+	// rendu += '</div>';
+	console.log(rendu);
+	$('#bouton-home').append(rendu);
+	// $('#bouton-home').append("<div id='blueContentTop'><p id='lastUpdate'></p></div><a><span id='home'>Accueil</span></a><div id='ariane'></div>").each(function(){
+		// if (cont.org != '') // si pas de filtre org 
+			// $("#ariane").append(cont.intro1+'1" class="org">'+cont.org_close+'<div id="ariane_org"'+cont.intro2+cont.org+'</div>'+cont.endReq);
+		// else   // si filtre org 
+			// $("#ariane").append(cont.intro1+'1" class="org"><div id="ariane_org"'+cont.intro2+cont.orgRep+'</div>'+cont.endReq); 
+		// if (cont.prd != '')  // si pas de filtre prd
+			// $("#ariane").append(cont.intro1+'2" class="prd">'+cont.prd_close+'<div id="ariane_prod"'+cont.intro2+cont.prd+'</div>'+cont.endReq); 
+		// else  // si filtre prd
+			// $("#ariane").append(cont.intro1+'2" class="prd"><div id="ariane_prod"'+cont.intro2+cont.prdRep+'</div>'+cont.endReq); 
+		
+	// });
+	if (type == 'details') {
+		var agg = 'span#'+obj.filtres.agg.substring(0,3);
+		$(agg).removeClass().addClass('noActive');
+	}
 };

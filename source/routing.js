@@ -37,7 +37,7 @@ function handleRequest(request, response) {
 	setInterval(function() {
     _fs.appendFile('/etc/munin/plugins/nodejs_requests', request_count + '\n', function (error) {
 		if (error) {
-            throw error;
+            //throw error; TODO : remove pour Munin ... 
 		}
 		request_count=0;
 	});
