@@ -16,8 +16,7 @@ darty.wynn.data = (function () {
     }
 
     function postRequest(action, options, callback) {
-		// console.log('PostRequest : ', JSON.stringify(options));
-        $.ajax({
+		$.ajax({
             url: 'service/' + action,
             type: 'POST',
             dataType: 'json',
@@ -25,9 +24,7 @@ darty.wynn.data = (function () {
             data: JSON.stringify(options),
             timeout: darty.wynn.config.reqTimeout,
             success: function (data){
-				// console.log('data après le success du postRequest (Client Side)');
-				// console.log(data);
-                callback(null, data);
+				callback(null, data);
             },
             error : function (xhr) {
                 logError(xhr);
@@ -42,11 +39,9 @@ darty.wynn.data = (function () {
 
     // Calcul de valeurs supplémentaires sur une ligne aggrégée.
     function computeLineValues(data) { // from : createLineModel => from : prepareModel -> Utilisé par getDetails ! 
-		// console.log(data);
 		var result = {};
 		result.ca2m = data.ca2m;
 		result.ca1y = data.ca1y;
-		// result.prime = data.primevendeur; // si prime TODO 
 		result.caEvo2m = _w.getEvol(data.ca2m, data.ca1y); // ok
         
         result.caEvoGlobal2m = _w.getEvol(data.caGlobal2m, data.caGlobal1y);
@@ -68,50 +63,25 @@ darty.wynn.data = (function () {
 		result.caPartOaGlobal2m = _w.getPrct(data.caPoidsOaGlobal2m, data.caGlobal2m);
 		
 		return result;
-		
-		/*data.caEvo2m = _w.getEvol(data.ca2m, data.ca1y); // ok
-        
-        data.caEvoGlobal2m = _w.getEvol(data.caGlobal2m, data.caGlobal1y);
-
-		data.caPartAcc2m = _w.getPrct(data.caPoidsAcc2m, data.ca2m); 					// le calcul de ratio se fait ici ! 
-		data.caPartAcc1y = _w.getPrct(data.caPoidsAcc1y, data.ca1y);
-		data.caPartAccGlobal2m = _w.getPrct(data.caPoidsAccGlobal2m, data.caGlobal2m);
-		
-		data.caPartServ2m = _w.getPrct(data.caPoidsServ2m, data.ca2m);
-		data.caPartServ1y = _w.getPrct(data.caPoidsServ1y, data.ca1y);
-		data.caPartServGlobal2m = _w.getPrct(data.caPoidsServGlobal2m, data.caGlobal2m);
-		
-		data.caPartRem2m = _w.getPrct(data.caPoidsRem2m, data.ca2m);
-		data.caPartRem1y = _w.getPrct(data.caPoidsRem1y, data.ca1y);
-		data.caPartRemGlobal2m = _w.getPrct(data.caPoidsRemGlobal2m, data.caGlobal2m);
-		
-		data.caPartOa2m = _w.getPrct(data.caPoidsOa2m, data.ca2m);
-		data.caPartOa1y = _w.getPrct(data.caPoidsOa1y, data.ca1y);
-		data.caPartOaGlobal2m = _w.getPrct(data.caPoidsOaGlobal2m, data.caGlobal2m);*/
     }
 	
 	function computeScore(val, histo, moyenne, budget) {
 		if (!isFinite(val))
 			return 0; 
-			// return Math.floor((Math.random()*3)+0); // TODO : REMOVE THAT SHIT ! 
 		var score = 0;
         (val > histo) && score++;
         (val > moyenne) && score++;
         budget && (val > histo + (histo * budget) / 100) && score++;		
-		// score = Math.floor((Math.random()*3)+0);// TODO : REMOVE THAT SHIT !
-        // console.log('computeScore - val : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget + ' =>>  score : '+ score);
 		return score;
     }
 
     function computeScoreEvol(val, histo, moyenne, budget) {
-        // console.log('computeScoreEvol : ' + val + ' - histo : ' + histo + ' - moyenne : ' + moyenne + ' - budget : ' + budget);
-		if (!isFinite(val))
+        if (!isFinite(val))
 			return 0;
 		var score = 0;
 		(val > histo) && score++;
         (val > histo + (histo * moyenne) / 100) && score++;
         budget && (val > histo + (histo * budget) / 100) && score++;
-        // console.log('score : ' + score);
         return score;
     }
 

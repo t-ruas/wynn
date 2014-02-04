@@ -1,6 +1,5 @@
 // fab
 darty.wynn.gui.details = (function () {
-//window.event.cancelBubble = true;
     var _w = darty.wynn;
     var refreshTimer = null;
     var lastRefresh = null;
@@ -34,8 +33,6 @@ darty.wynn.gui.details = (function () {
 				else {
 					$('#mainContentMiddle').html(doT.template($('#tmplDetailsTable').text())(prepareModel(result, pageActive)));
 				}
-				// console.log('Mise à jour des infos de la page ! ');
-				// prepareModel(result, pageActive); // a dégager et remettre le if/else au dessus ! 
 				
 				if(parseInt(pageNumber) > 1)
 					$('#pageNumberLoader').prepend(text);
@@ -74,29 +71,34 @@ darty.wynn.gui.details = (function () {
 					5: {sorter:'percent'},
 					6: {sorter:'percent'} }
 				});
-				
-				if((metaDataTable.orientation || metaDataTable.col) && metaDataTable.etat) { // Mise à jour du tableau postRefresh ! 
+				if((metaDataTable.orientation || metaDataTable.col) || metaDataTable.etat) { // Mise à jour du tableau postRefresh ! 
 					var sorting = [[(typeof metaDataTable.col === 'number' ? metaDataTable.col : 0),metaDataTable.orientation == 'up' ? 1 : 0]]; 
 					$("table").trigger("sorton",[sorting]);
-					metaDataTable.etat == 'ferme' ? $('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle() : '';
+					if (metaDataTable.etat == 'ferme') { // doit être ferme
+						if ($('#detailsTable.reducted').length == 0) {// mais est ouvert
+							$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
+							updateClassTable();
+						}
+					}
+					else { // doit etre ouvert
+						if ($('#detailsTable.reducted').length == 1) {// et est ouvert
+							$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
+							updateClassTable();
+						}
+					}
+					
 				}
 				if (flag1erAffichage) {
 					$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
-					$('#detailsTable').addClass('reducted');
 					flag1erAffichage = false;
+					updateClassTable();
 				}
-				
-				// if(metaDataTable.orientation || metaDataTable.col || metaDataTable.etat)
-					// console.log('metaDataTable contient des objets');
-				// else
-					// console.log('metaDataTable est vide ! ');
 			}
         });
     }
 	
 	// function de répartition des données dans le template HTML
     function prepareModel(data, pageNumber) {
-		// console.log('Data : ', data);
 		if (isNaN(pageNumber))
 			pageNumber = 1;
 		var model = {
@@ -104,10 +106,6 @@ darty.wynn.gui.details = (function () {
         };
 		var sum = {}; 
         var t = {};
-		// var fields = ['ca', 'ca2m', 'ca1y', 'caGlobal1y', 'caGlobal2m', 'vt2m', 'vt1y',
-		// 'caPoidsOaGlobal2m', 'caPoidsRemGlobal2m', 'caPoidsAccGlobal2m',
-		// 'caPoidsServGlobal2m', 'caPoidsOa1y','caPoidsRem1y','caPoidsAcc1y','caPoidsServ1y',
-		// 'caPoidsOa2m','caPoidsRem2m','caPoidsAcc2m','caPoidsServ2m','primevendeur']; // si prime TODO 
 		var fields = ['ca', 'ca2m', 'ca1y', 'caGlobal1y', 'caGlobal2m', 'vt2m', 'vt1y',
 		'caPoidsOaGlobal2m', 'caPoidsRemGlobal2m', 'caPoidsAccGlobal2m',
 		'caPoidsServGlobal2m', 'caPoidsOa1y','caPoidsRem1y','caPoidsAcc1y','caPoidsServ1y',
@@ -129,8 +127,7 @@ darty.wynn.gui.details = (function () {
 			if (j >= (darty.wynn.config.linePerPage*(pageNumber-1)) && j < (darty.wynn.config.linePerPage*pageNumber)) {
 				model.list.push(lineModel);}															// on rajoute dans la liste de model.
 			createSumLine(lineData, sum); 																// mais on veut une somme correcte, donc on garde la somme =)
-			console.log(data[j]);
-        }
+		}
 		model.totals = createLineModel(sum);
 		f = _w.makeSimpleFiltersClone();
 		model.totals.dbQuery = "/accueil?" + _w.makeQuery(f);
@@ -177,36 +174,25 @@ darty.wynn.gui.details = (function () {
                 cls: isNaN(result.caPartOa2m) || !isFinite(result.caPartOa2m)  ? 'gray' : _w.score2Cls(_w.data.computeScore(result.caPartOa2m, result.caPartOa1y, result.caPartOaGlobal2m,_w.pageData.budget.OFFRESACTIVES), 4)
 			}
         }
-		// var f = _w.makeSimpleFiltersClone();
-		// if(f.agg == 'org4') {
-			// console.log('BYPASS des KPI pour Prime Vendeur');
-			// z.caEvo.val = _w.formatPrct(result.prime);
-		// } SI prime TODO 
 		return z;
     }
 	// function de création de la requête pour l'appel vers Dashboard
     function makeDashboardQuery(cd) {
-		// console.log('cd',cd)
 		var f = _w.makeSimpleFiltersClone();
 		var aggreg = f.agg;
         f[f.agg] = cd;
-		console.log(f, test);
-        var test = delete f.agg;
-		console.log(f, test);
+		var test = delete f.agg;
 		return 'agg='+aggreg+'&'+_w.makeQuery(f);
     }
 	// function de création de la requête pour l'appel en Drill Down
     function makeDrillDownQuery(cd) {
         var f = _w.makeSimpleFiltersClone();
-		// console.log('1er f', f, 'f.agg.slice(0,3) = ', f.agg.slice(0,3),'f.agg.slice(3) = ', f.agg.slice(3));
-        f[f.agg] = cd;
+		f[f.agg] = cd;
 		if(f.agg == 'prd6' || f.agg == 'org4')
 			f.agg = f.agg.slice(0,3) == 'prd' ? (darty.wynn.getMaxFilter('org')== 4 ? 'org4' : 'org'+parseInt(darty.wynn.getMaxFilter('org')+1) ):
 				(darty.wynn.getMaxFilter('prd')== 6 ? 'prd6' : 'prd'+parseInt(darty.wynn.getMaxFilter('prd')+1));
 		else
 			f.agg = f.agg.slice(0,3) + (parseInt(f.agg.slice(3)) + 1);
-		// console.log('2nd f', f, 'f[f.agg]', f.agg);
-		// console.log('makeQuery(f)',_w.makeQuery(f));
         return _w.makeQuery(f);
     }
 	
@@ -215,52 +201,31 @@ darty.wynn.gui.details = (function () {
 		metaDataTable.orientation = $('th.headerSortUp').length>0 ? 'up' : ($('th.headerSortDown').length>0 ? 'down' : '');
 		metaDataTable.col = metaDataTable.orientation == 'up' ? parseInt($('th.headerSortUp').attr('id').substring(3,4)) : (metaDataTable.orientation == 'down' ? parseInt($('th.headerSortDown').attr('id').substring(3,4)) : '');
 		metaDataTable.etat = $('#detailsTable').attr('class') == 'reducted' ? 'ferme':'ouvert';
-		// console.log(metaDataTable.orientation, metaDataTable.col, metaDataTable.etat); 
-		// up = ordre croissant A B C 1 2 3
-		// down = ordre décroissant C B A 3 2 1 
 	};
 	
+	function updateClassTable() {
+		if($('#detailsTable').attr('class'))
+			$('#detailsTable').removeClass();
+		else
+			$('#detailsTable').addClass('reducted');
+	}
+	
     function start() {
-		// alert('Start ! ');
-        $(document).ready(function () {
-			// agrandir le tableau avec le volet droit 
-            $(document).on('click', '#detailsTable .linkExpand', function () {
+		$(document).ready(function () {
+			$(document).on('click', '#detailsTable .linkExpand', function () {
                 $('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
-				if($('#detailsTable').attr('class'))
-					$('#detailsTable').removeClass();
-				else
-					$('#detailsTable').addClass('reducted');
+				updateClassTable();
 				return false;
             });
 			
 			// Bouton Refresh Timer 
             $(document).on('click','p#lastUpdate', function () {
-                console.log('SEMI ECHEC');
-				if (refreshTimer) {
-					/* Pour garder le tableau ouvert et l'ordre de tri ! */
+                if (refreshTimer) {
 					updateTable();
-					console.log('SOMETHING ?§?§ ')
 					window.clearTimeout(refreshTimer);
                     refreshPage();
                 }
             });
-			
-			// $(document).on('click','#blueContentBot', function () { // TODO : REMOVE ! 
-				// /* Pour garder le tableau ouvert et l'ordre de tri ! */
-				// metaDataTable.orientation = $('th.headerSortUp').length>0 ? 'up' : ($('th.headerSortDown').length>0 ? 'down' : '');
-				// metaDataTable.col = metaDataTable.orientation == 'up' ? $('th.headerSortUp').attr('id').substring(3,4) : (metaDataTable.orientation == 'down' ? $('th.headerSortDown').attr('id').substring(3,4) : '');
-				// metaDataTable.etat = $('#detailsTable').attr('class') == 'reducted' ? 'ferme':'ouvert';
-				// console.log(metaDataTable.orientation, metaDataTable.col, metaDataTable.etat); 
-			// });
-			
-			// $('#blueContentMid').on('click', function () { // TODO : REMOVE ! 
-				// console.log('La lumière est éteinte ');
-				// if(metaDataTable.orientation || metaDataTable.col || metaDataTable.etat)
-					// console.log('metaDataTable contient des objets');
-				// else
-					// console.log('metaDataTable est vide ! ');
-            // });
-            
 			
 			// Bouton radio de choix de dimension
 			$(document).on('click', 'div#bouton span.active', function () {

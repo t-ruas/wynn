@@ -57,8 +57,7 @@ function handleRequest(request, response) {
         }
     );
     request.addListener('end', function () {
-			// console.log('routing.js return on End ;)')
-            if (context.body.length) {
+			if (context.body.length) {
                 context.content = (function (ct) {
                     if (!ct.indexOf('application/json')) {
                         return JSON.parse(context.body);
@@ -70,7 +69,6 @@ function handleRequest(request, response) {
             var methodRoutes = routes[context.request.method]; // dispose des pattern de routes
             for (var i = 0, imax = methodRoutes.length; i < imax; i++) { // on fait le tour des différentes routes disponibles 
                 var route = methodRoutes[i];
-                //_logger.info(_util.inspect(route));
                 var matches = route.pattern.exec(context.path.pathname);
                 if (matches) { // si c'est la bonne route 
                     for (var j = 1; j < matches.length; j++) {

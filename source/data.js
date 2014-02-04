@@ -20,6 +20,7 @@ function sendRequest(options, data, callback) {
     options.port = _config.elasticSearch.port;
     options.path = '/' + _config.elasticSearch.index + options.path;
     // On lance la requête
+	console.log('Voici la requete : ',JSON.stringify(data))
     var req = _http.request(options, function (response) {
         var content = '';
         response.on('data', function (chunk) {
@@ -116,7 +117,7 @@ function getBudget(callback) {
 		// console.log(ddate + '' + typeof ddate);
 	}
 	
-	console.log(ddate, typeof ddate);
+	// console.log(ddate, typeof ddate);
 	var f = {"DATE": ddate};
 	var data = {
 		size: 1,

@@ -9,7 +9,7 @@ var darty = {
             refreshCa: 5 * 1000,
 			quartdheure: 15 * 60 * 1000,
             // timeDiff : 0,
-            timeDiff : 60*60*1000,
+            timeDiff : 2*60*1000,
 			linePerPage : 100,
 			requestAccueil : 'indicateurs',
 			requestDetails : 'details',
@@ -56,7 +56,7 @@ darty.wynn.formatPrice = function (n) {
 
 darty.wynn.formatEvo = function (n) { // pour maquille le pourcentage d'evo 
 	if (n == 'Infinity' || isNaN(n)){
-		console.log('Format Evo :',isNaN(n), isFinite(n));
+		// console.log('Format Evo :',isNaN(n), isFinite(n));
 		return '- %';}
 	else {
 		console.log('Format Evo :',isNaN(n), isFinite(n));
@@ -189,7 +189,7 @@ darty.wynn.getMaxFilter = function(dim) { // retourne chaine vide ou indice max 
 		}
 	max = parseInt(max);
 	// console.log('typeof max :', typeof max, 'val de max : ', max, 'Dimension : ', dim)
-	console.log("Réussite de getMaxFilter ? ",flag);
+	// console.log("Réussite de getMaxFilter ? ",flag);
 	return flag ? parseInt(max) : '';
 }
 
@@ -207,55 +207,23 @@ darty.wynn.setFilters = function(type) {
 	var obj = darty.wynn.pageData;
 	var val = 0;
 	var rendu='';
-	// console.log(obj);
 	for(var index in obj.filtres) { 
-		// console.log('XXXXXXXXXXXXXXXXXXXX -> index', index);
 		if (index.substring(0,3) == 'org' && parseInt(index.substring(3,4)) == darty.wynn.getMaxFilter('org')) {
 			cont.org = '<span id="" class="org"> ';
 			cont.org += obj.filtres[index].lib.length > 0 ? obj.filtres[index].lib +' </span>': obj.filtres[index].cd +' </span>';
-			// cont.org +=;
-			// cont.org = '<span id="'+obj.filtres[darty.wynn.getMaxFilter('org')].lib+'" class="org"> '+obj.filtres[darty.wynn.getMaxFilter('org')].lib +' </span>'+'</div>'
 		}
 		if (index.substring(0,3) == 'prd' && parseInt(index.substring(3,4)) == darty.wynn.getMaxFilter('prd')) {
 			cont.prd = '<span id="" class="prd"> ';
 			cont.prd += obj.filtres[index].lib.length > 0 ? obj.filtres[index].lib +' </span>': obj.filtres[index].cd + ' </span>';
-			// cont.prd +=;
-			// cont.prd = '<span id="'+obj.filtres[darty.wynn.getMaxFilter('prd')].lib+'" class="prd"> '+obj.filtres[darty.wynn.getMaxFilter('prd')].lib +' </span>'+'</div>';
 		}
 	}
-	console.log(cont.prd);
-	console.log(cont.org);
-	// console.log(cont.prd, cont.org);
-	// on enlève les 2 blocs à refaire ariane1 => Produits, ariane2 => Lieux
 	rendu = "<div id='blueContentTop'><p id='lastUpdate'></p></div><a><span id='home'>Accueil</span></a><div id='ariane'>";
-	// rendu = "<div id='blueContentTop'><p id='lastUpdate'></p></div><a><span id='home'>Accueil</span></a><div id='ariane'>";
-	
 	rendu += (cont.org != '') ? '<div id="ariane1" class="org"><a><span id="close_org" class="close"><</span></a><div id="ariane_org">'+cont.org+'</div></div>': 
 	'<div id="ariane1" class="org"><div id="ariane_org"><span id="" class="org">'+cont.orgRep+'</span></div></div>';
-	
 	rendu += (cont.prd != '') ? '<div id="ariane2" class="prd"><a><span id="close_prd" class="close"><</span></a><div id="ariane_prd">'+cont.prd+'</div></div></div>' : 
 	'<div id="ariane2" class="prd"><div id="ariane_prd"><span id="" class="prd">'+cont.prdRep+'</span></div></div></div>';
 	
-		// rendu += '<o>'+cont.orgRep+'Guigui est chaud</p>';
-		// cont.intro1+'1" class="org">'+cont.org_close+'<div id="ariane_org"'+cont.intro2+cont.org+'</div>'+cont.endReq :
-		// cont.intro1+'1" class="org"><div id="ariane_org"'+cont.intro2+cont.orgRep+'</div>'+cont.endReq;
-	// rendu += (cont.prd != '')  ? 
-		// cont.intro1+'2" class="prd">'+cont.prd_close+'<div id="ariane_prod"'+cont.intro2+cont.prd+'</div>'+cont.endReq : 
-		// cont.intro1+'2" class="prd"><div id="ariane_prod"'+cont.intro2+cont.prdRep+'</div>'+cont.endReq;
-	// rendu += '</div>';
-	console.log(rendu);
 	$('#bouton-home').append(rendu);
-	// $('#bouton-home').append("<div id='blueContentTop'><p id='lastUpdate'></p></div><a><span id='home'>Accueil</span></a><div id='ariane'></div>").each(function(){
-		// if (cont.org != '') // si pas de filtre org 
-			// $("#ariane").append(cont.intro1+'1" class="org">'+cont.org_close+'<div id="ariane_org"'+cont.intro2+cont.org+'</div>'+cont.endReq);
-		// else   // si filtre org 
-			// $("#ariane").append(cont.intro1+'1" class="org"><div id="ariane_org"'+cont.intro2+cont.orgRep+'</div>'+cont.endReq); 
-		// if (cont.prd != '')  // si pas de filtre prd
-			// $("#ariane").append(cont.intro1+'2" class="prd">'+cont.prd_close+'<div id="ariane_prod"'+cont.intro2+cont.prd+'</div>'+cont.endReq); 
-		// else  // si filtre prd
-			// $("#ariane").append(cont.intro1+'2" class="prd"><div id="ariane_prod"'+cont.intro2+cont.prdRep+'</div>'+cont.endReq); 
-		
-	// });
 	if (type == 'details') {
 		var agg = 'span#'+obj.filtres.agg.substring(0,3);
 		$(agg).removeClass().addClass('noActive');

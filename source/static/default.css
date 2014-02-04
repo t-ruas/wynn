@@ -559,6 +559,7 @@ div#ariane {
     margin: 0 auto;
     overflow: auto;
 	padding-bottom:80px;
+	min-height: 250px;
 }
 
 /*.button_right{
@@ -925,7 +926,7 @@ tfoot {text-align : center;}
 	color : rgb(90, 94, 107);
 	top: 0px;
 	position: absolute;
-	left: 300px;
+	left: 350px;
 	height: 50px;
 	width: 150px;
 	text-align: center;
@@ -934,7 +935,9 @@ tfoot {text-align : center;}
 	border-bottom-right-radius: 22px;
 	opacity: 0.8;
 	margin : 0 auto;
-	clear: both
+	clear: both;
+	font-family: "dartySans";
+	src: url("./fonts/Darty Sans.otf");
 }
 
 #blueContentMid {
