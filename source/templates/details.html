@@ -28,61 +28,61 @@
             <!-- <div id="menu"> -->
 				
 			<!-- </div> -->
-		<div style="color:white" id="pageNumberLoader">
-		</div>
-		<table id="detailsTable">
-			<thead>
-                    <tr>
-					    <th id="col0">
-							<div id="zone">									
-							</div>
-						</th>
-                        <th id="col1">CA
-							<!-- <img class="arrow" src="./img/arrow.png"> -->
-						</th>
-                        <th id="col2">% Evol
-							<!-- <img class="arrow" src="./img/arrow.png"> -->
-						</th>
-                        <th id="col3">Acc.
-							<!-- <img class="arrow" src="./img/arrow.png"> -->
-						</th>
-                        <th id="col4">Gar.
-							<!-- <img class="arrow" src="./img/arrow.png"> -->
-						</th>
-                        <th id="col5">OA.
-							<!-- <img class="arrow" src="./img/arrow.png"> -->
-						</th>
-                        <th id="col6">Rem.
-							<!-- <img class="arrow" src="./img/arrow.png"> -->
-						</th>
-                    </tr>
-                </thead></div>	
-				<tbody>
-                    <%~it.list:line%>
-                        <tr>
-                            <td class="content first-column"> <div class="code"><a href="/details?<%=line.ddQuery%>"><%=line.cd%></a> </div>  <div class="libelle"><a href="/details?<%=line.ddQuery%>"><%=line.lib%><span style="visibility:hidden"> ,<%=line.order%></span></a></div> </td>
-                            <td class="content color_X"><a href="/accueil?<%=line.dbQuery%>"><%=line.ca%></a></td>
-                            <td class="content color_background_<%=line.caEvo.cls%> linkExpand"><span><%=line.caEvo.val%></span></td>
-                            <td class="content color_underline_<%=line.acc.cls%>"><%=line.acc.val%></td>
-                            <td class="content color_underline_<%=line.serv.cls%>"><%=line.serv.val%></td>
-                            <td class="content color_underline_<%=line.oa.cls%>"><%=line.oa.val%></td>
-                            <td class="content color_underline_<%=line.rem.cls%>"><%=line.rem.val%></td>
+			<div style="color:white" id="pageNumberLoader">
+			</div>
+			<table id="detailsTable">
+				<thead>
+						<tr>
+							<th id="col0">
+								<div id="zone">									
+								</div>
+							</th>
+							<th id="col1">CA
+								<!-- <img class="arrow" src="./img/arrow.png"> -->
+							</th>
+							<th id="col2">% Evol
+								<!-- <img class="arrow" src="./img/arrow.png"> -->
+							</th>
+							<th id="col3">Acc.
+								<!-- <img class="arrow" src="./img/arrow.png"> -->
+							</th>
+							<th id="col4">Gar.
+								<!-- <img class="arrow" src="./img/arrow.png"> -->
+							</th>
+							<th id="col5">OA.
+								<!-- <img class="arrow" src="./img/arrow.png"> -->
+							</th>
+							<th id="col6">Rem.
+								<!-- <img class="arrow" src="./img/arrow.png"> -->
+							</th>
 						</tr>
-                    <%~%>
-                </tbody>
+					</thead></div>	
+				<tbody>
+					<%~it.list:line%>
+						<tr>
+							<td class="content first-column"> <div class="code"><a href="/details?<%=line.ddQuery%>"><%=line.cd%></a> </div>  <div class="libelle"><a href="/details?<%=line.ddQuery%>"><%=line.lib%><span style="visibility:hidden"> ,<%=line.order%></span></a></div> </td>
+							<td class="content color_X"><a href="/accueil?<%=line.dbQuery%>"><%=line.ca%></a></td>
+							<td class="content color_background_<%=line.caEvo.cls%> linkExpand"><span><%=line.caEvo.val%></span></td>
+							<td class="content color_underline_<%=line.acc.cls%>"><%=line.acc.val%></td>
+							<td class="content color_underline_<%=line.serv.cls%>"><%=line.serv.val%></td>
+							<td class="content color_underline_<%=line.oa.cls%>"><%=line.oa.val%></td>
+							<td class="content color_underline_<%=line.rem.cls%>"><%=line.rem.val%></td>
+						</tr>
+					<%~%>
+				</tbody>
 				<tfoot>
-                    <tr>
+					<tr>
 						<td>TOTAL</td>
-                        <td class="color_X"><a href="<%=it.totals.dbQuery%>"><%=it.totals.ca%></a></td>
-                        <td class="color_background_<%=it.totals.caEvo.cls%>" ><%=it.totals.caEvo.val%></td>
-                        <td class="color_underline_<%=it.totals.acc.cls%>"><%=it.totals.acc.val%></td>
-                        <td class="color_underline_<%=it.totals.serv.cls%>"><%=it.totals.serv.val%></td>
-                        <td class="color_underline_<%=it.totals.oa.cls%>"><%=it.totals.oa.val%></td>
-                        <td class="color_underline_<%=it.totals.rem.cls%>"><%=it.totals.rem.val%></td>
-                    </tr>
-                </tfoot></div>
-            </table>
-        </script>
+						<td class="color_X"><a href="<%=it.totals.dbQuery%>"><%=it.totals.ca%></a></td>
+						<td class="color_background_<%=it.totals.caEvo.cls%>" ><%=it.totals.caEvo.val%></td>
+						<td class="color_underline_<%=it.totals.acc.cls%>"><%=it.totals.acc.val%></td>
+						<td class="color_underline_<%=it.totals.serv.cls%>"><%=it.totals.serv.val%></td>
+						<td class="color_underline_<%=it.totals.oa.cls%>"><%=it.totals.oa.val%></td>
+						<td class="color_underline_<%=it.totals.rem.cls%>"><%=it.totals.rem.val%></td>
+					</tr>
+				</tfoot></div>
+			</table>
+		</script>
     </head>
     <body>
         <div id="mainContent">
@@ -105,11 +105,11 @@
             </div>
 			
         </div>
-        <!-- <div id="blueContent">
+        <div id="blueC">
 	        <div id="blueContentTop"></div>			
-	        <div id="blueContentMid"></div>			
-	        <div id="blueContentBot"></div>			
-	    </div> -->
+	        <!-- <div id="blueContentMid"></div>			
+	        <div id="blueContentBot"></div>	-->
+	    </div>
         <div style="clear: both;"></div>
     </body>
 </html>

@@ -5,10 +5,10 @@ var _keygrip = require('keygrip');
 module.exports = {
 	updateLogs : 5000,
 	nbEsQueries: 0,
-	DED_year: 12, 
+	DED_year: 11, 
 	// à partir de l'an 2000, donc pour 2013 : 13
-	DED_month: 0, // de 0 à 11
-	DED_day: 1, 
+	DED_month: 09, // de 0 à 11
+	DED_day: 24, 
 	// 1 / 7 / 2011 beaucoup de data mais nulles
 	// 28 / 3/ 2013 peu de data mais globalement ok 
 	// 9 / 8/ 2012 pour les primes 
@@ -36,6 +36,7 @@ module.exports = {
 			DETAILS_CHUNK_SIZE : 10000,
 			INDICATEURS_CHUNK_SIZE : 999, // non utilisé, inutile ! 
 			ENTREES_CHUNK_SIZE : 999, // non utilisé, inutile ! 
-		}	
+			VENTES_CHUNK_SIZE : 10000000, // non utilisé, inutile ! 
+		}
     },
 };

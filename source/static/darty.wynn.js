@@ -17,7 +17,6 @@ var darty = {
         },
     }
 };
-// var obj = darty.wynn.pageData;
 
 darty.wynn.clone = function(x) {
 	try {
@@ -217,7 +216,8 @@ darty.wynn.setFilters = function(type) {
 			cont.prd += obj.filtres[index].lib.length > 0 ? obj.filtres[index].lib +' </span>': obj.filtres[index].cd + ' </span>';
 		}
 	}
-	rendu = "<div id='blueContentTop'><p id='lastUpdate'></p></div><a><span id='home'>Accueil</span></a><div id='ariane'>";
+	// rendu = '<div id='blueContentTop'><p id='lastUpdate'></p></div>'
+	rendu = "<a><span id='home'>Accueil</span></a><div id='ariane'>";
 	rendu += (cont.org != '') ? '<div id="ariane1" class="org"><a><span id="close_org" class="close"><</span></a><div id="ariane_org">'+cont.org+'</div></div>': 
 	'<div id="ariane1" class="org"><div id="ariane_org"><span id="" class="org">'+cont.orgRep+'</span></div></div>';
 	rendu += (cont.prd != '') ? '<div id="ariane2" class="prd"><a><span id="close_prd" class="close"><</span></a><div id="ariane_prd">'+cont.prd+'</div></div></div>' : 

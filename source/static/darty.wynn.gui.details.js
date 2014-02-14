@@ -72,8 +72,10 @@ darty.wynn.gui.details = (function () {
 					6: {sorter:'percent'} }
 				});
 				if((metaDataTable.orientation || metaDataTable.col) || metaDataTable.etat) { // Mise à jour du tableau postRefresh ! 
-					var sorting = [[(typeof metaDataTable.col === 'number' ? metaDataTable.col : 0),metaDataTable.orientation == 'up' ? 1 : 0]]; 
-					$("table").trigger("sorton",[sorting]);
+					var sorting = [[(typeof metaDataTable.col === 'number' ? metaDataTable.col : ''),metaDataTable.orientation == '' ? '' : (metaDataTable.orientation == 'up' ? 1 : 0)]]; 
+					
+					metaDataTable.orientation != '' && metaDataTable.col != '' ? $("table").trigger("sorton",[sorting]) : '';
+					
 					if (metaDataTable.etat == 'ferme') { // doit être ferme
 						if ($('#detailsTable.reducted').length == 0) {// mais est ouvert
 							$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();

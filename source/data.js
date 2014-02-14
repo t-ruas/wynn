@@ -92,8 +92,6 @@ function makeDateFilterLib(date) {
 
 // permet de retourner le budget pour chaque catégories
 function getBudget(callback) {
-	// callback(null, {CA: -5, ACCESSOIRES: -5, SERVICES: -5, OFFRESACTIVES: -5, REMISE: -5});
-	// get date du jour et la mettre dans value_of_date
 	var value_of_date = new Date();
 	var ddate = '';
 	
@@ -108,16 +106,12 @@ function getBudget(callback) {
 		var tmp = '' + _config.DED_month + '';
 		tmp++; // les mois commencent à 0 ! 
 		tmp = tmp > 9 ? tmp : '0'+tmp;
-		// console.log('DED_month : ' + _config.DED_month + 'Month : ' + tmp + ' - ' + typeof tmp);
 		ddate += tmp;
 		tmp = '' + _config.DED_day + '';
 		tmp = tmp > 9 ? tmp : '0'+tmp;
 		ddate += tmp;
-		// console.log('Day : ' + tmp + ' - ' + typeof tmp);
-		// console.log(ddate + '' + typeof ddate);
 	}
 	
-	// console.log(ddate, typeof ddate);
 	var f = {"DATE": ddate};
 	var data = {
 		size: 1,
@@ -152,7 +146,6 @@ function prepareDateFilters(tempsComptSet) {
 		console.log(typeof a, typeof b, typeof c, dates[0]);
 	}
 	
-	// dates[0] = new Date(); 
 	var dateRef = new Date();
 	dates[0].setHours(dateRef.getHours()); // config pour 01/12/2013
     dates[0].setMinutes(dateRef.getMinutes() -  _config.tempsChargReel); // 2min
@@ -215,13 +208,10 @@ function getFilterText(options, callback) {
     var o = {};
     var cancel = false;
     var i = 0;
-	// console.log('Here are options : ')
-	// console.log(options);
-    for (var m in options) {
+	for (var m in options) {
         (function (n) {
             if (n in filterFields) {
                 i++;
-                // console.log(' getLib -> filterFields[n] : ' + filterFields[n] + ' -> options[n] : ' + options[n]);
                 getLib(filterFields[n], options[n], function (error, result) {
                     if (error) {
                     	callback(error);
@@ -309,7 +299,7 @@ function getIndicators(options, callback) {
 
     var fDates = prepareDateFilters();
     
-	var fVt = {field: 'NVENTE'};
+	var fVt = {field: 'NVENTE', size: _config.elasticSearch.chunk_size.VENTES_CHUNK_SIZE};
     var fCa = {field: 'PVTOTAL'};
 	
 	var fVend = { field: 'PRIMEVENDEUR'};
