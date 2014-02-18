@@ -98,7 +98,7 @@ function handleRequest(request, response) {
                                         context.response.end(_dot.template(txt)(result.fileData || {}));
                                     });
                                 } else if (result.redirect) { // si jamais le résultat demande un redirect
-                                    context.response.writeHead(301, {'Location': result.redirect});
+                                    context.response.writeHead(302, {'Location': result.redirect});
                                     context.response.end();
                                 } else {
                                     context.response.statusCode = result.status || 200;
