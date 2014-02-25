@@ -1,4 +1,4 @@
-// fab
+ // fab
 darty.wynn.gui.details = (function () {
     var _w = darty.wynn;
     var refreshTimer = null;
@@ -9,10 +9,22 @@ darty.wynn.gui.details = (function () {
 				
     function refreshPage() { // controller de la page
         refreshTimer = null;
+        
+        /* On sette la transition : */
+        $('#mainContent div#spin').length === 0 && _w.fromClick ? $('#mainContent').prepend("<div id=\"spin\"></div>") : '';
+		$('#mainContent div#spin').length === 1 && _w.fromClick ? $('#mainContent div#spin').prepend(spinner.el) : '';
+		typeof sessionStorage.QTE_DAY_LINES !== 'undefined' ? ($('#mainContent div#spin').length === 1 && _w.fromClick ? $('#mainContent div#spin').prepend("<h3>Processing "+sessionStorage.QTE_DAY_LINES+" documents</h3>") : '' ) : ''
+		_w.fromClick = true;
+        
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
 				
+				var tmp = result.pop(); // on récupère la valeur NB_LINES 
+				typeof sessionStorage.QTE_DAY_LINES === 'undefined' ? sessionStorage.QTE_DAY_LINES = tmp.QTE_LINES : (sessionStorage.QTE_DAY_LINES !== tmp.QTE_LINES ? sessionStorage.QTE_DAY_LINES = tmp.QTE_LINES : '');
+				
+				
+
 				// Algo pour calculer le nombre de page, le nombre d'onglet à créer, ainsi que les objets dans la page !
 				var pageActive = parseInt($('.actif').html()); 																// ok ! 
 				var pageNumber = result.length%darty.wynn.config.linePerPage > 0 ? parseInt(result.length/darty.wynn.config.linePerPage) + 1 : parseInt(result.length/darty.wynn.config.linePerPage);
@@ -26,7 +38,10 @@ darty.wynn.gui.details = (function () {
 					text += '" value="'+parseInt(i+1)+'">'+parseInt(i+1)+'</span>';
 				}
 				
-				// récupérer la valeur à modifier ! 
+				spinner.stop(); // on stope le spinner
+				$('#mainContent div#spin').remove(); // on enlève le container
+				
+
 				if (!darty.wynn.checkBrowser()) {// false = IE8 ! 
 					$('#mainContentMiddle').html(doT.template($('#tmplDetailsTable').html())(prepareModel(result, pageActive)));
 				}
@@ -39,6 +54,7 @@ darty.wynn.gui.details = (function () {
 				else 
 					$('#pageNumberLoader').remove();
 				
+				_w.fromClick = false;
 				refreshTimer = window.setTimeout(refreshPage, _w.config.reqInterval);
                 lastRefresh = new Date();
                 nextRefresh = new Date(lastRefresh.getTime() + _w.config.reqInterval);
@@ -61,7 +77,7 @@ darty.wynn.gui.details = (function () {
 					$(".code").remove();
 				}
 				
-				$("table").tablesorter(// configuration du tri de tableau ! TODO : faire fonctionner l'historique de tri ! 
+				$("table").tablesorter( // configuration du tri de tableau ! TODO : faire fonctionner l'historique de tri ! 
 					{ headers: { 
 					0: {sorter:'subclass'},
 					1: {sorter:'currency'}, 
@@ -153,6 +169,7 @@ darty.wynn.gui.details = (function () {
     // Ajout d'un objet sur les données de la ligne pour ne pas mélanger les valeurs d'affichage avec les données numériques en entrée.
     function createLineModel(data) {
         var result = _w.data.computeLineValues(data);
+		// console.log(_w.pageData.filtres.agg === 'org4', result)
 		var z = {
 			ca: _w.formatPrice(result.ca2m),
             caEvo: {
@@ -164,7 +181,7 @@ darty.wynn.gui.details = (function () {
                 cls: isNaN(result.caPartAcc2m) || !isFinite(result.caPartAcc2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(result.caPartAcc2m, result.caPartAcc1y, result.caPartAccGlobal2m,_w.pageData.budget.ACCESSOIRES), 4)
             },
 			serv: {
-                val: _w.formatPrct(result.caPartServ2m),
+                val: _w.formatPrct(result.caPartServ2m),//darty.wynn.getPrct(data.indicateurs.caPoidsRem2m, data.indicateurs.ca2m)
                 cls: isNaN(result.caPartServ2m) || !isFinite(result.caPartServ2m) ? 'gray' : _w.score2Cls(_w.data.computeScore(result.caPartServ2m, result.caPartServ1y, result.caPartServGlobal2m, _w.pageData.budget.SERVICES), 4)
             },
 			rem: { // TODO : appliquer une formule particulière ? 
@@ -280,24 +297,6 @@ darty.wynn.gui.details = (function () {
 				// console.log('Menu deroulant !');
             });
 			
-			// Menu déroulant => Affiche les options d'aggregat 
-			// $(document).on('click', 'div.delete', function () {
-                // $("table").tablesorter({ // configuration du tri de tableau ! 
-					// headers: { 
-					// 0: {sorter:'subclass'},
-					// 1: {sorter:'currency'}, 
-					// 2: {sorter:'percent'},
-					// 3: {sorter:'percent'},
-					// 4: {sorter:'percent'},
-					// 5: {sorter:'percent'},
-					// 6: {sorter:'percent'}
-					// } 
-				// }); 
-				// $('div#zone').parent().addClass('headerSortDown');
-				// var elem = $("div.delete").remove();
-				// $('div#zone').append('');
-				// $('div#zone').append('<a><img class="arrow" src="./img/arrow.png"></a>')
-            // });
 			
 			// bouton des onglets du tableau
 			$(document).on('click', '.pageNumber.noActif', function () {

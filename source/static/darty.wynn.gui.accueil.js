@@ -2,7 +2,7 @@ darty.wynn.gui.accueil = (function () { // fab
 
 	// tablesorter doc : http://tablesorter.com/docs
 
-	var _w = darty.wynn;
+	var _w = darty.wynn; 
     var refreshTimer = null;
     var refreshTimerCa = null;
     var lastRefresh = null;
@@ -21,8 +21,15 @@ darty.wynn.gui.accueil = (function () { // fab
     function refreshPage() { // controler de la page 
 		var counter = 0;
 		var data = {};
+		
+		/* On sette la transition : */
+		$('#mainContent div#spin').length === 0 && _w.fromClick ? $('#mainContent').prepend("<div id=\"spin\"></div>") : '';
+		$('#mainContent div#spin').length === 1 && _w.fromClick ? $('#mainContent div#spin').prepend(spinner.el) : '';
+		typeof sessionStorage.QTE_DAY_LINES !== 'undefined' ? ($('#mainContent div#spin').length === 1 && _w.fromClick ? $('#mainContent div#spin').prepend("<h3>Processing " + sessionStorage.QTE_DAY_LINES + " documents</h3>") : '' ) : ''
+		_w.fromClick = true; // On reset la condition
+
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
-            if (error) {
+        	if (error) {
 				counter += 1;
             } else { 
 				counter += 1; // TODO :  sécurisé ?! 
@@ -30,7 +37,8 @@ darty.wynn.gui.accueil = (function () { // fab
 			}
 			if (counter > 1) {
 				data.entrees = {};
-				doWork(data);
+				doWork(data)
+				// spinner.stop();
 			}
 		});
 		
@@ -44,9 +52,9 @@ darty.wynn.gui.accueil = (function () { // fab
 			}
 			if (counter > 1) {
 				data.entrees = {};
-				doWork(data); // cas non normal mais il faut continuer le traitement
+				doWork(data)
 			}
-		});		
+		});
 	}
 	
 	function doWork(data) {
@@ -59,7 +67,7 @@ darty.wynn.gui.accueil = (function () { // fab
 				entCoul: darty.wynn.score2Cls(darty.wynn.data.computeScore(data.entrees.ent2m, data.entrees.ent1y, data.entrees.entGlobal2m), 3)
 			};
 		}
-		console.log('Result avec seulement les entrees',result);
+		// console.log('Result avec seulement les entrees',result);
 		if(typeof data.indicateurs !== 'undefined') {
 			result.ca = typeof data.indicateurs.ca2m != 'undefined' ? data.indicateurs.ca2m : '-';
 			if (f.org4 && f.agg=='org4') {
@@ -70,7 +78,6 @@ darty.wynn.gui.accueil = (function () { // fab
 				result.caEvol = darty.wynn.formatEvo(darty.wynn.getEvol(data.indicateurs.ca2m,data.indicateurs.ca1y));
 				result.caCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(data.indicateurs.ca2m, data.indicateurs.ca1y, data.indicateurs.caGlobal2m, darty.wynn.pageData.budget.CA), 4);
 			}
-			
 			result.poidsAcc = darty.wynn.formatPrct(darty.wynn.getPrct(data.indicateurs.caPoidsAcc2m, data.indicateurs.ca2m));
 			result.poidsAccCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(darty.wynn.getPrct(data.indicateurs.caPoidsAcc2m, data.indicateurs.ca2m),
 																						darty.wynn.getPrct(data.indicateurs.caPoidsAcc1y, data.indicateurs.ca1y),
@@ -106,14 +113,17 @@ darty.wynn.gui.accueil = (function () { // fab
 			dernierCa = typeof data.indicateurs.ca != 'undefined' ? data.indicateurs.ca : 0;
 			ca2minutes = typeof data.indicateurs.ca2m != 'undefined' ? data.indicateurs.ca2m : 0;
 		}
-		
+		_w.fromClick = false;
 		refreshTimer = window.setTimeout(refreshPage, darty.wynn.config.reqInterval); // TODO : VERIFIER pas de récursivité ! 
 		refreshTimerCa = refreshTimer;
 		lastRefresh = new Date();
 		nextRefresh = new Date(lastRefresh.getTime() + darty.wynn.config.reqInterval);
 		
-		checkEntrees(result);
+		spinner.stop(); // On enlève le spinner
+		$('#mainContent div#spin').remove(); // on enlève le container et on met à jour la valeur si elle a évoluée.
+		typeof data.indicateurs === 'undefined' ? '' : (typeof sessionStorage.QTE_DAY_LINES === 'undefined' ? sessionStorage.QTE_DAY_LINES = data.indicateurs.QTE_LINES : (sessionStorage.QTE_DAY_LINES !== data.indicateurs.QTE_LINES ? sessionStorage.QTE_DAY_LINES = data.indicateurs.QTE_LINES : ''))
 		
+
 		if (!darty.wynn.checkBrowser()) {// false = IE8 ! 
 			var pagefn = doT.template($('#indicateurs').html());
 		}
@@ -121,7 +131,7 @@ darty.wynn.gui.accueil = (function () { // fab
 			var pagefn = doT.template($('#indicateurs').text());
 		}
 		$('#mainContentMiddle_home').html(pagefn(result));
-		console.log('Data formattées pour Dashboard ', result)
+		// console.log('Data formattées pour Dashboard ', result)
 		modificationCA();
 	}
 	
@@ -266,8 +276,8 @@ darty.wynn.gui.accueil = (function () { // fab
 	}
 	
 	function makeDrillUrl() {	
-	var param = window.location.search;
-	var complet = "";
+		var param = window.location.search;
+		var complet = "";
 		// console.log('makeDrillUrl ! ');
 		if (param == ""){
 			console.log('Param is empty ! ');

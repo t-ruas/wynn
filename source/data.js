@@ -10,7 +10,7 @@ var _errors = require('./errors');
 // http://www.elasticsearch.org/guide/
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
-
+ 
 function postSearch(type, data, callback) {
 	sendRequest({method: 'POST', path: '/' + type + '/_search'}, data, callback);
 }
@@ -257,6 +257,8 @@ function getES(context, callback) {
 
 var libCache = {};
 
+var nbItemsCache = {};
+
 // Récupère un libellé en allant chercher la première ligne qui l'utilise.
 function getLib(field, code, callback) {
 
@@ -293,9 +295,38 @@ function getLib(field, code, callback) {
     }
 }
 
+function getNbItems(callback) {
+
+    if (!nbItemsCache) {
+        nbItemsCache.total = {};
+    }
+    
+    if (typeof nbItemsCache['total'] === 'number') {
+        callback(null, nbItemsCache['total']);
+    } else {
+        var data = { };
+        
+        postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
+            if (error) {
+                callback(error);
+            } else {
+                if (result.hits.total) {
+                    _logger.info(typeof result.hits.total)
+                    nbItemsCache['total'] = result.hits.total;
+                    _logger.info('SET nbItemsCache : '+nbItemsCache.total, nbItemsCache['total'])
+                    callback(null, result);
+                } else {
+                    callback(null, null);
+                }
+            }
+        });
+    }
+}
+
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 // Accueil
 function getIndicators(options, callback) {
+    // _logger.info('GET NB ITEMS : ' + nbItemsCache)
 
     var fDates = prepareDateFilters();
     
@@ -339,7 +370,7 @@ function getIndicators(options, callback) {
 			
 			'ca_poids_oa_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fOa},
 			'ca_poids_oa_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fOa},
-            'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fOa},
+            'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fOa}
 		}
     };
 	
@@ -347,6 +378,13 @@ function getIndicators(options, callback) {
         if (error) {
             callback(error);
         } else {
+            
+            typeof nbItemsCache.total === 'number' ? (nbItemsCache.total !== result.hits.total ? nbItemsCache.total = result.hits.total : '') : getNbItems(function(error, result){
+                nbItemsCache.total = result.hits.total;
+                // _logger.info('That works NOW : '+nbItemsCache.total) // TODO : remove
+            });
+            _logger.info('<< X Check Total : ' + nbItemsCache.total)
+
 			// fonction d'aggreg sur facet
             var getCaFacet = function (name) {
                 return result.facets[name].total;
@@ -355,6 +393,7 @@ function getIndicators(options, callback) {
             var getVtFacet = function (name) {
                 return result.facets[name].terms.length;
             }
+            _logger.info('RESULTS : ===> ', _util.inspect(result.hits.total))
 			callback(null, {
                 ca: getCaFacet('ca'),
                 ca2m: getCaFacet('ca_2m'),
@@ -384,7 +423,7 @@ function getIndicators(options, callback) {
                 caPoidsOa1y: getCaFacet('ca_poids_oa_1y'),
                 caPoidsOaGlobal2m: getCaFacet('ca_poids_oa_global_2m'),
 				
-
+                QTE_LINES : typeof nbItemsCache.total === 'number' ? nbItemsCache.total : 'n/a'
             });
         }
     });
@@ -430,7 +469,7 @@ function getIndicatorsEnt(options, callback) {
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 // Details
 function getDetails(options, callback) {
-
+    
     var aggField = filterFields[options.agg];
     var fDates = prepareDateFilters();
 	var fLib = {
@@ -454,12 +493,8 @@ function getDetails(options, callback) {
         key_field: aggField.cd,
         value_field: 'PVTOTAL'
     };
-	// var fVend = {
-		// size: _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
-        // field: aggField.cd,
-        // script: '_source.PRIMEVENDEUR + ";" + term'
-    // };
-	var fRem = {
+	
+    var fRem = {
 		size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
 		key_field: aggField.cd,
 		value_field: 'POIDSREMISE' 	// Nom_du_field_ou_se_trouve_le_ca_remisé
@@ -526,6 +561,9 @@ function getDetails(options, callback) {
         if (error) {
             callback(error);
         } else {
+            typeof nbItemsCache.total === 'number' ? (nbItemsCache.total != result.hits.total ? nbItemsCache.total = result.hits.total : '' ) : getNbItems(function(error, result){
+                nbItemsCache.total = result.hits.total;
+            });
 			var o = {};
 			
 			var addTerm = function (p, terms) { // a garder ! 
@@ -537,25 +575,6 @@ function getDetails(options, callback) {
 					}
 				}
 			}
-			// var addTerm = function (p, terms) { 
-				// console.log('p',p,'terms',terms, 'terms.length', terms.length)// a garder ! 
-				// p = primevendeur
-				// terms = 
-				// [{term: '009440;0,0',
-					// count: 1}]
-				
-				// for (var i = 0, imax = terms.length; i < imax; i++) {
-					// var part = terms[i].term.split(';');
-					// part[1] = part[1].toLowerCase();
-					// console.log('OK', typeof part[1],part[1], part[0]);
-					// if (o[part[1]]) { // si l'objet existe 
-						// if (true) {
-							// o[part[0]][p] = parseFloat(part[1]);
-						// }
-						// o[part[1]][p] = parseFloat(part[0]);
-					// }
-				// }
-			// }
 			
 			var mergeCaList = function (p, terms) { // TODO : vérifier que l'addition marche bien !
                 for (var i = 0, imax = terms.length; i < imax; i++) {
@@ -597,10 +616,6 @@ function getDetails(options, callback) {
             }
 
             addTerm('ordre', result.facets['ordre'].terms); // ordonnancement 
-			// console.log('OOO',o);
-            // addTerm('primevendeur', result.facets['primevendeur'].terms); // ordonnancement 
-			// console.log('OOP',o);
-			// addPrimeVendeur
 			mergeCaList('ca', result.facets['ca'].terms);
             mergeCaList('ca2m', result.facets['ca_2m'].terms);
             mergeCaList('ca1y', result.facets['ca_1y'].terms);
@@ -629,10 +644,17 @@ function getDetails(options, callback) {
 			var totalLines = 0;
 			
             var u = [];
-			
-			for (var n in o) {
+			var w = {};
+            // _logger.info('> W : ', w, '> W_LINES : ', w.QTE_LINES);
+            typeof nbItemsCache.total === 'number' ? w['QTE_LINES'] = nbItemsCache.total : w['QTE_LINES'] = 'n/a';
+            // _logger.info('>> W : ', w, '>> W_LINES : ', w.QTE_LINES);
+
+            for (var n in o) {
                 u.push(o[n]);
             }
+            u.push(w)
+            // _logger.info('Ajout du QTE_LINES : ', u['QTE_LINES'])
+            // _logger.info('>>> U : ', u, '>>> U_LINES : ', u[u.length-1]);
 			callback(null, u);
         }
     });

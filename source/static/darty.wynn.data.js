@@ -1,6 +1,6 @@
 // v fabien
 darty.wynn.data = (function () {
-
+ 
     var _w = darty.wynn;
 
     function getIndicateurs(options, callback) {
@@ -61,6 +61,8 @@ darty.wynn.data = (function () {
 		result.caPartOa2m = _w.getPrct(data.caPoidsOa2m, data.ca2m);
 		result.caPartOa1y = _w.getPrct(data.caPoidsOa1y, data.ca1y);
 		result.caPartOaGlobal2m = _w.getPrct(data.caPoidsOaGlobal2m, data.caGlobal2m);
+		
+		// TODO : rajouter la sortie de PrimeVendeur pour le details
 		
 		return result;
     }

@@ -1,5 +1,5 @@
 'use strict';
-
+ 
 var _logger = require('winston');
 var _moment = require('moment');
 var _crypto = require('crypto');

@@ -7,7 +7,7 @@ module.exports = {
 	nbEsQueries: 0,
 	DED_year: 11, 
 	// à partir de l'an 2000, donc pour 2013 : 13
-	DED_month: 09, // de 0 à 11
+	DED_month: 9, // de 0 à 11
 	DED_day: 24, 
 	// 1 / 7 / 2011 beaucoup de data mais nulles
 	// 28 / 3/ 2013 peu de data mais globalement ok 
@@ -24,8 +24,8 @@ module.exports = {
     authCookieName: 'darty_wynn_auth',
     keys: _keygrip(['azertyuiop', 'qsdfghjklm', 'wxcvbn'], 'sha256', 'hex'),
     elasticSearch: {
-        host: '10.132.20.115',											// adresse de la machine sur laquelle est stockée le LB ES
-        // host: 'localhost',											// adresse de la machine sur laquelle est stockée le LB ES
+        // host: '10.132.20.115',											// adresse de la machine sur laquelle est stockée le LB ES
+        host: 'localhost',											// adresse de la machine sur laquelle est stockée le LB ES
         port: 9200,
         // index: 'wynn', 												// nom de l'index 
         index: 'wynn_idx', 												// nom de l'index 

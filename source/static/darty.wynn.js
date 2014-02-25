@@ -15,8 +15,33 @@ var darty = {
 			requestDetails : 'details',
 			requestEntrees : 'indicateursEnt'
         },
+        QTE_DAY_LINES : 0, 
+        fromClick : true
     }
 };
+ 
+var opts = {
+  lines: 12, // The number of lines to draw
+  length: 50, // The length of each line
+  width: 17, // The line thickness
+  radius: 50, // The radius of the inner circle
+  corners: 1, // Corner roundness (0..1)
+  rotate: 17, // The rotation offset
+  direction: 1, // 1: clockwise, -1: counterclockwise
+  color: 'red', // #rgb or #rrggbb or array of colors
+  speed: 1.0, // Rounds per second
+  trail: 64, // Afterglow percentage
+  shadow: true, // Whether to render a shadow
+  hwaccel: true, // Whether to use hardware acceleration
+  className: 'spinner', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: 'auto', // Top position relative to parent in px
+  left: 'auto' // Left position relative to parent in px
+};
+var spinner = new Spinner(opts).spin();
+var target = $('#mainContent div#spin');
+// var target = document.getElementById('foo');
+// var spinner = new Spinner(opts).spin(target);
 
 darty.wynn.clone = function(x) {
 	try {
@@ -37,7 +62,7 @@ darty.wynn.priceToStr = function (n) {
 
 darty.wynn.getPrct = function (a, b) {
 	// console.log('Poids Acc : '  + a + ' CA2M : ' + b + 'results : ' + a/(a+b)*100);
-    return isNaN(a) || isNaN(b) || (a+b) == 0 ? 0 : a/(a+b)*100;
+    return isNaN(a) || isNaN(b) || (b) == 0 ? 0 : a/b;
 }
 
 darty.wynn.getEvol = function (a, b) { // b : 1y, a : 2m 
@@ -58,7 +83,7 @@ darty.wynn.formatEvo = function (n) { // pour maquille le pourcentage d'evo
 		// console.log('Format Evo :',isNaN(n), isFinite(n));
 		return '- %';}
 	else {
-		console.log('Format Evo :',isNaN(n), isFinite(n));
+		// console.log('Format Evo :',isNaN(n), isFinite(n));
 		return ((n < 0 ? '-' : '') + Math.abs(n).toFixed(1) + ' %');
 	}
 };

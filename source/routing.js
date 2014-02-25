@@ -11,7 +11,7 @@ var _logger = require('winston');
 var _static = require('node-static');
 var _dot = require('dot');
 var _config = require('./config');
-
+ 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 // Configure DoT pour ne pas supprimer les retours à la ligne du html.
@@ -98,7 +98,7 @@ function handleRequest(request, response) {
                                         context.response.end(_dot.template(txt)(result.fileData || {}));
                                     });
                                 } else if (result.redirect) { // si jamais le résultat demande un redirect
-                                    context.response.writeHead(301, {'Location': result.redirect});
+                                    context.response.writeHead(302, {'Location': result.redirect});
                                     context.response.end();
                                 } else {
                                     context.response.statusCode = result.status || 200;

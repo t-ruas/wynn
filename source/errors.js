@@ -10,3 +10,4 @@ var NodeError = function (name, message) {
 _util.inherits(NodeError, Error);
 
 exports.Error = NodeError;
+ 
