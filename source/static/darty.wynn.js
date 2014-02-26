@@ -62,7 +62,7 @@ darty.wynn.priceToStr = function (n) {
 
 darty.wynn.getPrct = function (a, b) {
 	// console.log('Poids Acc : '  + a + ' CA2M : ' + b + 'results : ' + a/(a+b)*100);
-    return isNaN(a) || isNaN(b) || (b) == 0 ? 0 : a/b;
+    return isNaN(a) || isNaN(b) || (b) == 0 ? 0 : a/b*100;
 }
 
 darty.wynn.getEvol = function (a, b) { // b : 1y, a : 2m 

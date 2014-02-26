@@ -31,6 +31,7 @@ var files = {
         'static/jquery-1.10.2.js',
         // https://github.com/olado/doT
         'static/doT.js',
+        'static/spin.min.js',
         'static/jquery.tablesorter.js',
     ],
     jsBaseMin: [
