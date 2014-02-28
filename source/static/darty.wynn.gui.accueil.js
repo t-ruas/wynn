@@ -19,6 +19,7 @@ darty.wynn.gui.accueil = (function () { // fab
 	var minMax;
 	
     function refreshPage() { // controler de la page 
+		console.log('RefreshPage : ', new Date().getTime());
 		var counter = 0;
 		var data = {};
 		
@@ -29,6 +30,7 @@ darty.wynn.gui.accueil = (function () { // fab
 		_w.fromClick = true; // On reset la condition
 
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
+        	console.log('getIndicateurs : ', new Date().getTime());
         	if (error) {
 				counter += 1;
             } else { 
@@ -43,6 +45,7 @@ darty.wynn.gui.accueil = (function () { // fab
 		});
 		
 		darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
+			console.log('getIndicateursEnt : ', new Date().getTime());
 			if (error) { 
 				console.log('Erreur lors du chargement des valeurs : page accueil - entrées');
 				counter += 1;
@@ -183,7 +186,7 @@ darty.wynn.gui.accueil = (function () { // fab
 		});
         
 		darty.wynn.setFilters('accueil');
-		
+		console.log('End Loading : ', new Date().getTime());
 	});
 }
     	

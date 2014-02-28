@@ -8,6 +8,7 @@ darty.wynn.gui.details = (function () {
 	var metaDataTable = {};
 				
     function refreshPage() { // controller de la page
+        console.log('RefreshPage : ', new Date().getTime());
         refreshTimer = null;
         
         /* On sette la transition : */
@@ -19,7 +20,8 @@ darty.wynn.gui.details = (function () {
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
-				
+				console.log('GetDetails : ', new Date().getTime());
+		
 				var tmp = result.pop(); // on récupère la valeur NB_LINES 
 				typeof sessionStorage.QTE_DAY_LINES === 'undefined' ? sessionStorage.QTE_DAY_LINES = tmp.QTE_LINES : (sessionStorage.QTE_DAY_LINES !== tmp.QTE_LINES ? sessionStorage.QTE_DAY_LINES = tmp.QTE_LINES : '');
 				
@@ -111,6 +113,7 @@ darty.wynn.gui.details = (function () {
 					flag1erAffichage = false;
 					updateClassTable();
 				}
+				console.log('EndLoading : ', new Date().getTime());
 			}
         });
     }
@@ -149,7 +152,6 @@ darty.wynn.gui.details = (function () {
 		model.totals = createLineModel(sum);
 		f = _w.makeSimpleFiltersClone();
 		model.totals.dbQuery = "/accueil?" + _w.makeQuery(f);
-		
 		return model;
     }
 	

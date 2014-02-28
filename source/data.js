@@ -12,6 +12,7 @@ var _errors = require('./errors');
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
  
 function postSearch(type, data, callback) {
+    _logger.info('Query Sent to '+type, ' --- +> ' , new Date().getTime(), ' ms')
 	sendRequest({method: 'POST', path: '/' + type + '/_search'}, data, callback);
 }
 
@@ -20,7 +21,7 @@ function sendRequest(options, data, callback) {
     options.port = _config.elasticSearch.port;
     options.path = '/' + _config.elasticSearch.index + options.path;
     // On lance la requête
-	console.log('Voici la requete : ',JSON.stringify(data))
+	// console.log('Voici la requete : ',JSON.stringify(data))
     var req = _http.request(options, function (response) {
         var content = '';
         response.on('data', function (chunk) {
@@ -39,7 +40,8 @@ function sendRequest(options, data, callback) {
         callback(error);
     });
     if (data) {
-        _logger.info('Requête ElasticSearch : ' + _util.inspect(data, {depth: null}));
+        // _logger.info('Requête ElasticSearch : ', JSON.stringify(data) ); //  
+        // _logger.info('Requête ElasticSearch : ', _util.inspect(data, {depth: null}));
         req.write(JSON.stringify(data));
     }
 	req.end();
@@ -79,7 +81,7 @@ function makeDateFilterLib(date) {
 	var tempDate = new Date(date);
 	tempDate.setDate(tempDate.getDate() - _config.jour1an);
 	tempDate.setHours(0,0,0,0);
-	console.log('Lib range : '+ tempDate +' -> '+date);
+	// console.log('Lib range : '+ tempDate +' -> '+date);
     return {
         range: {
             'DATE': {
@@ -143,13 +145,12 @@ function prepareDateFilters(tempsComptSet) {
 		var b = _config.DED_month;
 		var c = _config.DED_day;
 		dates[0] = new Date(a, b, c);
-		console.log(typeof a, typeof b, typeof c, dates[0]);
 	}
 	
 	var dateRef = new Date();
 	dates[0].setHours(dateRef.getHours()); // config pour 01/12/2013
     dates[0].setMinutes(dateRef.getMinutes() -  _config.tempsChargReel); // 2min
-	console.log(dates[0])
+	// console.log(dates[0])
     dates[1] = new Date(dates[0]);
     dates[1].setMinutes(dates[1].getMinutes() -  _config.tempsChargTalend); // 4min
     if (tempsComptSet != null){
@@ -296,11 +297,9 @@ function getLib(field, code, callback) {
 }
 
 function getNbItems(callback) {
-
     if (!nbItemsCache) {
         nbItemsCache.total = {};
     }
-    
     if (typeof nbItemsCache['total'] === 'number') {
         callback(null, nbItemsCache['total']);
     } else {
@@ -311,9 +310,9 @@ function getNbItems(callback) {
                 callback(error);
             } else {
                 if (result.hits.total) {
-                    _logger.info(typeof result.hits.total)
+                    // _logger.info(typeof result.hits.total)
                     nbItemsCache['total'] = result.hits.total;
-                    _logger.info('SET nbItemsCache : '+nbItemsCache.total, nbItemsCache['total'])
+                    // _logger.info('SET nbItemsCache : '+nbItemsCache.total, nbItemsCache['total'])
                     callback(null, result);
                 } else {
                     callback(null, null);
@@ -383,7 +382,7 @@ function getIndicators(options, callback) {
                 nbItemsCache.total = result.hits.total;
                 // _logger.info('That works NOW : '+nbItemsCache.total) // TODO : remove
             });
-            _logger.info('<< X Check Total : ' + nbItemsCache.total)
+            // _logger.info('<< X Check Total : ' + nbItemsCache.total)
 
 			// fonction d'aggreg sur facet
             var getCaFacet = function (name) {
@@ -393,7 +392,7 @@ function getIndicators(options, callback) {
             var getVtFacet = function (name) {
                 return result.facets[name].terms.length;
             }
-            _logger.info('RESULTS : ===> ', _util.inspect(result.hits.total))
+            // _logger.info('RESULTS : ===> ', _util.inspect(result.hits.total))
 			callback(null, {
                 ca: getCaFacet('ca'),
                 ca2m: getCaFacet('ca_2m'),
