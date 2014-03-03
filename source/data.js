@@ -12,7 +12,8 @@ var _errors = require('./errors');
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
  
 function postSearch(type, data, callback) {
-    _logger.info('Query Sent to '+type, ' --- +> ' , new Date().getTime(), ' ms')
+    _logger.info('Query Sent to '+type, ' --- +> ' , new Date().getTime(), ' ms');
+	_logger.info('Requête ES : ', JSON.stringify(data));
 	sendRequest({method: 'POST', path: '/' + type + '/_search'}, data, callback);
 }
 
@@ -126,6 +127,7 @@ function getBudget(callback) {
 			callback(error);
 		} else {
 			if (result.hits.hits.length) {
+				_logger.info("")
 				callback(null, result.hits.hits[0].fields);
 			} else {
 				callback(new _errors.Error('Budget Not Found : Error'));
@@ -278,7 +280,7 @@ function getLib(field, code, callback) {
             filter: {term: f}
         };
 		
-		// _logger.info('Réponse ElasticSearch : ' + _util.inspect(data, {depth: null}));
+		_logger.info('Requete ElasticSearch : ' + _util.inspect(data, {depth: null}));
 		// pour retrouver un libellé en particulier s'il manque
         postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
             if (error) {
@@ -336,7 +338,8 @@ function getIndicators(options, callback) {
 	var fRem = { field: 'POIDSREMISE'}; 		// Nom_du_field_ou_se_trouve_le_ca_remisé
 	var fAcc = { field: 'POIDSACC'}; 			// Nom_du_field_ou_se_trouve_le_ca_des_accessoires
 	var fOa = { field: 'POIDSOA'};  			// Nom_du_field_ou_se_trouve_le_ca_des_offres_actives
-	var fServ = { field: 'POIDSSERVICE'};		// Nom_du_field_ou_se_trouve_le_ca_des_services
+    var fServ = { field: 'POIDSSERVICE'};       // Nom_du_field_ou_se_trouve_le_ca_des_services
+	var fQtePm = { field: 'FLAGPM'};		// Nom_du_field_ou_se_trouve_le_ca_des_services
 	
 	var fPrd = makeNavFilters(options, 'prd');
     var fOrg = makeNavFilters(options, 'org');
@@ -369,7 +372,11 @@ function getIndicators(options, callback) {
 			
 			'ca_poids_oa_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fOa},
 			'ca_poids_oa_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fOa},
-            'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fOa}
+            'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fOa},
+
+            'qte_pm': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fQtePm},
+            'qte_pm_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fQtePm},
+            'qte_pm_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fQtePm}
 		}
     };
 	
@@ -422,6 +429,10 @@ function getIndicators(options, callback) {
                 caPoidsOa1y: getCaFacet('ca_poids_oa_1y'),
                 caPoidsOaGlobal2m: getCaFacet('ca_poids_oa_global_2m'),
 				
+                qtePm: getCaFacet('qte_pm'),
+                qtePm1y: getCaFacet('qte_pm_1y'),
+                qtePmGlobal2m: getCaFacet('qte_pm_global_2m'),
+                
                 QTE_LINES : typeof nbItemsCache.total === 'number' ? nbItemsCache.total : 'n/a'
             });
         }
@@ -514,6 +525,12 @@ function getDetails(options, callback) {
 		value_field: 'POIDSSERVICE'		// Nom_du_field_ou_se_trouve_le_ca_des_services
 	};
 	
+    var fQtePm = {
+        size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
+        key_field: aggField.cd,
+        value_field: 'FLAGPM'  // Nom_du_field_ou_se_trouve_le_ca_remisé
+    };
+
 	var fPrd = makeNavFilters(options, 'prd');
     var fOrg = makeNavFilters(options, 'org');
 	
@@ -550,8 +567,11 @@ function getDetails(options, callback) {
             'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fOa},	
 			
 			'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
-            'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt}
-			
+            'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt},
+
+            'qte_pm': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fQtePm},
+            'qte_pm_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fQtePm},
+            'qte_pm_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fQtePm}
 			
         }
     };
@@ -579,7 +599,6 @@ function getDetails(options, callback) {
                 for (var i = 0, imax = terms.length; i < imax; i++) {
                     var term = terms[i];
 					if (!o[term.term]) {
-						// console.log('Ligne de rejet : p', p, 'terms', terms);
 						return;
 					}  	// si on tombe sur un lib qui n'est pas bien renseigné TODO : remove
 					if (typeof o[term.term][p] !== 'number')  	// permet de tester la valeur associé au lib
@@ -632,29 +651,29 @@ function getDetails(options, callback) {
 			mergeCaList('caPoidsOa1y', result.facets['ca_poids_oa_1y'].terms);	
 			mergeCaList('caPoidsRem1y', result.facets['ca_poids_rem_1y'].terms);	
 			mergeCaList('caPoidsAcc1y', result.facets['ca_poids_acc_1y'].terms);	
-			// console.log('result.facets["ca_poids_acc_1y"].terms',result.facets['ca_poids_acc_1y'].terms);
 			mergeCaList('caPoidsServ1y', result.facets['ca_poids_serv_1y'].terms);
 			
 			mergeCaList('caPoidsOa2m', result.facets['ca_poids_oa_2m'].terms);	
 			mergeCaList('caPoidsRem2m', result.facets['ca_poids_rem_2m'].terms);	
 			mergeCaList('caPoidsAcc2m', result.facets['ca_poids_acc_2m'].terms);	
-			mergeCaList('caPoidsServ2m', result.facets['ca_poids_serv_2m'].terms);
+            mergeCaList('caPoidsServ2m', result.facets['ca_poids_serv_2m'].terms);
 			
-			var totalLines = 0;
+            mergeCaList('qtePm', result.facets['qte_pm'].terms);
+            mergeCaList('qtePm1y', result.facets['qte_pm_1y'].terms);
+            mergeCaList('qtePmGlobal2m', result.facets['qte_pm_global_2m'].terms);
+            
 			
             var u = [];
 			var w = {};
-            // _logger.info('> W : ', w, '> W_LINES : ', w.QTE_LINES);
+            
+            var totalLines = 0;
             typeof nbItemsCache.total === 'number' ? w['QTE_LINES'] = nbItemsCache.total : w['QTE_LINES'] = 'n/a';
-            // _logger.info('>> W : ', w, '>> W_LINES : ', w.QTE_LINES);
-
+            
             for (var n in o) {
                 u.push(o[n]);
             }
             u.push(w)
-            // _logger.info('Ajout du QTE_LINES : ', u['QTE_LINES'])
-            // _logger.info('>>> U : ', u, '>>> U_LINES : ', u[u.length-1]);
-			callback(null, u);
+            callback(null, u);
         }
     });
 }

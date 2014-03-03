@@ -6,9 +6,9 @@ darty.wynn.gui.details = (function () {
     var nextRefresh = null;
 	var flag1erAffichage = true;
 	var metaDataTable = {};
-				
-    function refreshPage() { // controller de la page
-        console.log('RefreshPage : ', new Date().getTime());
+	
+	function refreshPage() { // controller de la page
+        // console.log('RefreshPage : ', new Date().getTime());
         refreshTimer = null;
         
         /* On sette la transition : */
@@ -20,7 +20,7 @@ darty.wynn.gui.details = (function () {
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
-				console.log('GetDetails : ', new Date().getTime());
+				// console.log('GetDetails : ', new Date().getTime());
 		
 				var tmp = result.pop(); // on récupère la valeur NB_LINES 
 				typeof sessionStorage.QTE_DAY_LINES === 'undefined' ? sessionStorage.QTE_DAY_LINES = tmp.QTE_LINES : (sessionStorage.QTE_DAY_LINES !== tmp.QTE_LINES ? sessionStorage.QTE_DAY_LINES = tmp.QTE_LINES : '');
@@ -68,7 +68,7 @@ darty.wynn.gui.details = (function () {
 				if ((typeof obj.filtres.prd6 != 'undefined' && obj.filtres.agg == 'org4' )||
 					(typeof obj.filtres.org4 != 'undefined' && obj.filtres.agg == 'prd6' )) {
 					$("table#detailsTable tbody").find("a").removeAttr("href");
-					console.log(obj);
+					// console.log(obj);
 					$(".libelle").css("font-size","60%"); 													// contrôle ?!? Vérification ?!
 				}
 				else if (obj.filtres.agg == 'org4' || obj.filtres.agg == 'prd6')
@@ -113,7 +113,7 @@ darty.wynn.gui.details = (function () {
 					flag1erAffichage = false;
 					updateClassTable();
 				}
-				console.log('EndLoading : ', new Date().getTime());
+				// console.log('EndLoading : ', new Date().getTime());
 			}
         });
     }
@@ -127,13 +127,10 @@ darty.wynn.gui.details = (function () {
         };
 		var sum = {}; 
         var t = {};
-		var fields = ['ca', 'ca2m', 'ca1y', 'caGlobal1y', 'caGlobal2m', 'vt2m', 'vt1y',
-		'caPoidsOaGlobal2m', 'caPoidsRemGlobal2m', 'caPoidsAccGlobal2m',
-		'caPoidsServGlobal2m', 'caPoidsOa1y','caPoidsRem1y','caPoidsAcc1y','caPoidsServ1y',
-		'caPoidsOa2m','caPoidsRem2m','caPoidsAcc2m','caPoidsServ2m'];
-		for (var i = 0, imax = fields.length; i < imax; i++) {
-            t[fields[i]] = 0; // init
-			sum[fields[i]] = 0;
+		
+		for (var i = 0, imax = _w.fields.length; i < imax; i++) {
+            t[_w.fields[i]] = 0; // init
+			sum[_w.fields[i]] = 0;
         }
 		var cptNotZero = 1;
 		for (var j = 0, jmax = data.length; j < jmax; j++) {
@@ -156,14 +153,10 @@ darty.wynn.gui.details = (function () {
     }
 	
 	function createSumLine(data, sum) { // somme les valeurs d'une ligne pour l'ensemble
-		var fields = ['ca', 'ca2m', 'ca1y', 'caGlobal1y', 'caGlobal2m', 'vt2m', 'vt1y',
-		'caPoidsOaGlobal2m', 'caPoidsRemGlobal2m', 'caPoidsAccGlobal2m',
-		'caPoidsServGlobal2m', 'caPoidsOa1y','caPoidsRem1y','caPoidsAcc1y','caPoidsServ1y',
-		'caPoidsOa2m','caPoidsRem2m','caPoidsAcc2m','caPoidsServ2m','primevendeur'];
-		for (y = 0; y < fields.length; y++)
+		for (y = 0; y < _w.fields.length; y++)
 		{
-			if (typeof data[fields[y]] === 'number') {
-				sum[fields[y]] += data[fields[y]];
+			if (typeof data[_w.fields[y]] === 'number') {
+				sum[_w.fields[y]] += data[_w.fields[y]];
 			}
 		}
 	}

@@ -120,7 +120,7 @@ var routes = {
                         if (error) {
                             callback(error);
                         } else {
-							console.log('RESULT');
+							// console.log('RESULT');
                             callback(error, {file: 'accueil.html', fileData: result});
                         }
                     });
@@ -131,7 +131,7 @@ var routes = {
 			// on envoie la page avec quelques informations dans le result.
 			pattern: /^\/details$/i,
             handler: function (context, callback) {
-				console.log('Authorize : ', authorize(context))
+				// console.log('Authorize : ', authorize(context))
                 if (authorizeOrRedirect(context, callback)) {
 						getRefData(context, function (error, result) {
                         if (error) {

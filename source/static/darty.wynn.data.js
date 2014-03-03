@@ -58,9 +58,10 @@ darty.wynn.data = (function () {
 		result.caPartRem1y = _w.getPrct(data.caPoidsRem1y, data.ca1y);
 		result.caPartRemGlobal2m = _w.getPrct(data.caPoidsRemGlobal2m, data.caGlobal2m);
 		
-		result.caPartOa2m = _w.getPrct(data.caPoidsOa2m, data.ca2m);
-		result.caPartOa1y = _w.getPrct(data.caPoidsOa1y, data.ca1y);
-		result.caPartOaGlobal2m = _w.getPrct(data.caPoidsOaGlobal2m, data.caGlobal2m);
+		result.caPartOa2m = _w.getPrct(data.caPoidsOa2m, data.qtePm);
+		result.caPartOa1y = _w.getPrct(data.caPoidsOa1y, data.qtePm1y);
+		result.caPartOaGlobal2m = _w.getPrct(data.caPoidsOaGlobal2m, data.qtePmGlobal2m);
+        // console.log(data);
 		
 		// TODO : rajouter la sortie de PrimeVendeur pour le details
 		
@@ -94,5 +95,5 @@ darty.wynn.data = (function () {
         computeScore: computeScore,
         computeScoreEvol: computeScoreEvol,
         computeLineValues: computeLineValues,
-    };
+    }
 })();

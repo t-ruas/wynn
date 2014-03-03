@@ -16,10 +16,15 @@ var darty = {
 			requestEntrees : 'indicateursEnt'
         },
         QTE_DAY_LINES : 0, 
-        fromClick : true
+        fromClick : true, 
+        fields : ['ca', 'ca2m', 'ca1y', 'caGlobal1y', 'caGlobal2m', 'vt2m', 'vt1y',
+		'caPoidsOaGlobal2m', 'caPoidsRemGlobal2m', 'caPoidsAccGlobal2m',
+		'caPoidsServGlobal2m', 'caPoidsOa1y','caPoidsRem1y','caPoidsAcc1y','caPoidsServ1y',
+		'caPoidsOa2m','caPoidsRem2m','caPoidsAcc2m','caPoidsServ2m', 'qtePm', 'qtePm1y', 'qtePmGlobal2m']
     }
 };
- 
+// var 
+    
 var opts = {
   lines: 12, // The number of lines to draw
   length: 50, // The length of each line
@@ -40,15 +45,11 @@ var opts = {
 };
 var spinner = new Spinner(opts).spin();
 var target = $('#mainContent div#spin');
-// var target = document.getElementById('foo');
-// var spinner = new Spinner(opts).spin(target);
 
-darty.wynn.clone = function(x) {
+darty.wynn.clone = function(x) { // USELESS ?! 
 	try {
 		var copy = JSON.parse(JSON.stringify(x));
 	} catch (e) {
-		console.log('Error : ');
-		console.log(e);
 	}
 	return copy;
 }
@@ -207,7 +208,7 @@ darty.wynn.getMaxFilter = function(dim) { // retourne chaine vide ou indice max 
 		for (var h in f) {
 			if (h.substring(0,3) != 'agg') {
 				max = max > parseInt(u.substring(3,4)) ? max : u.substring(3,4);
-				console.log('test getMaxFilter', u.substring(3,4), 'Max : ', max)
+				// console.log('test getMaxFilter', u.substring(3,4), 'Max : ', max)
 				flag = true;
 			}
 		}

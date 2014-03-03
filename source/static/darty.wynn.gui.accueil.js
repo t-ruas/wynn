@@ -19,7 +19,7 @@ darty.wynn.gui.accueil = (function () { // fab
 	var minMax;
 	
     function refreshPage() { // controler de la page 
-		console.log('RefreshPage : ', new Date().getTime());
+		// console.log('RefreshPage : ', new Date().getTime());
 		var counter = 0;
 		var data = {};
 		
@@ -30,7 +30,7 @@ darty.wynn.gui.accueil = (function () { // fab
 		_w.fromClick = true; // On reset la condition
 
         darty.wynn.data.getIndicateurs(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
-        	console.log('getIndicateurs : ', new Date().getTime());
+        	// console.log('getIndicateurs : ', new Date().getTime());
         	if (error) {
 				counter += 1;
             } else { 
@@ -45,9 +45,9 @@ darty.wynn.gui.accueil = (function () { // fab
 		});
 		
 		darty.wynn.data.getIndicateursEnt(darty.wynn.makeSimpleFiltersClone(), function (error, resultEnt) {
-			console.log('getIndicateursEnt : ', new Date().getTime());
+			// console.log('getIndicateursEnt : ', new Date().getTime());
 			if (error) { 
-				console.log('Erreur lors du chargement des valeurs : page accueil - entrées');
+				// console.log('Erreur lors du chargement des valeurs : page accueil - entrées');
 				counter += 1;
 			} else { // SUCCESS
 				counter += 1; // TODO :  sécurisé ?! 
@@ -75,7 +75,7 @@ darty.wynn.gui.accueil = (function () { // fab
 			result.ca = typeof data.indicateurs.ca2m != 'undefined' ? data.indicateurs.ca2m : '-';
 			if (f.org4 && f.agg=='org4') {
 				result.caEvol = parseFloat(data.indicateurs.prime).toFixed(2).toString().replace('.',' - ');
-				console.log('BYPASS Prime', typeof result.caEvol);
+				// console.log('BYPASS Prime', typeof result.caEvol);
 				result.caCoul = darty.wynn.score2Cls(3,3);
 			} else {
 				result.caEvol = darty.wynn.formatEvo(darty.wynn.getEvol(data.indicateurs.ca2m,data.indicateurs.ca1y));
@@ -99,12 +99,19 @@ darty.wynn.gui.accueil = (function () { // fab
 																						darty.wynn.getPrct(data.indicateurs.caPoidsRemGlobal2m, data.indicateurs.caGlobal2m),
 																						darty.wynn.pageData.budget.REMISE), 4);
 			
-			result.poidsOa = darty.wynn.formatPrct(darty.wynn.getPrct(data.indicateurs.caPoidsOa2m, data.indicateurs.ca2m));
+			result.poidsOa = darty.wynn.formatPrct(darty.wynn.getPrct(data.indicateurs.caPoidsOa2m, data.indicateurs.qtePm));
+			result.poidsOaCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(darty.wynn.getPrct(data.indicateurs.caPoidsOa2m, data.indicateurs.qtePm),
+																						darty.wynn.getPrct(data.indicateurs.caPoidsOa1y, data.indicateurs.qtePm1y),
+																						darty.wynn.getPrct(data.indicateurs.caPoidsOaGlobal2m, data.indicateurs.qtePmGlobal2m),
+																						darty.wynn.pageData.budget.OFFRESACTIVES), 4);
+			
+
+			/*result.poidsOa = darty.wynn.formatPrct(darty.wynn.getPrct(data.indicateurs.caPoidsOa2m, data.indicateurs.ca2m));
 			result.poidsOaCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(darty.wynn.getPrct(data.indicateurs.caPoidsOa2m, data.indicateurs.ca2m),
 																						darty.wynn.getPrct(data.indicateurs.caPoidsOa1y, data.indicateurs.ca1y),
 																						darty.wynn.getPrct(data.indicateurs.caPoidsOaGlobal2m, data.indicateurs.caGlobal2m),
 																						darty.wynn.pageData.budget.OFFRESACTIVES), 4);
-			
+			*/
 			result.vt = typeof data.indicateurs.vt2m != 'undefined' ? data.indicateurs.vt2m : '-';
 			result.vtEvol = darty.wynn.formatEvo(darty.wynn.getEvol(data.indicateurs.vt2m,data.indicateurs.vt1y));
 			result.vtCoul = darty.wynn.score2Cls(darty.wynn.data.computeScore(data.indicateurs.vt2m, data.indicateurs.vt1y, data.indicateurs.vtGlobal2m), 3);
@@ -186,7 +193,7 @@ darty.wynn.gui.accueil = (function () { // fab
 		});
         
 		darty.wynn.setFilters('accueil');
-		console.log('End Loading : ', new Date().getTime());
+		// console.log('End Loading : ', new Date().getTime());
 	});
 }
     	
@@ -283,7 +290,7 @@ darty.wynn.gui.accueil = (function () { // fab
 		var complet = "";
 		// console.log('makeDrillUrl ! ');
 		if (param == ""){
-			console.log('Param is empty ! ');
+			// console.log('Param is empty ! ');
 			complet = "http://" + window.location.host + "/details?agg=prd1";	
 		}
    		else {
@@ -300,7 +307,7 @@ darty.wynn.gui.accueil = (function () { // fab
 					complet.length == 0 ? complet = end + "?"+split[i] : complet += "&" + split[i];
 				}
 				else {
-					console.log('split[i]');
+					// console.log('split[i]');
 				}
 			}
    		}

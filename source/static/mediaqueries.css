@@ -10,33 +10,62 @@
 *************************************************************/
 
 @media only screen and (max-width: 320px) {
-#blueContent{
-	display:none;}
+	#blueContent{
+		display:none;
+	}
+	#mainContent{
+		left: 0.00%;
+		right: 0.00%;
+	}
     
-#mainContentMiddle {
-    overflow:visible;}
+	#mainContentMiddle {
+		overflow:visible;
+	}
 
-    td.content.first-column {font-size:70%;}
+    td.content.first-column {
+		font-size:70%;
+	}
 
     #CA_chiffre {
         width:74.5%;
-        font-size:0.7em;}
+        font-size:0.7em;
+	}
 
     #CA_chiffre p {
-        margin-top:35px;}
+        margin-top:35px;
+	}
 
     #CA_pourcent {
-        font-size:1em;}
+        font-size:1em;
+	}
     
     #CA_pourcent p {
-        margin-top:40px;}
+        margin-top:40px;
+	}
     
-    .color_ {font-size:70%;} 
-    .color_underline_0 {border-bottom : 3px solid rgb(255,0,0); font-size:70%;} 
-    .color_underline_1 {border-bottom : 3px solid rgb(255,192,0);font-size:70%;}
-    .color_underline_2 {border-bottom : 3px solid rgb(146,208,80);font-size:70%;} 
-    .color_underline_3 {border-bottom : 3px solid rgb(0,176,80);font-size:70%;} 
-    .color_underline_gray {border-bottom : 3px solid rgb(187,187,187);font-size:70%;}
+    .color_ {
+		font-size:70%;
+	} 
+    .color_underline_0 {
+		border-bottom : 3px solid rgb(255,0,0);
+		font-size:70%;
+	} 
+    .color_underline_1 {
+		border-bottom : 3px solid rgb(255,192,0);
+		font-size:70%;
+	}
+    .color_underline_2 {
+		border-bottom : 3px solid rgb(146,208,80);
+		font-size:70%;
+	} 
+    .color_underline_3 {
+		border-bottom : 3px solid rgb(0,176,80);
+		font-size:70%;
+	} 
+    .color_underline_gray {
+		border-bottom : 3px solid rgb(187,187,187);
+		font-size:70%;
+	}
 
     .color_X {font-size:70%;}
     .color_0 {color:rgba(255,0,0,0.8);font-size:70%;} 
@@ -59,10 +88,17 @@
 
 @media only screen and (min-width: 320px) and (max-width: 480px) {
     #blueContent{
-        display:none;}
-
-#mainContentMiddle {
-    overflow:visible;}
+        display:none;
+	}
+	
+	#mainContent{
+		left: 0.00%;
+		right: 0.00%;
+	}
+	
+	#mainContentMiddle {
+		overflow:visible;
+	}
     
     td.content.first-column {font-size:70%;}
 
@@ -116,7 +152,9 @@
     
     #mainContent{
         background-image:url(./img/bg_1024.jpg);
-        right:0%;}
+        right:0%;
+		left: 0.00%;
+	}
 
     #mainContentMiddle {
         overflow:visible;}
@@ -359,7 +397,8 @@ td.content.first-column {width:10%;font-size:70%;}
     
 #mainContent {
     background-image:url(./img/bg_sup1024bis.jpg);
-    right:0%;}
+    right:0%;
+	left: 0%;}
 
 #mainContentMiddle {
     overflow:visible;}
