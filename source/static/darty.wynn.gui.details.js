@@ -5,45 +5,48 @@ darty.wynn.gui.details = (function () {
     var lastRefresh = null;
     var nextRefresh = null;
 	var flag1erAffichage = true;
-	var metaDataTable = {};
 	
-	function refreshPage() { // controller de la page
-        // console.log('RefreshPage : ', new Date().getTime());
+	function refreshPage() {
+        /*   ___________________________
+			|							|\
+			|							||
+			|							||
+			|							||
+			|___________________________||
+			\____________________________\
+        Sont en sessionStorage : 
+        - le nombre de données actuellement dans l'index
+        - l'état du tableau : ouvert ou ferme
+        - le tri : true ou false
+        - la colonne*/
+
         refreshTimer = null;
         
         /* On sette la transition : */
         $('#mainContent div#spin').length === 0 && _w.fromClick ? $('#mainContent').prepend("<div id=\"spin\"></div>") : '';
 		$('#mainContent div#spin').length === 1 && _w.fromClick ? $('#mainContent div#spin').prepend(spinner.el) : '';
 		typeof sessionStorage.QTE_DAY_LINES !== 'undefined' ? ($('#mainContent div#spin').length === 1 && _w.fromClick ? $('#mainContent div#spin').prepend("<h3>Processing "+sessionStorage.QTE_DAY_LINES+" documents</h3>") : '' ) : ''
+
 		_w.fromClick = true;
         
+        /* On attend la réponse du serveur node */
         darty.wynn.data.getDetails(darty.wynn.makeSimpleFiltersClone(), function (error, result) {
             if (error) {
             } else {
-				// console.log('GetDetails : ', new Date().getTime());
-		
-				var tmp = result.pop(); // on récupère la valeur NB_LINES 
+    			var tmp = result.pop(); // on récupère la valeur NB_LINES 
 				typeof sessionStorage.QTE_DAY_LINES === 'undefined' ? sessionStorage.QTE_DAY_LINES = tmp.QTE_LINES : (sessionStorage.QTE_DAY_LINES !== tmp.QTE_LINES ? sessionStorage.QTE_DAY_LINES = tmp.QTE_LINES : '');
 				
-				
-
-				// Algo pour calculer le nombre de page, le nombre d'onglet à créer, ainsi que les objets dans la page !
-				var pageActive = parseInt($('.actif').html()); 																// ok ! 
-				var pageNumber = result.length%darty.wynn.config.linePerPage > 0 ? parseInt(result.length/darty.wynn.config.linePerPage) + 1 : parseInt(result.length/darty.wynn.config.linePerPage);
-				var text = '';
-				for(var i = 0; i < pageNumber; i++) {
-					text += '<span href="" class="pageNumber ';
-					if(typeof pageActive == 'number' && i+1 == pageActive)
-						text += 'actif';
-					else
-						text += 'noActif';
-					text += '" value="'+parseInt(i+1)+'">'+parseInt(i+1)+'</span>';
-				}
 				
 				spinner.stop(); // on stope le spinner
 				$('#mainContent div#spin').remove(); // on enlève le container
 				
-
+				/* Mise en place des onglets */
+				// Algo pour calculer le nombre de page, le nombre d'onglet à créer, ainsi que les objets dans la page !
+				var pageActive = $('#onglet-container div.actif').attr('id'); // retrouver le .actif ! 
+				// console.log(pageActive);
+				//pageActive = 1;
+				
+				// Préparation des données pour être envoyées sur la page client 
 				if (!darty.wynn.checkBrowser()) {// false = IE8 ! 
 					$('#mainContentMiddle').html(doT.template($('#tmplDetailsTable').html())(prepareModel(result, pageActive)));
 				}
@@ -51,10 +54,18 @@ darty.wynn.gui.details = (function () {
 					$('#mainContentMiddle').html(doT.template($('#tmplDetailsTable').text())(prepareModel(result, pageActive)));
 				}
 				
-				if(parseInt(pageNumber) > 1)
-					$('#pageNumberLoader').prepend(text);
-				else 
-					$('#pageNumberLoader').remove();
+				setOnglets(result, pageActive);
+				
+				$("table").tablesorter( // configuration du tri de tableau !
+					{ headers: { 
+					0: {sorter:'text'}, // subclass :'(
+					1: {sorter:'currency'}, 
+					2: {sorter:'percent'},
+					3: {sorter:'percent'},
+					4: {sorter:'percent'},
+					5: {sorter:'percent'},
+					6: {sorter:'percent'} }
+				});
 				
 				_w.fromClick = false;
 				refreshTimer = window.setTimeout(refreshPage, _w.config.reqInterval);
@@ -65,59 +76,24 @@ darty.wynn.gui.details = (function () {
 					$("div.menuDeroul").css({"display":"hidden"});
 				});
 				
-				if ((typeof obj.filtres.prd6 != 'undefined' && obj.filtres.agg == 'org4' )||
-					(typeof obj.filtres.org4 != 'undefined' && obj.filtres.agg == 'prd6' )) {
+				if ((typeof obj.filtres.prd6 != 'undefined' && obj.filtres.agg == 'org5' )||
+					(typeof obj.filtres.org5 != 'undefined' && obj.filtres.agg == 'prd6' )) {
 					$("table#detailsTable tbody").find("a").removeAttr("href");
-					// console.log(obj);
-					$(".libelle").css("font-size","60%"); 													// contrôle ?!? Vérification ?!
 				}
-				else if (obj.filtres.agg == 'org4' || obj.filtres.agg == 'prd6')
-				{
-					$(".libelle").css("font-size","60%"); 
-				}
-				else {
-					$(".code").remove();
+				if (obj.filtres.agg == 'org5'){
+					$('table th#col2').html('% Evol')
+					$('table td.linkExpand').removeClass().addClass('content linkExpand');
 				}
 				
-				$("table").tablesorter( // configuration du tri de tableau ! TODO : faire fonctionner l'historique de tri ! 
-					{ headers: { 
-					0: {sorter:'subclass'},
-					1: {sorter:'currency'}, 
-					2: {sorter:'percent'},
-					3: {sorter:'percent'},
-					4: {sorter:'percent'},
-					5: {sorter:'percent'},
-					6: {sorter:'percent'} }
-				});
-				if((metaDataTable.orientation || metaDataTable.col) || metaDataTable.etat) { // Mise à jour du tableau postRefresh ! 
-					var sorting = [[(typeof metaDataTable.col === 'number' ? metaDataTable.col : ''),metaDataTable.orientation == '' ? '' : (metaDataTable.orientation == 'up' ? 1 : 0)]]; 
-					
-					metaDataTable.orientation != '' && metaDataTable.col != '' ? $("table").trigger("sorton",[sorting]) : '';
-					
-					if (metaDataTable.etat == 'ferme') { // doit être ferme
-						if ($('#detailsTable.reducted').length == 0) {// mais est ouvert
-							$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
-							updateClassTable();
-						}
-					}
-					else { // doit etre ouvert
-						if ($('#detailsTable.reducted').length == 1) {// et est ouvert
-							$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
-							updateClassTable();
-						}
-					}
-					
-				}
-				if (flag1erAffichage) {
-					$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
-					flag1erAffichage = false;
-					updateClassTable();
-				}
-				// console.log('EndLoading : ', new Date().getTime());
+				/* Ouverture tableau ! */
+				// setTableauState();
+				putTableauState();
 			}
         });
     }
 	
+    
+
 	// function de répartition des données dans le template HTML
     function prepareModel(data, pageNumber) {
 		if (isNaN(pageNumber))
@@ -125,9 +101,9 @@ darty.wynn.gui.details = (function () {
 		var model = {
             list: []
         };
+        darty.wynn.orderResult(data);
 		var sum = {}; 
         var t = {};
-		
 		for (var i = 0, imax = _w.fields.length; i < imax; i++) {
             t[_w.fields[i]] = 0; // init
 			sum[_w.fields[i]] = 0;
@@ -138,33 +114,26 @@ darty.wynn.gui.details = (function () {
 			var lineData = data[j]; 
 			var lineModel = createLineModel(lineData); 													// on créé la ligne
 			lineModel.cd = lineData.cd;
-            lineModel.lib = lineData.lib; 																// on rajoute le lib
+            lineModel.lib = lineData.lib;
+            lineModel.lib.length == 0 ? lineModel.lib = lineModel.cd : '',
             lineModel.ddQuery = makeDrillDownQuery(lineData.cd); 										// on rajoute les liens
-            lineModel.dbQuery = makeDashboardQuery(lineData.cd); 										// le second lien
-			lineModel.order = typeof lineData.ordre === 'number' ? lineData.ordre : cptNotZero;
+            lineModel.dbQuery = makeDrillDownQuery(lineData.cd); 										// on rajoute les liens
+            lineModel.order = typeof lineData.ordre === 'number' ? lineData.ordre : cptNotZero;
 			if (j >= (darty.wynn.config.linePerPage*(pageNumber-1)) && j < (darty.wynn.config.linePerPage*pageNumber)) {
 				model.list.push(lineModel);}															// on rajoute dans la liste de model.
-			createSumLine(lineData, sum); 																// mais on veut une somme correcte, donc on garde la somme =)
+			createSumLine(lineData, sum);
 		}
 		model.totals = createLineModel(sum);
+		// console.log(sum);
 		f = _w.makeSimpleFiltersClone();
-		model.totals.dbQuery = "/accueil?" + _w.makeQuery(f);
-		return model;
+		model.totals.dbQuery = _w.makeQuery(f);
+		return model; 
+		// La mise en forme est aussi définie sur le template 
     }
-	
-	function createSumLine(data, sum) { // somme les valeurs d'une ligne pour l'ensemble
-		for (y = 0; y < _w.fields.length; y++)
-		{
-			if (typeof data[_w.fields[y]] === 'number') {
-				sum[_w.fields[y]] += data[_w.fields[y]];
-			}
-		}
-	}
-	
     // Ajout d'un objet sur les données de la ligne pour ne pas mélanger les valeurs d'affichage avec les données numériques en entrée.
     function createLineModel(data) {
-        var result = _w.data.computeLineValues(data);
-		// console.log(_w.pageData.filtres.agg === 'org4', result)
+        var result = _w.data.computeLineValues(data); 
+        /* Les calculs sont effectués dans computeLineValues notamment les KPI */
 		var z = {
 			ca: _w.formatPrice(result.ca2m),
             caEvo: {
@@ -188,8 +157,18 @@ darty.wynn.gui.details = (function () {
                 cls: isNaN(result.caPartOa2m) || !isFinite(result.caPartOa2m)  ? 'gray' : _w.score2Cls(_w.data.computeScore(result.caPartOa2m, result.caPartOa1y, result.caPartOaGlobal2m,_w.pageData.budget.OFFRESACTIVES), 4)
 			}
         }
+        // console.log(z, result.ca2m);
 		return z;
     }
+	function createSumLine(data, sum) { // somme les valeurs d'une ligne pour l'ensemble
+		for (y = 0; y < _w.fields.length; y++)
+		{
+			if (typeof data[_w.fields[y]] === 'number') {
+				sum[_w.fields[y]] += data[_w.fields[y]];
+			}
+		}
+		// console.log(sum)
+	}
 	// function de création de la requête pour l'appel vers Dashboard
     function makeDashboardQuery(cd) {
 		var f = _w.makeSimpleFiltersClone();
@@ -202,45 +181,198 @@ darty.wynn.gui.details = (function () {
     function makeDrillDownQuery(cd) {
         var f = _w.makeSimpleFiltersClone();
 		f[f.agg] = cd;
-		if(f.agg == 'prd6' || f.agg == 'org4')
-			f.agg = f.agg.slice(0,3) == 'prd' ? (darty.wynn.getMaxFilter('org')== 4 ? 'org4' : 'org'+parseInt(darty.wynn.getMaxFilter('org')+1) ):
+		if(f.agg == 'prd6' || f.agg == 'org5')
+			f.agg = f.agg.slice(0,3) == 'prd' ? (darty.wynn.getMaxFilter('org')== 5 ? 'org5' : 'org'+parseInt(darty.wynn.getMaxFilter('org')+1) ):
 				(darty.wynn.getMaxFilter('prd')== 6 ? 'prd6' : 'prd'+parseInt(darty.wynn.getMaxFilter('prd')+1));
 		else
 			f.agg = f.agg.slice(0,3) + (parseInt(f.agg.slice(3)) + 1);
+		// console.log(_w.makeQuery(f));
         return _w.makeQuery(f);
     }
 	
 	
-	function updateTable() {
-		metaDataTable.orientation = $('th.headerSortUp').length>0 ? 'up' : ($('th.headerSortDown').length>0 ? 'down' : '');
-		metaDataTable.col = metaDataTable.orientation == 'up' ? parseInt($('th.headerSortUp').attr('id').substring(3,4)) : (metaDataTable.orientation == 'down' ? parseInt($('th.headerSortDown').attr('id').substring(3,4)) : '');
-		metaDataTable.etat = $('#detailsTable').attr('class') == 'reducted' ? 'ferme':'ouvert';
-	};
-	
-	function updateClassTable() {
-		if($('#detailsTable').attr('class'))
-			$('#detailsTable').removeClass();
-		else
-			$('#detailsTable').addClass('reducted');
+	function setOnglets(result, pageActive) {
+		// console.log('smth');
+		// var pageActive = parseInt($('#onglet-container div.actif').attr("id"));
+		isNaN(pageActive) ? pageActive = 1 : '';
+		var pageNumber = result.length%darty.wynn.config.linePerPage > 0 ? parseInt(result.length/darty.wynn.config.linePerPage) + 1 : parseInt(result.length/darty.wynn.config.linePerPage);
+		var text = '';
+		// console.log("setOnglets : pageActive : ", pageActive, " pageNumber : ", pageNumber);
+		// pageActive = 3;
+		// pageNumber = 3;
+		if (!isNaN(pageActive) && !isNaN(pageNumber)) {
+			if (pageActive == 1 && pageNumber == 1) {
+				text = "";
+			}
+			else if (pageActive == 1 && pageNumber > 0) {
+				// btn inf inactif, #onglet, btn sup,
+				text = "<div id=\"onglet-container\"><div class=\"fleche left\"><img src=\"img/ongletInfInactif.png\" width=\"24px\" heigth=\"24px\" alt=\"Précédent\"/></div>"
+				text += "<div class=\"left valOnglet\">"+(parseInt(pageActive))+"</div>";
+				text += "<div class=\"left fleche ongletCliquable\" id="+(parseInt(pageActive)+1)+" ><img src=\"img/ongletSupActif.png\" width=\"24px\"  heigth=\"24px\" alt=\"Suivant\"/></div></div>";
+			}
+			else if (pageActive > 1 && pageActive < pageNumber) {
+				text = "<div id=\"onglet-container\"><div class=\"fleche left ongletCliquable\" id="+(parseInt(pageActive)-1)+" ><img src=\"img/ongletInfActif.png\" width=\"24px\"  heigth=\"24px\" alt=\"Suivant\"/></div>";
+				text += "<div class=\"valOnglet actif left\" id="+(parseInt(pageActive))+">"+(parseInt(pageActive))+"</div>";
+				text += "<div class=\"left fleche ongletCliquable\" id="+(parseInt(pageActive)+1)+" ><img src=\"img/ongletSupActif.png\" width=\"24px\"  heigth=\"24px\" alt=\"Suivant\"/></div></div>";
+			}
+			else if (pageActive > 1 && pageActive == pageNumber) {
+				text = "<div id=\"onglet-container\"><div class=\"fleche left ongletCliquable\" id="+(parseInt(pageActive)-1)+" ><img src=\"img/ongletInfActif.png\" width=\"24px\"  heigth=\"24px\" alt=\"Suivant\"/></div>";
+				text += "<div class=\"valOnglet left\">"+(parseInt(pageActive))+"</div>";
+				text += "<div class=\"fleche left\"><img src=\"img/ongletSupInactif.png\" width=\"24px\" heigth=\"24px\" alt=\"Suivant\"/></div></div>"
+			}
+		}
+		else {
+			/*isNaN(pageActive) ? pageActive = '#' : '';
+			text = "<div><img src=\"img/ongletInfInactif.png\" width=\"24px\" heigth=\"24px\" alt=\"Précédent\"/></div>"
+			text += "<div class=\"valOnglet\">"+0+"</div>";
+			text += "<div class=\"ongletCliquable\" id="+(parseInt(pageActive)+1)+" ><img src=\"img/ongletSupActif.png\" width=\"24px\"  heigth=\"24px\" alt=\"Suivant\"/></div>";
+			*/
+		}
+		/*for(var i = 0; i < pageNumber; i++) {
+			text += '<span href="" class="pageNumber ';
+			if(typeof pageActive == 'number' && i+1 == pageActive)
+				text += 'actif';
+			else
+				text += 'noActif';
+			text += '" value="'+parseInt(i+1)+'">'+parseInt(i+1)+'</span>';
+		}*/
+		// if(parseInt(pageNumber) > 1) {
+		// var test = 
+		// console.log(text);
+		$('div#pageNumberLoader').html(text);
+		// console.log($('#pageNumberLoader').text());
+		// console.log('3', text, test)
+		// }
+		// else 
+		// 	$('#pageNumberLoader').remove();
+		return pageActive;
 	}
+
+	function setTableauState() { // somme les valeurs d'une ligne pour l'ensemble!
+		var tab = $('#detailsTable').attr('class') == 'reducted' ? 'ferme': 'ouvert';
+		var ord = $('#detailsTable th.headerSortUp').length > 0 ? 'desc' : 
+				$('#detailsTable th.headerSortDown').length > 0 ? 'asc' : '';
+		var col = ord === 'desc' ? parseInt($('th.headerSortUp').attr('id').substring(3,4)) : 
+			ord === 'asc' ? parseInt($('th.headerSortDown').attr('id').substring(3,4)) : '';
+
+		if (typeof sessionStorage.tableau === 'undefined' || typeof sessionStorage.colonne === 'undefined' || typeof sessionStorage.ordre === 'undefined') {
+			// Premier affichage de la journée : Setting des valeurs : 
+			ord.length > 0 ? '' : ord = 'desc';
+			typeof col === 'number' ? '' : col = 1;
+			
+			sessionStorage.setItem("tableau", tab);
+			sessionStorage.setItem("ordre", ord);
+			sessionStorage.setItem("colonne", col);
+		}
+		else
+		{
+			var localTab = sessionStorage.getItem('tableau') !== null ? sessionStorage.getItem('tableau') : '';
+			if (localTab.length > 0) {
+				if (tab.length > 0) {
+					if (localTab !== tab)
+						sessionStorage.setItem("tableau", tab);
+				}
+				else 
+					sessionStorage.setItem("tableau", tab);
+				}
+			else 
+				if (tab.length > 0) {
+					sessionStorage.setItem("tableau", tab);
+				}
+
+			var localOrd = sessionStorage.getItem("ordre") !== null ? sessionStorage.getItem("ordre") : '';
+			if(localOrd.length > 0){
+				if (ord.length > 0){
+					if (localOrd !== ord) 
+						sessionStorage.setItem("ordre", ord);
+				}
+				else
+					sessionStorage.setItem("ordre", ord);
+			}
+			else 
+				if (ord.length > 0) {
+					sessionStorage.setItem("ordre", ord);
+				}
+
+			var localCol = sessionStorage.getItem("colonne") !== null ? parseInt(sessionStorage.getItem("colonne")) : '';
+			if (typeof localCol == "number") {
+				if (typeof col == "number") {
+					if (localCol !== col)
+						sessionStorage.setItem("colonne", col);
+				}
+				else
+					sessionStorage.setItem("colonne", col);
+			}
+			else 
+				if (typeof col == 'number') {
+					sessionStorage.setItem("colonne", col);
+				}
+		}
+		// console.log('End of SessionStorageSet ', sessionStorage, localTab, localCol, localOrd)
+	}
+	function putTableauState() {
+		if (typeof sessionStorage.tableau === 'undefined') {
+			// console.log('Etat du tableau indeterminé ! ');
+			var sorting = [[1,1]];
+			$("table").trigger("sorton",[sorting]);
+		}
+		else {
+			var a = sessionStorage.ordre === "desc" ? 1 : 0;
+			var b = parseInt(sessionStorage.colonne);
+			var sorting = [[b,a]];
+			if (isNaN(b)) {
+				b = 1;
+				// return ;
+			}
+			$("table").trigger("sorton",[sorting]);
+			if (sessionStorage.tableau === 'ferme') {
+				if ($('#detailsTable.reducted').length == 0) {
+					$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
+					$('#detailsTable').addClass('reducted');
+				}
+			}
+			else 
+				if($('#detailsTable.reducted').length == 1) {
+					$('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
+					$('#detailsTable').removeClass();
+				}
+		}
+		setTableauState();
+	}
+	
+    
 	
     function start() {
 		$(document).ready(function () {
+			/* Si on  est au niveau vendeur : il faut afficher l'entete Prime et non evol + 
+			Enlever la couleur du background de Prime pour fond blanc/gris clair */
+
 			$(document).on('click', '#detailsTable .linkExpand', function () {
                 $('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
-				updateClassTable();
+                if($('#detailsTable').attr('class'))
+					$('#detailsTable').removeClass();
+				else
+					$('#detailsTable').addClass('reducted');
+				setTableauState(); 
 				return false;
             });
-			
+            $(document).on('click', '#detailsTable .Dexpand', function () {
+                $('#detailsTable th:nth-child(3), #detailsTable td:nth-child(3)').nextAll().toggle();
+                if($('#detailsTable').attr('class'))
+					$('#detailsTable').removeClass();
+				else
+					$('#detailsTable').addClass('reducted');
+				setTableauState(); 
+				return false;
+            });
 			// Bouton Refresh Timer 
             $(document).on('click','p#lastUpdate', function () {
                 if (refreshTimer) {
-					updateTable();
+					setTableauState();
 					window.clearTimeout(refreshTimer);
                     refreshPage();
                 }
             });
-			
 			// Bouton radio de choix de dimension
 			$(document).on('click', 'div#bouton span.active', function () {
 				// trouver le max de chaque dimension, et en fonction de celle ou l'on va, appliquer le max ! 
@@ -248,15 +380,14 @@ darty.wynn.gui.details = (function () {
 				var max = false;
 				var top = 0;
 				for (var i in f) {
-					if(($('span.active').attr('id') == 'prd' && i == 'prd6') || ($('span.active').attr('id') == 'org' && i == 'org4'))
+					if(($('span.active').attr('id') == 'prd' && i == 'prd6') || ($('span.active').attr('id') == 'org' && i == 'org5'))
 						max = true;
 					else if (i.substring(0,3) == $('span.active').attr('id'))
 						top = parseInt(i.substring(3,4));
 				}
-					f.agg = (f.agg.substring(0,3) == 'prd'? 'org':'prd') + parseInt(top + 1);
-				window.location.assign("http://" + window.location.host + "/details?" + _w.makeQuery(f));
+				f.agg = (f.agg.substring(0,3) == 'prd'? 'org':'prd') + parseInt(top + 1);
+				window.location.assign("/details?" + _w.makeQuery(f));
 			});
-			
 			// Menu déroulant => Redirect => itself + Aggregat 
 			$(document).on('click', 'div.btn-menu.btnY', function () {
 				if ($(this).attr('id')) {
@@ -268,43 +399,67 @@ darty.wynn.gui.details = (function () {
 						else 
 							text += '&'+split[i];
 					}
-					window.location.assign("http://" + window.location.host + "/details" + text);
+					window.location.assign("/details" + text);
 				}
 			});
-			
 			// bouton de suppression des filtres  
-			$(document).on('click', 'div#ariane span.close', function () { // TODO : Clic sur l'img ... 
+			$(document).on('click', 'div#ariane span.close', function () {
 				darty.wynn.removeFilters('details',$(this).parent().parent().attr('class') );
             });
-			
-			// Bouton Home => Redirect => Accueil 
+      //       $(document).on('click', 'body', function(){
+      //       	// console.log('click');
+      //   		// $('mainContentMiddle div#pageNumberLoader').html('<div><img src="img/ongletInfInactif.png" width="24px" heigth="24px" alt="Précédent"/></div><div class="valOnglet">1</div><div class="ongletCliquable" id=1 ><img src="img/ongletSupActif.png" width="24px"  heigth="24px" alt="Suivant"/></div>');
+      //   		// $("div#pageNumberLoader").html('<div><img src="img/ongletInfInactif.png" width="24px" heigth="24px" alt="Précédent"/><span>Darty</span></div>');
+      //   		$("div#pageNumberLoader").html('<div style="margin: 15px auto;width:110px;"><div style="float:left; margin:10px 5px"><img src="img/ongletInfInactif.png" width="24px" heigth="24px" alt="Précédent"/></div><div style="float:left" class="valOnglet">1</div><div style="float:left; margin:10px 5px" class="ongletCliquable" id="1" ><img src="img/ongletSupActif.png" width="24px"  heigth="24px" alt="Suivant"/></div></div>');
+    		// });
 			$(document).on('click', 'span#home', function () {
-                window.location.assign("http://" + window.location.host + "/accueil?agg=prd1");
+                window.location.assign("/accueil?agg=prd1");
             });
-			
 			// Menu déroulant => Affiche les options d'aggregat 
 			$(document).on('click', 'div#zone', function () {
-				// console.log('click sur div#zone');
-                if($('div.menuDeroul').is(":hidden")) { // console.log('hidden to show');
+				if($('div.menuDeroul').is(":hidden")) { // console.log('hidden to show');
 					$('div.menuDeroul').show("fast", function(){}); }
-				else { // console.log('show to hide');
+				else { 
 					$('div.menuDeroul').hide("fast", function(){}); }
-				// console.log('Menu deroulant !');
             });
 			
-			
+			$(document).on("mouseenter", "tr td.first-column", function() {
+				pos = $(this).findPos();
+				$(this).prepend('<div id="rm" style="position:absolute;background-color:rgb(249, 249, 249);width: 80px; padding:0px 4px 0px 15px;top:'+(pos.y-116)+'px; left: '+(pos.x-50)+'px;">'+$(this).children("div.code").attr("code_to_display")+'</div>').fadeIn('slow'); 
+			});
+			$(document).on("mouseleave", "tr td.first-column", function() {
+				$(this).children().remove("#rm");
+			});
+
 			// bouton des onglets du tableau
-			$(document).on('click', '.pageNumber.noActif', function () {
-				// appel à refresh page, avec la valeur dans le DOM ! 
-				$('.actif').removeClass('actif').addClass('noActif');
-				$(this).removeClass('noActif').addClass('actif');
+			$(document).on('click', 'div.ongletCliquable', function () {
+				$('.actif').removeClass('actif');
+				$(this).addClass('actif');
+				// console.log($(this).attr('id'));
 				refreshPage();
 				return false;
             });
+
 			
-            window.setInterval(function(){ 
+			
+			// $("div.code rm").remove();
+			// $(document).on("mouseleave", "table div.code", function (){
+			// 	$('#rm').remove();
+			// });
+			// $(document).on("mouseover","table div.code", function () {
+	  		//           pos = $(this).findPos();
+	  		//           $(this).prepend('<div id="rm" style="position:absolute;background-color:rgb(249, 249, 249);width: 80px; padding:0px 4px 0px 15px;top:'+(pos.y-121)+'px; left: '+(pos.x-56)+'px;">'+$(this).attr("code_to_display")+'</div>').fadeIn('slow'); 
+	  		//       });
+	        // $(document).on("mouseover","table tr td.first-column", function () {
+	        //     pos = $(this).findPos();
+	        //     $(this).children('.code').prepend('<div id="rm" style="position:absolute;background-color:rgb(249, 249, 249);width: 80px; padding:0px 4px 0px 15px;top:'+(pos.y-121)+'px; left: '+(pos.x-56)+'px;">'+$(this).children('.code').attr("code_to_display")+'</div>').fadeIn('slow'); 
+	        // });
+	        // $(document).on("mouseout","table div.code", function () {
+	        //     $('#rm').remove(); 
+	        // });
+	        window.setInterval(function(){ 
 				var jour = new Date();
-				updateTable(); // TODO : ne pas en avoir autant d'exécution, bloquer sur > à délai max - 5 secondes ?!?! 
+				setTableauState(); // TODO : ne pas en avoir autant d'exécution, bloquer sur > à délai max - 5 secondes ?!?! 
 				var text = parseInt(jour.getDate()) + '/'+(parseInt(jour.getMonth())+1) + '/'+parseInt(jour.getYear()%100)
 				if (refreshTimer) {
 					$('#lastUpdate').remove();
@@ -319,7 +474,6 @@ darty.wynn.gui.details = (function () {
             
 			darty.wynn.setFilters('details');
 			refreshPage();
-			// $("table").tablesorter({ }); 
 			$('div.delete').remove();
         });
     }

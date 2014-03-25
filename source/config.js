@@ -3,32 +3,29 @@
 var _keygrip = require('keygrip');
 
 module.exports = {
+    version : 1.12,
 	updateLogs : 5000,
 	nbEsQueries: 0,
-	DED_year: 11, 
+	DED_year: 0, 
 	// à partir de l'an 2000, donc pour 2013 : 13
-	DED_month: 9, // de 0 à 11
-	DED_day: 24, 
-	// 1 / 7 / 2011 beaucoup de data mais nulles
-	// 28 / 3/ 2013 peu de data mais globalement ok 
-	// 9 / 8/ 2012 pour les primes 
+	DED_month: 0, 
+	DED_day: 0,  
 	port: 8090,
     staticRoot: './static',
-    // tempsChargReel:-60,
     tempsChargReel:0,
     tempsChargTalend:2,
     tempsComptSet:5,
     jourCalcMoyeEnt:7,
     jour1an: 364,
-	jour1week: 7,
+	jour1week: 2,
     authCookieName: 'darty_wynn_auth',
     keys: _keygrip(['azertyuiop', 'qsdfghjklm', 'wxcvbn'], 'sha256', 'hex'),
     elasticSearch: {
-        host: '10.132.20.115',											// adresse de la machine sur laquelle est stockée le LB ES
+        host: 'hdpesprd1', //.intranet.darty.fr',											// adresse de la machine sur laquelle est stockée le LB ES
+        // host: '10.132.20.115',											// adresse de la machine sur laquelle est stockée le LB ES
         // host: 'localhost',											// adresse de la machine sur laquelle est stockée le LB ES
         port: 9200,
-        // index: 'wynn', 												// nom de l'index 
-        index: 'wynn_idx', 												// nom de l'index 
+        index: 'wynn_idx', 										        // nom de l'index 
         typeEnt: 'entrees', 											// nom du type pour les entrées
 		typeBud: 'budget', 												// nom du type pour les budgets
 		typeLv: 'lv',
@@ -39,4 +36,7 @@ module.exports = {
 			VENTES_CHUNK_SIZE : 10000000, // non utilisé, inutile ! 
 		}
     },
+    metrics : {
+    	port : 9091
+    }
 };

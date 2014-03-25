@@ -12,8 +12,8 @@ var _errors = require('./errors');
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
  
 function postSearch(type, data, callback) {
-    _logger.info('Query Sent to '+type, ' --- +> ' , new Date().getTime(), ' ms');
-	_logger.info('Requête ES : ', JSON.stringify(data));
+    // _logger.info('Query Sent to '+type, ' --- +> ' , new Date().getTime(), ' ms');
+	// _logger.info('Requête ES : ', JSON.stringify(data));
 	sendRequest({method: 'POST', path: '/' + type + '/_search'}, data, callback);
 }
 
@@ -38,11 +38,10 @@ function sendRequest(options, data, callback) {
             }
         });
     }).on('error', function (error) {
+        console.log('Error in Http.request', error)
         callback(error);
     });
     if (data) {
-        // _logger.info('Requête ElasticSearch : ', JSON.stringify(data) ); //  
-        // _logger.info('Requête ElasticSearch : ', _util.inspect(data, {depth: null}));
         req.write(JSON.stringify(data));
     }
 	req.end();
@@ -65,7 +64,6 @@ function dateToString(date) {
 }
 
 function makeDateFilter(date) {
-	//_logger.info('2 Réponse ElasticSearch : ' + _util.inspect(date, {depth: null}));
 	return {
         range: {
             'DATE': {
@@ -80,10 +78,9 @@ function makeDateFilter(date) {
 
 function makeDateFilterLib(date) {
 	var tempDate = new Date(date);
-	tempDate.setDate(tempDate.getDate() - _config.jour1an);
+	tempDate.setDate(tempDate.getDate() - _config.jour1week);
 	tempDate.setHours(0,0,0,0);
-	// console.log('Lib range : '+ tempDate +' -> '+date);
-    return {
+	return {
         range: {
             'DATE': {
             	lte: dateToString(date),
@@ -127,7 +124,7 @@ function getBudget(callback) {
 			callback(error);
 		} else {
 			if (result.hits.hits.length) {
-				_logger.info("")
+				// _logger.info("")
 				callback(null, result.hits.hits[0].fields);
 			} else {
 				callback(new _errors.Error('Budget Not Found : Error'));
@@ -139,6 +136,7 @@ function getBudget(callback) {
 function prepareDateFilters(tempsComptSet) {
     var dates = new Array(5);
 	
+    // if no hack date
 	if(_config.DED_year == 0 && _config.DED_month == 0 && _config.DED_day == 0) {
 		dates[0] = new Date();
 	}
@@ -146,18 +144,18 @@ function prepareDateFilters(tempsComptSet) {
 		var a = 2000 + _config.DED_year;
 		var b = _config.DED_month;
 		var c = _config.DED_day;
-		dates[0] = new Date(a, b, c);
-	}
-	
-	var dateRef = new Date();
-	dates[0].setHours(dateRef.getHours()); // config pour 01/12/2013
+    	dates[0] = new Date(a, b, c);
+    }
+    
+    var dateRef = new Date();
+    dates[0].setHours(dateRef.getHours()); // config pour 01/12/2013
     dates[0].setMinutes(dateRef.getMinutes() -  _config.tempsChargReel); // 2min
-	// console.log(dates[0])
+    
     dates[1] = new Date(dates[0]);
     dates[1].setMinutes(dates[1].getMinutes() -  _config.tempsChargTalend); // 4min
     if (tempsComptSet != null){
-    	dates[1] = dates[1].setMinutes(dates[1].getMinutes() -  tempsComptSet); // 19 min
-   	}
+        dates[1] = dates[1].setMinutes(dates[1].getMinutes() -  tempsComptSet); // 19 min
+    }
     dates[2] = new Date(dates[1]); 
     dates[2].setDate(dates[2].getDate() - _config.jourCalcMoyeEnt);  // 26 min
 
@@ -170,7 +168,7 @@ function prepareDateFilters(tempsComptSet) {
         	dates[i] = makeDateFilter(dates[i]);
        	}
        	else {
-       		dates[4] = makeDateFilterLib (dates[4]);
+       		dates[4] = makeDateFilterLib(dates[4]);
        	}
     }
     return dates;
@@ -178,17 +176,19 @@ function prepareDateFilters(tempsComptSet) {
 
 var filterFields = {
     // On ignore le premier niveau (couleur).
-    'prd1': {cd: 'CPROD1', lib: 'LPROD1'},
-    'prd2': {cd: 'CPROD2', lib: 'LPROD2'},
-    'prd3': {cd: 'CPROD3', lib: 'LPROD3'},
-    'prd4': {cd: 'CPROD4', lib: 'LPROD4'},
-    'prd5': {cd: 'CPROD5', lib: 'LPROD5'},
+    //'prd1': {cd: 'CPROD0', lib: 'LPROD0'}, // Ajout test 
+    'prd1': {cd: 'CPROD0', lib: 'LPROD0'},
+    'prd2': {cd: 'CPROD1', lib: 'LPROD1'},
+    'prd3': {cd: 'CPROD2', lib: 'LPROD2'},
+    'prd4': {cd: 'CPROD3', lib: 'LPROD3'},
+    'prd5': {cd: 'CPROD4', lib: 'LPROD4'},
     'prd6': {cd: 'CPRODUIT', lib: 'LPRODUIT'},
 
     'org1': {cd: 'CORG0', lib: 'LORG0'},
     'org2': {cd: 'CORG1', lib: 'LORG1'},
     'org3': {cd: 'CORG2', lib: 'LORG2'},
-    'org4': {cd: 'CVENDEUR', lib: 'LVENDEUR'},
+    'org4': {cd: 'CORG3', lib: 'LORG3'},
+    'org5': {cd: 'CVENDEUR', lib: 'LVENDEUR'},
 };
 
 // Prépare les filtres ElasticSearch à partir des options de navigation org et prd.
@@ -236,26 +236,6 @@ function getFilterText(options, callback) {
         callback(null, o);
     }
 }
-
-function getES(context, callback) {
-	var data = {
-		from: 0,
-		size: 1,
-		query: {query_string: {query:1}}
-	};
-	
-	postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
-		if (error) {
-			callback(error);
-		} else {
-			if (result.hits.hits.length) {
-				callback(null, true);
-			} else {
-				callback(new _errors.Error('ElasticSearch Not Found : Error'));
-			}
-		}
-	});
-}
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 var libCache = {};
@@ -280,7 +260,7 @@ function getLib(field, code, callback) {
             filter: {term: f}
         };
 		
-		_logger.info('Requete ElasticSearch : ' + _util.inspect(data, {depth: null}));
+		// _logger.info('Requete ElasticSearch : ' + _util.inspect(data, {depth: null}));
 		// pour retrouver un libellé en particulier s'il manque
         postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
             if (error) {
@@ -328,22 +308,34 @@ function getNbItems(callback) {
 // Accueil
 function getIndicators(options, callback) {
     // _logger.info('GET NB ITEMS : ' + nbItemsCache)
-
+    // _logger.info('OPTIONS : ===> ', _util.inspect(options))
     var fDates = prepareDateFilters();
     
 	var fVt = {field: 'NVENTE', size: _config.elasticSearch.chunk_size.VENTES_CHUNK_SIZE};
     var fCa = {field: 'PVTOTAL'};
 	
-	var fVend = { field: 'PRIMEVENDEUR'};
-	var fRem = { field: 'POIDSREMISE'}; 		// Nom_du_field_ou_se_trouve_le_ca_remisé
-	var fAcc = { field: 'POIDSACC'}; 			// Nom_du_field_ou_se_trouve_le_ca_des_accessoires
-	var fOa = { field: 'POIDSOA'};  			// Nom_du_field_ou_se_trouve_le_ca_des_offres_actives
-    var fServ = { field: 'POIDSSERVICE'};       // Nom_du_field_ou_se_trouve_le_ca_des_services
-	var fQtePm = { field: 'FLAGPM'};		// Nom_du_field_ou_se_trouve_le_ca_des_services
+	var fVend = { field: 'MONTANTPRIME'};      // Nom du champ pour la prime vendeur
+	
+    var fRem = { field: 'MONTANTREMISE'}; 		// ca_remisé (seulement la part de remise)
+	var fAcc = { field: 'MONTANTACC'}; 			// ca_des_accessoires
+	
+    var fOa = { field: 'QTEOA'};  			    // volume_des_offres_actives
+    var fServ = { field: 'QTESERVICE'};         // volume_des_services
+    
+    // var fQtePm = { field: 'FLAGPM'};        // Nom_du_field_ou_se_trouve_le_ca_des_services
+	
+    var fPm = { field: 'QTEPM'};               // Nom_du_field_ou_se_trouve_le_ca_des_services
+    var fCodic = { field: 'QTECODIC'};		       // Nom_du_field_ou_se_trouve_le_ca_des_services
 	
 	var fPrd = makeNavFilters(options, 'prd');
     var fOrg = makeNavFilters(options, 'org');
 	
+    // for (var i in fDates)
+    // {
+    //     fDates[i].range.DATE.lte = fDates[i].range.DATE.lte.substring(0,8) + '2359';
+    // } // TODO : REMOVE 
+    
+    
     var data = {
         size: 0,
         facets: {
@@ -362,21 +354,25 @@ function getIndicators(options, callback) {
 			'ca_poids_acc_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fAcc},
             'ca_poids_acc_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fAcc},			
 			
-			'ca_poids_serv_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fServ},
-			'ca_poids_serv_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fServ},
-            'ca_poids_serv_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fServ},			
+			'vol_poids_serv_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fServ},
+			'vol_poids_serv_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fServ},
+            'vol_poids_serv_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fServ},			
 			
 			'ca_poids_rem_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fRem},
 			'ca_poids_rem_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fRem},
             'ca_poids_rem_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fRem},			
 			
-			'ca_poids_oa_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fOa},
-			'ca_poids_oa_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fOa},
-            'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fOa},
+			'vol_poids_oa_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fOa},
+			'vol_poids_oa_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fOa},
+            'vol_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fOa},
 
-            'qte_pm': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fQtePm},
-            'qte_pm_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fQtePm},
-            'qte_pm_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fQtePm}
+            'vol_poids_pm_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fPm},
+            'vol_poids_pm_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fPm},
+            'vol_poids_pm_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fPm},
+
+            'vol_poids_codic_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, statistical: fCodic},
+            'vol_poids_codic_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, statistical: fCodic},
+            'vol_poids_codic_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, statistical: fCodic}
 		}
     };
 	
@@ -417,21 +413,26 @@ function getIndicators(options, callback) {
                 caPoidsAcc1y: getCaFacet('ca_poids_acc_1y'),
                 caPoidsAccGlobal2m: getCaFacet('ca_poids_acc_global_2m'),
 
-				caPoidsServ2m: getCaFacet('ca_poids_serv_2m'),
-                caPoidsServ1y: getCaFacet('ca_poids_serv_1y'),
-                caPoidsServGlobal2m: getCaFacet('ca_poids_serv_global_2m'),
+				volPoidsServ2m: getCaFacet('vol_poids_serv_2m'),
+                volPoidsServ1y: getCaFacet('vol_poids_serv_1y'),
+                volPoidsServGlobal2m: getCaFacet('vol_poids_serv_global_2m'),
 				
 				caPoidsRem2m: getCaFacet('ca_poids_rem_2m'),
                 caPoidsRem1y: getCaFacet('ca_poids_rem_1y'),
                 caPoidsRemGlobal2m: getCaFacet('ca_poids_rem_global_2m'),
 				
-				caPoidsOa2m: getCaFacet('ca_poids_oa_2m'),
-                caPoidsOa1y: getCaFacet('ca_poids_oa_1y'),
-                caPoidsOaGlobal2m: getCaFacet('ca_poids_oa_global_2m'),
+				volPoidsOa2m: getCaFacet('vol_poids_oa_2m'),
+                volPoidsOa1y: getCaFacet('vol_poids_oa_1y'),
+                volPoidsOaGlobal2m: getCaFacet('vol_poids_oa_global_2m'),
 				
-                qtePm: getCaFacet('qte_pm'),
-                qtePm1y: getCaFacet('qte_pm_1y'),
-                qtePmGlobal2m: getCaFacet('qte_pm_global_2m'),
+                // ** Pour la prod ** Remettre cette partie de la requete -
+                qtePm2m: getCaFacet('vol_poids_pm_2m'),
+                qtePm1y: getCaFacet('vol_poids_pm_1y'),
+                qtePmGlobal2m: getCaFacet('vol_poids_pm_global_2m'),
+                
+                qteCodic2m: getCaFacet('vol_poids_codic_2m'),
+                qteCodic1y: getCaFacet('vol_poids_codic_1y'),
+                qteCodicGlobal2m: getCaFacet('vol_poids_codic_global_2m'),
                 
                 QTE_LINES : typeof nbItemsCache.total === 'number' ? nbItemsCache.total : 'n/a'
             });
@@ -487,11 +488,6 @@ function getDetails(options, callback) {
         field: aggField.cd,
         script: 'term + ";" + _source.' + aggField.lib
     };
-	var fOrd = {
-		size: _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
-        field: ('ORDRECAT'+(aggField.cd.substring(0,4) == 'CORG' ? aggField.cd.substring(4,5) : (aggField.cd == 'CPRODUIT' ? '5':(aggField.cd == 'CVENDEUR' ? '3' : (aggField.cd.substring(0,5) == 'CPROD' ? parseInt(parseInt(aggField.cd.substring(5,6))-1): ''))))),
-		script: 'term + ";" + _source.' + aggField.cd
-    };
 	// on concatène le numéro de vente avec l'axe d'aggrégation pour avoir un count de ventes et non de lignes.
     var fVt = {
 		size: _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
@@ -507,43 +503,87 @@ function getDetails(options, callback) {
     var fRem = {
 		size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
 		key_field: aggField.cd,
-		value_field: 'POIDSREMISE' 	// Nom_du_field_ou_se_trouve_le_ca_remisé
+		value_field: 'MONTANTREMISE' 	// Nom_du_field_ou_se_trouve_le_ca_remisé
 	};
 	var fAcc = {
 		size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
 		key_field: aggField.cd,
-		value_field: 'POIDSACC' 	// Nom_du_field_ou_se_trouve_le_ca_des_accessoires
+		value_field: 'MONTANTACC' 	// Nom_du_field_ou_se_trouve_le_ca_des_accessoires
 	};
-	var fOa = {
+	
+    var fOa = {
 		size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
-		key_field: aggField.cd,
-		value_field: 'POIDSOA'		// Nom_du_field_ou_se_trouve_le_ca_des_offres_actives
+		field: aggField.cd,
+		script: 'term + ";" + _source.' + 'QTEOA'		// Nom_du_field_ou_se_trouve_le_ca_des_offres_actives
 	};
 	var fServ = {
+        size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
+        field: aggField.cd,
+        script: 'term + ";" + _source.' + 'QTESERVICE'     // Nom_du_field_ou_se_trouve_le_ca_des_services
+    };
+    var fVend = {
 		size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
-		key_field: aggField.cd,
-		value_field: 'POIDSSERVICE'		// Nom_du_field_ou_se_trouve_le_ca_des_services
+		field: aggField.cd,
+		script: 'term + ";" + _source.' + 'MONTANTPRIME'		// Nom_du_field_ou_se_trouve_le_ca_des_services
 	};
-	
     var fQtePm = {
         size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
-        key_field: aggField.cd,
-        value_field: 'FLAGPM'  // Nom_du_field_ou_se_trouve_le_ca_remisé
+        field: aggField.cd,
+        script: 'term + ";" + _source.' + 'QTEPM'  // Nom_du_field_ou_se_trouve_le_ca_remisé
+    };
+    var fQteCodic = {
+        size : _config.elasticSearch.chunk_size.DETAILS_CHUNK_SIZE,
+        field: aggField.cd,
+        script: 'term + ";" + _source.' + 'QTECODIC'  // Nom_du_field_ou_se_trouve_le_ca_remisé
     };
 
-	var fPrd = makeNavFilters(options, 'prd');
+    var fPrd = makeNavFilters(options, 'prd');
     var fOrg = makeNavFilters(options, 'org');
-	
+    
+    /*var day = {
+        din : {
+            year : typeof options.din !== "undefined" ? (options.din.length == 12 ? options.din.substring(0,4) : '' ) : '',
+            month : typeof options.din !== "undefined" ? (options.din.length == 12 ? options.din.substring(4,6) : '' ) : '',
+            day : typeof options.din !== "undefined" ? (options.din.length == 12 ? options.din.substring(6,8) : '' ) : '',
+            h : typeof options.din !== "undefined" ? (options.din.length == 12 ? options.din.substring(8,10) : '' ) : '',
+            m : typeof options.din !== "undefined" ? (options.din.length == 12 ? options.din.substring(10,12) : '' ) : ''
+        },
+        dout : {
+            year : typeof options.dout !== "undefined" ? (options.dout.length == 12 ? options.dout.substring(0,4) : '' ) : '',
+            month : typeof options.dout !== "undefined" ? (options.dout.length == 12 ? options.dout.substring(4,6) : '' ) : '',
+            day : typeof options.dout !== "undefined" ? (options.dout.length == 12 ? options.dout.substring(6,8) : '' ) : '',
+            h : typeof options.dout !== "undefined" ? (options.dout.length == 12 ? options.dout.substring(8,10) : '' ) : '',
+            m : typeof options.dout !== "undefined" ? (options.dout.length == 12 ? options.dout.substring(10,12) : '' ) : ''  
+        }
+    };*/
+    
+    /* if () 
+    din < dout ! 
+    dout.year.length == 0 ? 
+    Setter la date à celle de la veille, 
+    mais il faut qu'elle soit supérieure à la din ! ou que la Dout soit suppérieur à la din
+
+    din.year.length == 0 ?
+    Setter la date à celle d'il y a une semaine, 
+    mais s'assurer qu'elle soit inférieure  
+	*/
+    // _logger.info('OPTIONS : ' + _util.inspect(options, {depth: null}))
+    // _logger.info('OPTIONS2 : ' +  _util.inspect(day, {depth: null}))
+    // _logger.info('OPTIONS22 : ' + options.din + typeof options.din+ options.dout + typeof options.dout, options.dout.length)
+    // _logger.info('OPTIONS3 : ' + _util.inspect(fOrg, {depth: null}))
 	// si filtre avec CVENDEUR
 	
+    // for (var i in fDates)
+    // {
+    //     fDates[i].range.DATE.lte = fDates[i].range.DATE.lte.substring(0,8) + '2359';
+    // } // TODO : REMOVE 
+    
+
     var data = {
         size: 0,
         facets: {
-            // 'ordre': {facet_filter: {and: [fDates[0], fDates[3]]}, terms: fOrd},
-            // 'lib': {facet_filter: {and: [fDates[0], fDates[3]].concat(fPrd).concat(fOrg)}, terms: fLib},
-            'ordre': {facet_filter: {and: [fDates[0]]}, terms: fOrd}, 											// TODO : Mettre les bonnes dates 
             'lib': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms: fLib},					// TODO : Mettre les bonnes dates 
-			// 'primevendeur': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms: fVend},
+			'prime_vendeur': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms: fVend},
             'ca': {facet_filter: {and: [fDates[0]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
             'ca_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fCa},
@@ -554,24 +594,28 @@ function getDetails(options, callback) {
 			'ca_poids_acc_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fAcc},
             'ca_poids_acc_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fAcc},			
 			
-			'ca_poids_serv_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fServ},
-			'ca_poids_serv_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fServ},
-            'ca_poids_serv_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fServ},			
+			'ca_poids_serv_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fServ},
+			'ca_poids_serv_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fServ},
+            'ca_poids_serv_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fServ},			
 			
 			'ca_poids_rem_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fRem},
 			'ca_poids_rem_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fRem},
             'ca_poids_rem_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fRem},			
 			
-			'ca_poids_oa_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fOa},
-			'ca_poids_oa_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fOa},
-            'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fOa},	
+			'ca_poids_oa_2m':{facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fOa},
+			'ca_poids_oa_1y':{facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fOa},
+            'ca_poids_oa_global_2m':{facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fOa},	
 			
 			'vt_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fVt},
             'vt_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fVt},
+            
+            'qte_pm_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fQtePm},
+            'qte_pm_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fQtePm},
+            'qte_pm_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fQtePm},
 
-            'qte_pm': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms_stats: fQtePm},
-            'qte_pm_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms_stats: fQtePm},
-            'qte_pm_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms_stats: fQtePm}
+            'qte_codic_2m': {facet_filter: {and: [fDates[1]].concat(fPrd).concat(fOrg)}, terms: fQteCodic},
+            'qte_codic_1y': {facet_filter: {and: [fDates[3]].concat(fPrd).concat(fOrg)}, terms: fQteCodic},
+            'qte_codic_global_2m': {facet_filter: {and: [fDates[1]].concat(fPrd)}, terms: fQteCodic}
 			
         }
     };
@@ -585,12 +629,17 @@ function getDetails(options, callback) {
             });
 			var o = {};
 			
-			var addTerm = function (p, terms) { // a garder ! 
-				for (var i = 0, imax = terms.length; i < imax; i++) {
-					var part = terms[i].term.split(';');
-					part[1] = part[1].toLowerCase();
-					if (o[part[1]]) {
-						o[part[1]][p] = parseFloat(part[0]);
+            // Permet de sommer sur les count, en récupérant un indice pour une multiplication
+			var addTerm = function (p, terms) { // p contient le term sur lequel on va aggrégé, terms, ce qu'on aggrège
+                for (var i = 0, imax = terms.length; i < imax; i++) {
+					var part = terms[i].term.split(';'); // part0 contient le term, part[1] contient la valeur
+                    if (o[part[0]]) {
+                        if (typeof o[part[0]][p] === 'undefined') {
+                            o[part[0]][p] = 0.0; 
+                            o[part[0]][p] += parseFloat(part[1])*parseFloat(terms[i].count);
+                        }
+                        else 
+                            o[part[0]][p] += parseFloat(part[1])*parseFloat(terms[i].count);
 					}
 				}
 			}
@@ -607,6 +656,7 @@ function getDetails(options, callback) {
                 }
             }
 			
+            // Permet de sommer sur les count sans se soucier d'autres valeurs
             var mergeVtList = function (p, terms) { // récupère les VALEURS des terms 'pem', 'div', 'gem'
 				for (var i = 0, imax = terms.length; i < imax; i++) {
 				    var term = terms[i].term.split(';')[0];
@@ -630,10 +680,9 @@ function getDetails(options, callback) {
 				if (!libCache[aggField.cd][parts[0]]) {
                     libCache[aggField.cd][parts[0]] = parts[1];
                 }
-                
             }
 
-            addTerm('ordre', result.facets['ordre'].terms); // ordonnancement 
+            // addTerm('ordre', result.facets['ordre'].terms); // ordonnancement 
 			mergeCaList('ca', result.facets['ca'].terms);
             mergeCaList('ca2m', result.facets['ca_2m'].terms);
             mergeCaList('ca1y', result.facets['ca_1y'].terms);
@@ -643,26 +692,34 @@ function getDetails(options, callback) {
 			mergeVtList('vt2m', result.facets['vt_2m'].terms);
             mergeVtList('vt1y', result.facets['vt_1y'].terms);
             
-			mergeCaList('caPoidsOaGlobal2m', result.facets['ca_poids_oa_global_2m'].terms);	
-			mergeCaList('caPoidsRemGlobal2m', result.facets['ca_poids_rem_global_2m'].terms);	
-			mergeCaList('caPoidsAccGlobal2m', result.facets['ca_poids_acc_global_2m'].terms);	
-			mergeCaList('caPoidsServGlobal2m', result.facets['ca_poids_serv_global_2m'].terms);
-			
-			mergeCaList('caPoidsOa1y', result.facets['ca_poids_oa_1y'].terms);	
-			mergeCaList('caPoidsRem1y', result.facets['ca_poids_rem_1y'].terms);	
-			mergeCaList('caPoidsAcc1y', result.facets['ca_poids_acc_1y'].terms);	
-			mergeCaList('caPoidsServ1y', result.facets['ca_poids_serv_1y'].terms);
-			
-			mergeCaList('caPoidsOa2m', result.facets['ca_poids_oa_2m'].terms);	
-			mergeCaList('caPoidsRem2m', result.facets['ca_poids_rem_2m'].terms);	
-			mergeCaList('caPoidsAcc2m', result.facets['ca_poids_acc_2m'].terms);	
-            mergeCaList('caPoidsServ2m', result.facets['ca_poids_serv_2m'].terms);
-			
-            mergeCaList('qtePm', result.facets['qte_pm'].terms);
-            mergeCaList('qtePm1y', result.facets['qte_pm_1y'].terms);
-            mergeCaList('qtePmGlobal2m', result.facets['qte_pm_global_2m'].terms);
+			addTerm('caPoidsOa2m', result.facets['ca_poids_oa_2m'].terms);	
+            addTerm('caPoidsOa1y', result.facets['ca_poids_oa_1y'].terms);  
+            addTerm('caPoidsOaGlobal2m', result.facets['ca_poids_oa_global_2m'].terms); 
             
+			mergeCaList('caPoidsRem2m', result.facets['ca_poids_rem_2m'].terms);	
+            mergeCaList('caPoidsRem1y', result.facets['ca_poids_rem_1y'].terms);    
+            mergeCaList('caPoidsRemGlobal2m', result.facets['ca_poids_rem_global_2m'].terms);   
+            
+			mergeCaList('caPoidsAcc2m', result.facets['ca_poids_acc_2m'].terms);	
+            mergeCaList('caPoidsAcc1y', result.facets['ca_poids_acc_1y'].terms);    
+            mergeCaList('caPoidsAccGlobal2m', result.facets['ca_poids_acc_global_2m'].terms);   
+            
+            addTerm('caPoidsServ2m', result.facets['ca_poids_serv_2m'].terms); 
+            addTerm('caPoidsServ1y', result.facets['ca_poids_serv_1y'].terms);
+            addTerm('caPoidsServGlobal2m', result.facets['ca_poids_serv_global_2m'].terms);
+            
+            addTerm('qtePm2m', result.facets['qte_pm_2m'].terms);
+            addTerm('qtePm1y', result.facets['qte_pm_1y'].terms);
+            addTerm('qtePmGlobal2m', result.facets['qte_pm_global_2m'].terms);
+            
+            addTerm('qteCodic2m', result.facets['qte_codic_2m'].terms);
+            addTerm('qteCodic1y', result.facets['qte_codic_1y'].terms);
+            addTerm('qteCodicGlobal2m', result.facets['qte_codic_global_2m'].terms);
+
+            addTerm('primevendeur', result.facets['prime_vendeur'].terms);
 			
+            // _logger.info("Info sur les services restants : ", _util.inspect(result.facets['ca_poids_oa_2m'].terms, {depth: null}))
+
             var u = [];
 			var w = {};
             
@@ -672,12 +729,31 @@ function getDetails(options, callback) {
             for (var n in o) {
                 u.push(o[n]);
             }
+            // _logger.info("Objet retourné : ", _util.inspect(u, {depth: null}))
             u.push(w)
             callback(null, u);
         }
     });
 }
 
+function getES(context, callback) {
+    var data = {
+        from: 0,
+        size: 1,
+        query: {query_string: {query:1}}
+    };
+    postSearch(_config.elasticSearch.typeLv, data, function (error, result) {
+        if (error) {
+            callback(error);
+        } else {
+            if (result.hits.hits.length) {
+                callback(null, true);
+            } else {
+                callback(new _errors.Error('ElasticSearch Not Found : Error'));
+            }
+        }
+    });
+}
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 exports.getIndicators = getIndicators;

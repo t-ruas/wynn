@@ -15,8 +15,8 @@ var _config = require('./config.js');
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
-_logger.remove(_logger.transports.Console);
-_logger.add(_logger.transports.Console, {timestamp: function () { return _moment().format('HH:mm:ss'); }, colorize: true});
+// _logger.remove(_logger.transports.Console);
+// _logger.add(_logger.transports.Console, {timestamp: function () { return _moment().format('HH:mm:ss'); }, colorize: true});
 _logger.add(_logger.transports.File, {filename: _path.resolve(__dirname, 'logs', _moment().format('YYYYMMDD') + '.log')});
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\

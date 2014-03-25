@@ -593,7 +593,7 @@
                 for (var i = 0; i < l; i++) {
 
                     var c = sortList[i][0];
-                    // console.log(c, table.config.parsers);
+                    console.log(c, table.config.parsers);
                     var order = sortList[i][1];
                     // var s = (getCachedSortType(table.config.parsers,c) == "text") ?
                     // ((order == 0) ? "sortText" : "sortTextDesc") : ((order == 0) ?
@@ -936,13 +936,12 @@
 			var y = s.substring(0, n-2);
 			var u = y.split(' ');
 			var result = '';
-			//var neg = parseInt(u[0]) > 0 ? false : true;
-            // pour vérifier : console.log du return + s ;)
+			var neg = parseInt(u[0]) > 0 ? false : true;
 			if(u.length == 5) {
-                return u[0]<0? (-1)*parseInt(Math.abs(u[0]))*1000000000000+parseInt(u[1])*1000000000+parseInt(u[2])*1000000+parseInt(u[3])*1000+parseInt(u[4]) : parseInt(Math.abs(u[0]))*1000000000000+parseInt(u[1])*1000000000+parseInt(u[2])*1000000+parseInt(u[3])*1000+parseInt(u[4]);
+				return u[0]<0? (-1)*parseInt(Math.abs(u[0]))*1000000000000+parseInt(u[1])*1000000000+parseInt(u[2])*1000000+parseInt(u[3])*1000+parseInt(u[4]) : parseInt(Math.abs(u[0]))*1000000000000+parseInt(u[1])*1000000000+parseInt(u[2])*1000000+parseInt(u[3])*1000+parseInt(u[4]);
 			}
 			else if(u.length == 4) {
-                return u[0]<0? (-1)*parseInt(Math.abs(u[0]))*1000000000+parseInt(u[1])*1000000+parseInt(u[2])*1000+parseInt(u[3]) : parseInt(Math.abs(u[0]))*1000000000+parseInt(u[1])*1000000+parseInt(u[2])*1000+parseInt(u[3]);
+				return u[0]<0? (-1)*parseInt(Math.abs(u[0])*1000000000+u[1]*1000000+u[2]*1000+u[3]) : parseInt(Math.abs(u[0])*1000000000+u[1]*1000000+u[2]*1000+u[3]);
 			}
 			else if(u.length == 3) {
 				return u[0]<0? (-1)*parseInt(Math.abs(u[0]))*1000000+parseInt(u[1])*1000+parseInt(u[2]) : parseInt(Math.abs(u[0]))*1000000+parseInt(u[1])*1000+parseInt(u[2]);

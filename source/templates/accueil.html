@@ -9,7 +9,190 @@
 
         @@base_scripts@@
         @@scripts@@
+        <script type="text/javascript"><!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Darty Wynn</title>
+        <link rel="stylesheet" type="text/css" href="default.css" />
+		<link rel="stylesheet" type="text/css" href="mediaqueries.css">
+        <link rel="stylesheet" type="text/css" href="reset.css">
+
+        @@base_scripts@@
+        @@scripts@@
         <script type="text/javascript">
+            // les informations de filtres sont envoyées en json dans un objet.
+            // On met l'objet dans une variable, pour l'utiliser facilement
+            darty.wynn.pageData = {{=JSON.stringify(it)}};
+			//console.log(darty.wynn.pageData.budget.ACCESSOIRES);
+            darty.wynn.gui.accueil.start();
+        </script>
+        <script id="indicateurs" type="text/x-dot-template">
+		
+			<a id="CA">
+                <div id="CA_content" class="color_border_<%=it.caCoul%>">
+                    <div id="CA_chiffre"><p> €</p></div>
+                    <div id="CA_pourcent" class="color_background_<%=it.caCoul%>"><p><%=it.caEvol%></p></div>
+                </div>
+			</a>
+		<div id="second_line">  
+            <a id="">
+                <div id="block1" class="color_background_<%=it.montantAccCoul%>">
+                    <div id="block1_chiffre">
+                        <img src="./img/picto_accessoires2.png">
+                        <p><%=it.montantAcc%></p>
+                    </div>
+                    <div class="block_title">
+                        <p><!-- Accessoires --> KPI 1 </p>
+                    </div>
+                </div>
+            </a>
+                    
+            <a id="">
+                <div id="block2" class="color_background_<%=it.volumeServCoul%>">
+                    <div id="block2_chiffre">
+                        <img src="./img/picto_services2.png">
+                        <p><%=it.volumeServ%></p>
+                    </div>
+                    <div class="block_title">
+                        <p><!-- PSE et assurances --> KPI 2 </p>
+                    </div>
+                </div>
+            </a>
+                    
+            <a id="">    
+                <div id="block3" class="color_background_<%=it.volumeOaCoul%>">
+                    <div id="block3_chiffre">
+                        <img src="./img/picto_remise2.png">
+                        <p><%=it.volumeOa%></p>
+                    </div>
+                    <div class="block_title">
+                        <p><!-- Offres active --> KPI 3 </p>
+                    </div>
+                </div>
+            </a>
+                    
+            <a id="">    
+                <div id="block4" class="color_background_<%=it.montantRemCoul%>">
+                    <div id="block4_chiffre">
+                        <img src="./img/picto_services.png">
+    					<p><%=it.montantRem%></p>
+                    </div>
+                    <div class="block_title">
+                        <p><!-- Remise --> KPI 4 </p>
+                    </div>
+                </div>
+            </a>
+                
+		</div>
+				
+		<div id="thired_line" style="display:none">
+			<a class="thired_line_link">
+    			<div id="block5">
+    				<div id="block5_chiffre">
+    					<p class="chiffre_p"><%=it.ent%></p>
+    				</div>
+    				<div id="block5_title">
+    					<p class="title">Entrées</p>
+    					<p class="pourcent"><%=it.entEvol%></p>
+    				</div>
+    				<div id="block5_underline" class="color_background_<%=it.entCoul%>">
+    				</div>
+    			</div>
+			</a>
+			
+			<a class="thired_line_link">
+    			<div id="block6">
+    				<div id="block6_chiffre">
+    					<p class="chiffre_p"><%=it.vt%></p>
+    				</div>
+    				<div id="block6_title">
+    					<p class="title">Ventes</p>
+    					<p class="pourcent"><%=it.vtEvol%></p>
+    				</div>
+    				<div id="block6_underline" class="color_background_<%=it.vtCoul%>">
+    				</div>
+    			</div>
+			</a>
+			
+			<a class="thired_line_link">
+    			<div id="block7">
+    				<div id="block7_chiffre">
+    					<p class="chiffre_p"><%=it.concret%></p>
+    				</div>
+    				<div id="block7_title">
+    					<p class="title">Concretisation</p>
+    					<p class="pourcent"><%=it.concretEvol%></p>
+    				</div>
+    				<div id="block7_underline" class="color_background_<%=it.concretCoul%>">
+    				</div>
+    			</div>
+			</a>
+			
+		</div>
+			
+		<div> 
+			<span id="probErreurEnt" style="visibility:hidden;">
+				<p>il y a une erreur avec les entrées</p> 
+			</span> 
+		</div>
+		
+		
+			
+             
+        </script>
+		
+		<script id="top-blue-part" type="text-x-dot-template">
+			<div id="refreshTimer"> </div>
+		</script>
+		
+        <script id="load-ranking" type="text/x-dot-template">
+            <div id="informations">
+                <div id="position"><p>Le magasin est actuellement classe a la position : <% %></p>
+                <% %>
+                    <p>Le magasin a progresse de X<% %>place<% %>(s)<% %><% %></p>
+                <% %>
+                    <p>Le magasin a perdu <% %>X place<% %>(s)<% %><% %></p>
+                <!-- <% %> -->
+                </div>
+                <div id="top5">
+                    <table>
+                        <tr><th>X</th><th>critere 2</th><th>critere 4</th><th>critere 4</th><th>critere 5</th></tr>
+                        <tr><th>mag 1 (rank)</th><th>val 1</th><th>val 2</th><th>val 4</th><th>val 4</th></tr>
+                        <tr><th>mag 2 (rank)</th><th>val 2.1</th><th>val 2.2</th><th>val 2.3</th><th>val 2.4</th></tr>
+                        <tr><th>mag 3 (rank)</th><th>val 3.1</th><th>val 3.2</th><th>val 3.3</th><th>val 3.4</th></tr>
+                        <tr><th>mag 4 (rank)</th><th>val 4.1</th><th>val 4.2</th><th>val 4.3</th><th>val 4.4</th></tr>
+                        <tr><th>mag 5 (rank)</th><th>val 5.1</th><th>val 5.2</th><th>val 5.3</th><th>val 5.4</th></tr>
+                        <tr><th>mag 16 (rank)</th><th>val 13.1</th><th>val 13.2</th><th>val 13.3</th><th>val 13.4</th></tr>
+                    </table>
+
+                </div>
+            </div>
+        </script>
+
+        <script id="navigation-bar" type="text/x-dot-template">
+            <div><span>Darty France</span></div>
+        </script>
+
+    </head>
+    <body>
+        <div id="mainContent">
+			<div id="mainContentTop">
+                <div id="breadcrumb">
+					<div id="bouton-home">
+					</div>
+				</div>
+			</div>
+			<div id="mainContentMiddle_home">
+            </div>
+		</div>
+		<div id="blueC">
+	        <div id="blueContentTop"></div>			
+	        <!-- <div id="blueContentMid"></div>			
+	        <div id="blueContentBot"></div>	-->
+	    </div>
+    </body>
+</html>
             // les informations de filtres sont envoyées en json dans un objet.
             // On met l'objet dans une variable, pour l'utiliser facilement
             darty.wynn.pageData = {{=JSON.stringify(it)}};

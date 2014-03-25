@@ -11,6 +11,11 @@ var _logger = require('winston');
 var _static = require('node-static');
 var _dot = require('dot');
 var _config = require('./config');
+var _metrics = require('metrics');
+var Metric = exports = module.exports = function Metrics(messagePasser, eventType) {
+	this.messagePasser = messagePasser;
+	this.eventType = eventType;
+}
  
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
@@ -25,25 +30,53 @@ var request_count;
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
+Metric.prototype.newMetric = function(type, eventType) {
+	this.messagePasser.sendMessage({
+		method: 'createMetric'
+		, type: type
+		, eventType: eventType
+	});
+}
+
+Metric.prototype.forwardMessage = function(method, args) {
+	this.messagePasser.sendMessage({
+		method: 'updateMetric'
+		, metricMethod: method
+		, metricArgs: args
+		, eventType: this.eventType
+	}); 
+}
+Metric.prototype.update = function(val) { return this.forwardMessage('update', [val]); }
+Metric.prototype.mark = function(n) { return this.forwardMessage('mark', [n]); }
+Metric.prototype.inc = function(n) { return this.forwardMessage('inc', [n]); }
+Metric.prototype.dec = function(n) { return this.forwardMessage('dec', [n]); }
+Metric.prototype.clear = function() { return this.forwardMessage('clear'); }
+
+var metricsServer = new _metrics.Server(_config.metrics.port || 9091);
+
 function start(r) { // lancement du serveur Node ! 
     routes = r;
-	request_count = 0;
+    // request_count = 0;
     fileServer = new _static.Server(_config.staticRoot, {cache: false});
     _http.createServer(handleRequest).listen(_config.port);
 }
 
 function handleRequest(request, response) {
 	request_count++;
-	setInterval(function() {
+	/*setInterval(function() {
     _fs.appendFile('/etc/munin/plugins/nodejs_requests', request_count + '\n', function (error) {
 		if (error) {
             //throw error; TODO : remove pour Munin ... 
 		}
 		request_count=0;
 	});
-	}, _config.updateLogs);
+	}, _config.updateLogs);*/
 	
-	var context = {
+	// update('Hello World !');
+
+    metricsServer.addMetric('HandleRequest', request_count);
+	
+    var context = {
         id: _uuid.v4(),
         request: request,
         response: response,
@@ -78,7 +111,7 @@ function handleRequest(request, response) {
                     }
                     matches.splice(0, 1, context, function (error, result) {
                             if (error) { // si erreur, Code 500 ! (web services unavailable)
-                                _logger.error(error.stack);
+                                // _logger.error(error.stack);
                                 context.response.statusCode = 500;
                                 context.response.end();
                             } else {

@@ -17,8 +17,8 @@
 			var org = "org";
 			// TODO : envoyer l'objet depuis le serv en ajax et le "cacher"
 			obj.dims = {}
-			obj.dims.org = {"org1":"Filiale","org2":"ZDV","org3":"Magasin","org4":"Vendeur"};
-			obj.dims.prd = {"prd1":"Univers","prd2":"Rayon","prd3":"Gamme","prd4":"F. Budg","prd5":"F. Mkg","prd6":"Codic"} // couleur (R.K.), 
+			obj.dims.org = {"org1":"Canal","org2":"Filiale","org3":"ZDV","org4":"Magasin","org5":"Vendeur"};
+			obj.dims.prd = {"prd1":"Type", "prd2":"Univers","prd3":"Rayon","prd4":"Gamme","prd5":"F. Mkg","prd6":"Article"} // couleur (R.K.), 
 			// sera ajouté avec les droits d'utilisateur
         </script>
 		<script type="text/javascript">
@@ -28,8 +28,7 @@
             <!-- <div id="menu"> -->
 				
 			<!-- </div> -->
-			<div style="color:white" id="pageNumberLoader">
-			</div>
+			
 			<table id="detailsTable">
 				<thead>
 						<tr>
@@ -43,16 +42,16 @@
 							<th id="col2">% Evol
 								<!-- <img class="arrow" src="./img/arrow.png"> -->
 							</th>
-							<th id="col3">Acc.
+							<th id="col3">KPI1 <!-- Acc. -->
 								<!-- <img class="arrow" src="./img/arrow.png"> -->
 							</th>
-							<th id="col4">PSE et assur.
+							<th id="col4">KPI2 <!-- PSE et assur. -->
 								<!-- <img class="arrow" src="./img/arrow.png"> -->
 							</th>
-							<th id="col5">OA.
+							<th id="col5">KPI3 <!-- OA. -->
 								<!-- <img class="arrow" src="./img/arrow.png"> -->
 							</th>
-							<th id="col6">Rem.
+							<th id="col6">KPI4 <!-- Rem. -->
 								<!-- <img class="arrow" src="./img/arrow.png"> -->
 							</th>
 						</tr>
@@ -60,20 +59,38 @@
 				<tbody>
 					<%~it.list:line%>
 						<tr>
-							<td class="content first-column"> <div class="code"><a href="/details?<%=line.ddQuery%>"><%=line.cd%></a> </div>  <div class="libelle"><a href="/details?<%=line.ddQuery%>"><%=line.lib%><span style="visibility:hidden"> ,<%=line.order%></span></a></div> </td>
-							<td class="content color_X"><a href="/accueil?<%=line.dbQuery%>"><%=line.ca%></a></td>
+							<td class="content first-column"> 
+								<div class="code" code_to_display="<%=line.cd%>">
+									<a href="/details?<%=line.ddQuery%>">
+										<acronym title="<%=line.cd%>">
+											<%=line.lib%>
+										</acronym>
+									</a> 
+								</div>  
+								<div class="libelle"><!--
+									<a href="/details?<%=line.ddQuery%>"><%=line.lib%>
+										<span style="visibility:hidden"> ,<%=line.order%>
+										</span>
+									</a>-->
+								</div> 
+							</td>
+							<td class="content color_X">
+								<a href="/details?<%=line.dbQuery%>">
+									<%=line.ca%>
+								</a>
+							</td>
 							<td class="content color_background_<%=line.caEvo.cls%> linkExpand"><span><%=line.caEvo.val%></span></td>
-							<td class="content color_underline_<%=line.acc.cls%>"><%=line.acc.val%></td>
-							<td class="content color_underline_<%=line.serv.cls%>"><%=line.serv.val%></td>
-							<td class="content color_underline_<%=line.oa.cls%>"><%=line.oa.val%></td>
-							<td class="content color_underline_<%=line.rem.cls%>"><%=line.rem.val%></td>
+							<td class="content Dexpand color_underline_<%=line.acc.cls%>"><%=line.acc.val%></td>
+							<td class="content Dexpand color_underline_<%=line.serv.cls%>"><%=line.serv.val%></td>
+							<td class="content Dexpand color_underline_<%=line.oa.cls%>"><%=line.oa.val%></td>
+							<td class="content Dexpand color_underline_<%=line.rem.cls%>"><%=line.rem.val%></td>
 						</tr>
 					<%~%>
 				</tbody>
 				<tfoot>
 					<tr>
 						<td>TOTAL</td>
-						<td class="color_X"><a href="<%=it.totals.dbQuery%>"><%=it.totals.ca%></a></td>
+						<td class="color_X"><a href="/accueil?<%=it.totals.dbQuery%>"><%=it.totals.ca%></a></td>
 						<td class="color_background_<%=it.totals.caEvo.cls%>" ><%=it.totals.caEvo.val%></td>
 						<td class="color_underline_<%=it.totals.acc.cls%>"><%=it.totals.acc.val%></td>
 						<td class="color_underline_<%=it.totals.serv.cls%>"><%=it.totals.serv.val%></td>
@@ -82,6 +99,8 @@
 					</tr>
 				</tfoot></div>
 			</table>
+			<div id="pageNumberLoader">
+			</div>
 		</script>
     </head>
     <body>
